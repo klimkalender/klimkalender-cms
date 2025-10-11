@@ -1,0 +1,18 @@
+# Stage: devserver
+FROM node:22.19.0-trixie AS devserver
+
+RUN apt-get update && \
+  apt-get install -y \  
+  less \
+  nano \
+  sysstat \
+  uuid-runtime \
+  jq
+RUN mkdir -p \
+  /workspace/klimkalender-new/node_modules && \
+  chown node:node \
+  /workspace/klimkalender-new/node_modules
+
+USER node
+RUN touch  /home/node/.bashrc && echo "source /usr/share/bash-completion/completions/git" >> /home/node/.bashrc
+ENV SHELL /bin/bash

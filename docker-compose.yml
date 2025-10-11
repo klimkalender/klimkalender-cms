@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+  dev:
+    build:
+      context: ./
+      target: devserver
+      dockerfile: Dockerfile-dev
+    tty: true
+    stdin_open: true
+    volumes:
+      - kk_node_modules:/workspace/klimkalender-new/node_modules
+volumes:
+  kk_node_modules:

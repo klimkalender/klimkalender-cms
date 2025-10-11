@@ -1,0 +1,77 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.195.0/containers/javascript-node
+{
+  "name": "klimkalender-cms",
+  "dockerComposeFile": [
+    "../docker-compose.yml",
+    "docker-compose.extend.yml"
+  ],
+  "service": "dev",
+  // "build": {
+  //   "dockerfile": "Dockerfile",
+  //   // Update 'VARIANT' to pick a Node version: 16, 14, 12.
+  //   // Append -bullseye or -buster to pin to an OS version.
+  //   // Use -bullseye variants on local arm64/Apple Silicon.
+  //   "args": {
+  //     "VARIANT": "18-bullseye"
+  //   }
+  // },
+  // Configure tool-specific properties.
+  "customizations": {
+    // Configure properties specific to VS Code.
+    "vscode": {
+      // Set *default* container specific settings.json values on container create.
+      // see https://stackoverflow.com/a/69085491/430721 - prettier conflicts
+      "settings": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": false,
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit",
+          "source.fixAll.stylelint": "explicit"
+        },
+        "git.postCommitCommand": "push",
+        "css.validate": false,
+        "scss.validate": false,
+        "stylelint.validate": [
+          "css",
+          "scss"
+        ],
+        "typescript.preferences.includePackageJsonAutoImports": "on"
+      },
+      // Add the IDs of extensions you want installed when the container is created.
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "GitHub.copilot",
+        "stylelint.vscode-stylelint",
+        "streetsidesoftware.code-spell-checker"
+      ]
+    }
+  },
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // "forwardPorts": [3000],
+  // Use 'portsAttributes' to set default properties for specific forwarded ports. More info: https://code.visualstudio.com/docs/remote/devcontainerjson-reference.
+  // "portsAttributes": {
+  //   "3000": {
+  //     "label": "Hello Remote World",
+  //     "onAutoForward": "notify"
+  //   }
+  // },
+  // Use 'otherPortsAttributes' to configure any ports that aren't configured using 'portsAttributes'.
+  // "otherPortsAttributes": {
+  // 		"onAutoForward": "silent"
+  // },
+  // Use 'postCreateCommand' to run commands after the container is created.
+  "postCreateCommand": "./scripts/post-install.sh",
+  //https://www.kenmuse.com/blog/avoiding-dubious-ownership-in-dev-containers/
+  "postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}",
+  // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+  "remoteUser": "node",
+  "workspaceFolder": "/workspace",
+  "remoteEnv": {
+    "PATH": "${containerEnv:PATH}:/workspace/node_modules/.bin:/workspace/scripts",
+    "EDITOR": "nano",
+    "AWS_PROFILE": "rocsys-int",
+    "DATABASE_URL": "postgres://root:root@pg_container:5432/rocsyscloud"
+  }
+}
