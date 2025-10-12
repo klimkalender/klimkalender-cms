@@ -41,6 +41,9 @@ export default function Header() {
             />
           </Link>
         </h1>
+        <div className="ml-4 text-2xl font-bold text-black">
+           CMS
+        </div>
         <div className="ml-auto text-black align-right flex items-center gap-1">
           {auth.isAuthenticated ? (
             <><span className="text-sm">
@@ -54,12 +57,8 @@ export default function Header() {
                 <IconExit />
               </button>
             </>
-          ) : (
-            <Link
-              to="/login"
-              className="text-blue-500 hover:underline font-medium"
-            >Login
-            </Link>
+          ) : ( 
+            <span className="text-sm">Not logged in</span>
           )}
         </div>
       </header>

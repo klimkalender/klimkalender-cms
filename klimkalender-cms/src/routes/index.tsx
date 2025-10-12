@@ -1,9 +1,19 @@
-import { createFileRoute } from '@tanstack/react-router'  
+import { createFileRoute, redirect } from '@tanstack/react-router'  
 import { useEffect, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
 export const Route = createFileRoute('/')({
   component: HomeComponent,
+   beforeLoad: ({ context, location }) => {
+    if (!context.auth.isAuthenticated) {
+      throw redirect({
+        to: '/login',
+        search: {
+          redirect: location.href,
+        },
+      })
+    }
+  },
 })
 
 const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
