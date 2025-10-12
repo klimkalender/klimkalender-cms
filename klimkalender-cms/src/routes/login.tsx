@@ -84,7 +84,7 @@ function LoginComponent() {
       {search.redirect ? (
         <p className="text-red-500">You need to login to access this page.</p>
       ) : (
-        <p>Login to see all the cool content in here.</p>
+        <p>Login into the Klimkalender CMS</p>
       )}
       <form className="mt-4 max-w-lg" onSubmit={onFormSubmit}>
         <fieldset disabled={isLoggingIn} className="w-full grid gap-2">

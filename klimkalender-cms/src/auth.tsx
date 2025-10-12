@@ -36,14 +36,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const isAuthenticated = !!user
 
   const logout = React.useCallback(async () => {
-    await sleep(250)
 
     setStoredUser(null)
     setUser(null)
   }, [])
 
   const login = React.useCallback(async (username: AuthTokenResponsePassword["data"]) => {
-    await sleep(500)
 
     setStoredUser(username)
     setUser(username)

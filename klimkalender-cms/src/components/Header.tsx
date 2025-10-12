@@ -1,10 +1,27 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useRouter, useNavigate } from '@tanstack/react-router'
 
 import { useState } from 'react'
 import { Home, Menu, X } from 'lucide-react'
+import { useAuth } from '@/auth'
+
+
+
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
+  const auth = useAuth()
+  const router = useRouter()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    if (window.confirm('Are you sure you want to logout?')) {
+      auth.logout().then(() => {
+        router.invalidate().finally(() => {
+          navigate({ to: '/' })
+        })
+      })
+    }
+  }
 
   return (
     <>
@@ -25,6 +42,31 @@ export default function Header() {
             />
           </Link>
         </h1>
+        <div className="ml-auto text-black">
+          {auth.isAuthenticated ? (
+            <><span className="text-sm">
+             <strong>{auth.user?.user?.email}</strong>
+            </span>
+   
+              <button
+                type="button"
+                className="hover:underline"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            
+            </>
+
+          ) : (
+            <Link
+              to="/login"
+              className="text-blue-500 hover:underline font-medium"
+            >
+              Login
+            </Link>
+          )}
+        </div>
       </header>
 
       <aside
