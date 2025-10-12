@@ -12,7 +12,7 @@ function DashboardPage() {
 
   return (
     <section className="grid gap-2 p-2">
-      <p>Hi {auth.user}!</p>
+      <p>Hi {auth.user?.user?.email}!</p>
       <p>You are currently on the dashboard route.</p>
     </section>
   )

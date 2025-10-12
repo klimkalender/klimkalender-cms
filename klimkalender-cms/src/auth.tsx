@@ -1,12 +1,13 @@
 import * as React from 'react'
 
 import { sleep } from './utils'
+import type { AuthTokenResponsePassword } from '@supabase/supabase-js'
 
 export interface AuthContext {
   isAuthenticated: boolean
-  login: (username: string) => Promise<void>
+  login: (userData: AuthTokenResponsePassword["data"]) => Promise<void>
   logout: () => Promise<void>
-  user: string | null
+  user: AuthTokenResponsePassword["data"] | null
 }
 
 const AuthContext = React.createContext<AuthContext | null>(null)
@@ -14,19 +15,24 @@ const AuthContext = React.createContext<AuthContext | null>(null)
 const key = 'tanstack.auth.user'
 
 function getStoredUser() {
-  return localStorage.getItem(key)
+  try {
+    return JSON.parse(localStorage.getItem(key) || 'null') as AuthTokenResponsePassword["data"] | null
+  } catch (error) {
+    console.error('Error parsing stored user:', error)  
+    return null
+  }
 }
 
-function setStoredUser(user: string | null) {
+function setStoredUser(user: AuthTokenResponsePassword["data"] | null) {
   if (user) {
-    localStorage.setItem(key, user)
+    localStorage.setItem(key, JSON.stringify(user))
   } else {
     localStorage.removeItem(key)
   }
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = React.useState<string | null>(getStoredUser())
+  const [user, setUser] = React.useState<AuthTokenResponsePassword["data"] | null>(getStoredUser())
   const isAuthenticated = !!user
 
   const logout = React.useCallback(async () => {
@@ -36,7 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null)
   }, [])
 
-  const login = React.useCallback(async (username: string) => {
+  const login = React.useCallback(async (username: AuthTokenResponsePassword["data"]) => {
     await sleep(500)
 
     setStoredUser(username)

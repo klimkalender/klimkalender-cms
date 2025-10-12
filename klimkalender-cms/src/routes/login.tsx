@@ -60,7 +60,7 @@ function LoginComponent() {
         return;
       }
 
-      await auth.login(userData.data.user?.email || userNameValue.toString())
+      await auth.login(userData.data)
 
       await router.invalidate()
 
@@ -111,6 +111,7 @@ function LoginComponent() {
               placeholder="Enter your password"
               type="password"
               className="border rounded-md p-2 w-full"
+              autoComplete='current-password'
               required
             />
           </div>
