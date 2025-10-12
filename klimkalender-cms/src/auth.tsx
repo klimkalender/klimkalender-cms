@@ -1,6 +1,5 @@
 import * as React from 'react'
 
-import { sleep } from './utils'
 import type { AuthTokenResponsePassword } from '@supabase/supabase-js'
 
 export interface AuthContext {

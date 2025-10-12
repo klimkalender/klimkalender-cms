@@ -1,6 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
-import * as React from 'react'
-import { Link } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'  
 import { useEffect, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
