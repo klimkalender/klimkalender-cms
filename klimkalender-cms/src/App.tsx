@@ -6,7 +6,7 @@ const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env
 async function signInWithEmail() {
   const { data, error } = await supabase.auth.signInWithPassword({
     email: 'robert@bakkerfamily.net',
-    password: 'QJE8nkf3krn@gjx*eaf',
+    password: 'xxx',
   })
   console.log('data', data);
   console.log('error', error);
