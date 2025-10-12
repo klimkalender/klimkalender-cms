@@ -1,81 +1,47 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import logo from '../logo.svg'
-import { useEffect, useState } from "react";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
-
-async function signInWithEmail() {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: 'robert@bakkerfamily.net',
-    password: 'xxxx',
-  })
-  console.log('data', data);
-  console.log('error', error);
-}
-
+import { createFileRoute } from '@tanstack/react-router'
+import * as React from 'react'
+import { Link } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({
-  component: App,
+  component: HomeComponent,
 })
 
-function App() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [instruments, setInstruments] = useState<any[]>([]);
-
-
-  useEffect(() => {
-    getInstruments();
-  }, []);
-
-  async function getInstruments() {
-    const { data } = await supabase.from("instruments").select();
-    if (data) setInstruments(data);
-  }
-
+function HomeComponent() {
   return (
-    <div className="text-center">
-      <header className="min-h-screen flex flex-col items-center justify-center bg-[#282c34] text-white text-[calc(10px+2vmin)]">
-        <img
-          src={logo}
-          className="h-[40vmin] pointer-events-none animate-[spin_20s_linear_infinite]"
-          alt="logo"
-        />
-        <p>
-          Edit <code>src/routes/index.tsx</code> and save to reload.
-        </p>
-        <a
-          className="text-[#61dafb] hover:underline"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <a
-          className="text-[#61dafb] hover:underline"
-          href="https://tanstack.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn TanStack
-        </a>
-        <p>
-          <Link to="/about">Go to "/about"</Link>
-        </p>
-        <div>
-          <h1>Instruments</h1>
-          <a href="#" onClick={signInWithEmail}>Sign in with email</a>
-          <ul>
-            {instruments.map((instrument) => (
-              <li key={instrument.name}>{instrument.name}</li>
-            ))}
-          </ul>
-        </div>
-      </header>
-
+    <div className="p-2 grid gap-2">
+      <h1 className="text-xl">Welcome!</h1>
+      <p className="py-4 px-2 italic bg-slate-100 dark:bg-slate-800">
+        <strong className="text-red-500">IMPORTANT!!!</strong> This is just an
+        example of how to use authenticated routes with TanStack Router.
+        <br />
+        This is NOT an example how you'd write a production-level authentication
+        system.
+        <br />
+        You'll need to take the concepts and patterns used in this example and
+        adapt then to work with your authentication flow/system for your app.
+      </p>
+      <p>
+        You are currently on the index route of the{' '}
+        <strong>authenticated-routes</strong> example.
+      </p>
+      <p>You can try going through these options.</p>
+      <ol className="list-disc list-inside px-2">
+        <li>
+          <Link to="/login" className="text-blue-500 hover:opacity-75">
+            Go to the public login page.
+          </Link>
+        </li>
+        <li>
+          <Link to="/dashboard" className="text-blue-500 hover:opacity-75">
+            Go to the auth-only dashboard page.
+          </Link>
+        </li>
+        <li>
+          <Link to="/invoices" className="text-blue-500 hover:opacity-75">
+            Go to the auth-only invoices page.
+          </Link>
+        </li>
+      </ol>
     </div>
   )
 }
-
-
