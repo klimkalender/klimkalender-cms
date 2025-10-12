@@ -8,6 +8,6 @@ services:
     tty: true
     stdin_open: true
     volumes:
-      - kk_node_modules:/workspace/klimkalender-new/node_modules
+      - kk_node_modules:/workspace/klimkalender-cms/node_modules
 volumes:
   kk_node_modules:

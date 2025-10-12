@@ -9,9 +9,9 @@ RUN apt-get update && \
   uuid-runtime \
   jq
 RUN mkdir -p \
-  /workspace/klimkalender-new/node_modules && \
+  /workspace/klimkalender-cms/node_modules && \
   chown node:node \
-  /workspace/klimkalender-new/node_modules
+  /workspace/klimkalender-cms/node_modules
 
 USER node
 RUN touch  /home/node/.bashrc && echo "source /usr/share/bash-completion/completions/git" >> /home/node/.bashrc
