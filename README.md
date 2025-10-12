@@ -2,4 +2,4 @@
 
 ## generating types
 
-supabase gen types typescript --project-id rhqfmbneypdqnstbuifi  > database.types.ts
+supabase gen types typescript --project-id  zrshjxlfodmuulctapbw  > database.types.ts
