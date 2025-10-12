@@ -3,8 +3,7 @@ import { Link, useRouter, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { Home, Menu, X } from 'lucide-react'
 import { useAuth } from '@/auth'
-
-
+import IconExit from '../icons/arrow-right-start-on-rectangle.svg?react'
 
 
 export default function Header() {
@@ -28,7 +27,7 @@ export default function Header() {
       <header className="p-4 flex items-center bg-white-800 text-white shadow-lg">
         <button
           onClick={() => setIsOpen(true)}
-          className="p-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
+          className="p-2 bg-black hover:bg-gray-700 rounded-lg transition-colors"
           aria-label="Open menu"
         >
           <Menu size={24} />
@@ -42,28 +41,24 @@ export default function Header() {
             />
           </Link>
         </h1>
-        <div className="ml-auto text-black">
+        <div className="ml-auto text-black align-right flex items-center gap-1">
           {auth.isAuthenticated ? (
             <><span className="text-sm">
-             <strong>{auth.user?.user?.email}</strong>
+              <strong>{auth.user?.user?.email}</strong>
             </span>
-   
               <button
                 type="button"
                 className="hover:underline"
                 onClick={handleLogout}
               >
-                Logout
+                <IconExit />
               </button>
-            
             </>
-
           ) : (
             <Link
               to="/login"
               className="text-blue-500 hover:underline font-medium"
-            >
-              Login
+            >Login
             </Link>
           )}
         </div>

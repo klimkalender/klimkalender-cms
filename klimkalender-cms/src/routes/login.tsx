@@ -80,7 +80,6 @@ function LoginComponent() {
 
   return (
     <div className="p-2 grid gap-2 place-items-center">
-      <h3 className="text-xl">Login page</h3>
       {search.redirect ? (
         <p className="text-red-500">You need to login to access this page.</p>
       ) : (
@@ -117,7 +116,7 @@ function LoginComponent() {
           </div>
           <button
             type="submit"
-            className="bg-blue-500 text-white py-2 px-4 rounded-md w-full disabled:bg-gray-300 disabled:text-gray-500"
+            className="bg-black text-white py-2 px-4 rounded-md w-full disabled:bg-gray-300 disabled:text-gray-500"
           >
             {isLoggingIn ? 'Loading...' : 'Login'}
           </button>
