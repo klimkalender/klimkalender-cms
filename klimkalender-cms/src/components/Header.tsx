@@ -36,8 +36,8 @@ export default function Header() {
         <h1 className="ml-4 text-xl font-semibold">
           <Link to="/">
             <img
-              src="/logo.png"
-              alt="TanStack Logo"
+              src="./logo.png"
+              alt="klimkalender logo"
               className="h-10"
             />
           </Link>
