@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import type { FileObject } from '@supabase/storage-js';
 import Uppy from '@uppy/core';
