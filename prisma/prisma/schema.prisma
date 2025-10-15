@@ -1,0 +1,83 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
+  output          = "../gen/prisma"
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Event {
+  id               Int         @id @default(autoincrement())
+  externalId       String      @unique @map("external_id")
+  title            String
+  status           EventStatus @default(DRAFT) @map("status")
+  description      String?     @map("description")
+  startDateTime    DateTime    @map("start_date_time")
+  endDateTime      DateTime    @map("end_date_time")
+  isFullDay        Boolean     @default(false) @map("is_full_day")
+  timeZone         String      @default("Europe/Amsterdam") @map("time_zone")
+  venueId          Int?        @map("venue_id")
+  organizerId      Int?        @map("organizer_id")
+  featured         Boolean?    @default(false) @map("featured")
+  featuredText     String?     @map("featured_text")
+  featuredImageRef String?     @map("featured_image_ref")
+  remarks          String?     @map("remarks")
+  link             String?     @map("link")
+
+  venue     Venue?     @relation(fields: [venueId], references: [id])
+  organizer Organizer? @relation(fields: [organizerId], references: [id])
+  tags      EventTag[]
+
+  @@map("events")
+}
+
+model Tag {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  events EventTag[]
+
+  @@map("tags")
+}
+
+model EventTag {
+  eventId Int
+  tagId   Int
+
+  event Event @relation(fields: [eventId], references: [id])
+  tag   Tag   @relation(fields: [tagId], references: [id])
+
+  @@unique([eventId, tagId])
+  @@map("event_tags")
+}
+
+model Organizer {
+  id       Int     @id @default(autoincrement())
+  name     String  @unique
+  imageRef String? @map("image_ref")
+
+  events Event[]
+
+  @@map("organizers")
+}
+
+model Venue {
+  id       Int     @id @default(autoincrement())
+  name     String  @unique
+  imageRef String? @map("image_ref")
+  lat      Float?
+  long     Float?
+
+  events Event[]
+
+  @@map("venues")
+}
