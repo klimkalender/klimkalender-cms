@@ -44,7 +44,8 @@
         "esbenp.prettier-vscode",
         "GitHub.copilot",
         "stylelint.vscode-stylelint",
-        "streetsidesoftware.code-spell-checker"
+        "streetsidesoftware.code-spell-checker",
+        "Prisma.prisma@6.17.1"
       ]
     }
   },
@@ -69,9 +70,9 @@
   "remoteUser": "node",
   "workspaceFolder": "/workspace",
   "remoteEnv": {
-    "PATH": "${containerEnv:PATH}:/workspace/node_modules/.bin:/workspace/scripts",
+    "PATH": "${containerEnv:PATH}:/workspace/node_modules/.bin:/workspace/prisma/node_modules/.bin:/workspace/klimkalender-cms/node_modules/.bin",
     "EDITOR": "nano",
     "AWS_PROFILE": "rocsys-int",
-    "DATABASE_URL": "postgres://root:root@pg_container:5432/rocsyscloud"
+    "DATABASE_URL": "postgres://root:root@db:5432/rocsyscloud"
   }
 }

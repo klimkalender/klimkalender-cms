@@ -9,5 +9,12 @@ services:
     stdin_open: true
     volumes:
       - kk_node_modules:/workspace/klimkalender-cms/node_modules
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: klimkalender
 volumes:
   kk_node_modules:
