@@ -43,35 +43,28 @@ async function importData() {
   }));
 
   for (const event of events) { //.slice(0, 1)) { // limit to first 1 event for testing
-
     const eventRow = mapEventToSupabaseRow(event);
     // console.dir(eventRow, { depth: null });
     console.dir(event, { depth: null });
 
     // upsert event into Supabase
-    let { error } = await supabase
+    let { data: eventResp, error } = await supabase
       .from('events')
-      .upsert(eventRow, { onConflict: 'external_id' });
+      .upsert(eventRow, { onConflict: 'external_id' })
+      .select('id, featured_image_ref')
+      .single();
     if (error) {
       console.error('Error importing event:', error);
     }
 
-    let eventResp = await supabase
-      .from('events')
-      .select('id, featured_image_ref')
-      .eq('external_id', event.id)
-      .single();
     // upsert venue
-    const { error: venueError } = await supabase
+    const { data: venueResp, error: venueError } = await supabase
       .from('venues')
-      .upsert({ name: event.venueName }, { onConflict: 'name' });
-
-    let venueResp = await supabase
-      .from('venues')
-      .select('id, featured_image_ref')
-      .eq('name', event.venueName)
+      .upsert({ name: event.venueName }, { onConflict: 'name' })
+      .select('id, image_ref')
       .single();
-    if (!venueResp.data?.featured_image_ref) {
+
+    if (!venueResp?.image_ref) {
       // handle venue image
       if (event.venueImage) {
         if (event.venueImage == NKBV_IMAGE) {
@@ -120,10 +113,10 @@ async function importData() {
     // link venue to event
     await supabase
       .from('events')
-      .update({ venue_id: venueResp?.data?.id || null })
+      .update({ venue_id: venueResp?.id || null })
       .eq('external_id', event.id);
 
-    if (event.featured && !eventResp.data?.featured_image_ref) {
+    if (event.featured && !eventResp?.featured_image_ref) {
       // handle featured image
       if (event.featuredImage) {
         const imagePath = await uploadRemoteImageToSupabase(event.featuredImage, 'event-images');
@@ -137,12 +130,37 @@ async function importData() {
     } else {
       console.log('Skipping featured image upload for event:', event.id);
     }
-
+    // exclude NKBV tag, it's handled via organization
+    for (const tag of event.tags.filter( t => t !== 'NKBV')) {
+      await addTagToEvent(eventResp!.id, tag);
+    }
 
     if (venueError) {
       console.error('Error importing venue:', venueError);
     }
 
+  }
+}
+
+async function addTagToEvent(eventId: string, tagName: string) {
+  // upsert tag
+  const { data: tagData, error: tagError } = await supabase
+    .from('tags')
+    .upsert({ name: tagName }, { onConflict: 'name' })
+    .select('id')
+    .single();
+  if (tagError) {
+    console.error('Error importing tag:', tagError);
+    return;
+  }
+
+  // link tag to event
+  const { error: eventTagError } = await supabase
+    .from('event_tags')
+    .upsert({ event_id: eventId, tag_id: tagData!.id }, { onConflict: 'event_id, tag_id' });
+  if (eventTagError) {
+    console.error('Error linking tag to event:', eventTagError);
+    return;
   }
 }
 
