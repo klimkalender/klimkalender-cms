@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { fetchInvoices } from '../posts'
 import { createClient } from '@supabase/supabase-js';
-import TestTable from '@/components/TestTable';
+import TestTable from '@/components/EventsTable';
 import type { Database } from '@/database.types';
 import type { Organizer } from '@/types';
 import { useState, useEffect } from 'react';
