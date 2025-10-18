@@ -50,8 +50,8 @@ model Tag {
 }
 
 model EventTag {
-  eventId Int
-  tagId   Int
+  eventId Int @map("event_id")
+  tagId   Int @map("tag_id")
 
   event Event @relation(fields: [eventId], references: [id])
   tag   Tag   @relation(fields: [tagId], references: [id])
