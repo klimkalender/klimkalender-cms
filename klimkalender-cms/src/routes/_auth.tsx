@@ -19,23 +19,7 @@ function AuthLayout() {
   return (
     <div className="p-2 h-full">
       <ul className="py-2 flex gap-2">
-        <li>
-          <Link
-            to="/dashboard"
-            className="hover:underline data-[status='active']:font-semibold"
-          >
-            Dashboard
-          </Link>
-        </li>
-        <li>
-          <Link
-            to="/invoices"
-            className="hover:underline data-[status='active']:font-semibold"
-          >
-            Invoices
-          </Link>
-        </li>
-        <li>
+                <li>
           <Link
             to="/events"
             className="hover:underline data-[status='active']:font-semibold"
@@ -43,8 +27,23 @@ function AuthLayout() {
             Events
           </Link>
         </li>
+        <li>
+          <Link
+            to="/dashboard"
+            className="hover:underline data-[status='active']:font-semibold"
+          >
+            Venues
+          </Link>
+        </li>
+        <li>
+          <Link
+            to="/invoices"
+            className="hover:underline data-[status='active']:font-semibold"
+          >
+            Organizers
+          </Link>
+        </li>
       </ul>
-      <hr />
       <Outlet />
     </div>
   )

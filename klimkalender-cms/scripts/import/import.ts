@@ -2,7 +2,7 @@ import 'dotenv/config'
 import { createClient } from '@supabase/supabase-js';
 import * as fs from 'fs';
 import dotenv from 'dotenv'
-import type { CalendarEvent, SupabaseEvent } from '../../src/types';
+import type { CalendarEvent, Event } from '../../src/types';
 import { isDateFullDate } from '../../src/utils.ts';
 
 dotenv.config({ path: '/workspace/klimkalender-cms/.env.local' })
@@ -17,18 +17,23 @@ const supabase = createClient(
 
 
 
-function mapEventToSupabaseRow(event: CalendarEvent): SupabaseEvent {
+function mapEventToSupabaseRow(event: CalendarEvent): Omit<Event, 'id'> {
   return {
     external_id: event.id,
     title: event.title,
-    start_date_time: event.startTimeUtc,
-    end_date_time: event.endTimeUtc,
+    start_date_time: event.startTimeUtc.toISOString(),
+    end_date_time: event.endTimeUtc.toISOString(),
     is_full_day: isDateFullDate(event),
     time_zone: event.timezone,
     status: 'PUBLISHED', // Default status, can be changed later
     link: event.link,
     featured: event.featured || false,
     featured_text: event.featuredText || '',
+    description: '', // No description in import data
+    remarks: '', // No remarks in import data
+    venue_id: null, // To be set after venue upsert
+    organizer_id: null, // To be set after organizer upsert
+    featured_image_ref: null, // To be set after image upload
   };
 }
 
@@ -91,10 +96,15 @@ async function importData() {
             console.log('NKBV organization image already exists, skipping upload');
           } 
           // link organization event
-          await supabase
+          const {  error: orgEventError } = await supabase
             .from('events')
-            .update({ organization_id: orgResp?.data?.id || null })
-            .eq('id', event.id);
+            .update({ organizer_id: orgResp?.data?.id || null })
+            .eq('external_id', event.id);
+          if (orgEventError) {
+            console.error('Error linking event to organizer:', orgEventError);
+          }else{
+            console.log(`Linked event ${event.id} to NKBV organizer ${orgResp?.data?.id}`);
+          }
         } else {
           console.log('Uploading venue image for venue:', event.venueName);
           const imagePath = await uploadRemoteImageToSupabase(event.venueImage, 'venue-images');

@@ -2,4 +2,4 @@
 
 ## generating types
 
-supabase gen types typescript --project-id  zrshjxlfodmuulctapbw  > database.types.ts
+cd /workspace/klimkalender-cms && supabase gen types typescript --project-id  zrshjxlfodmuulctapbw  > /src/database.types.ts
