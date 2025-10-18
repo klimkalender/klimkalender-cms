@@ -1,7 +1,7 @@
 import { Link, useRouter, useNavigate } from '@tanstack/react-router'
 
 import { useState } from 'react'
-import { Home, Menu, X } from 'lucide-react'
+import { Home, Menu, X, CalendarHeart } from 'lucide-react'
 import { useAuth } from '@/auth'
 import IconExit from '../icons/arrow-right-start-on-rectangle.svg?react'
 
@@ -101,10 +101,21 @@ export default function Header() {
                 'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
             }}
           >
-            <Home size={20} />
+            <CalendarHeart size={20} />
             <span className="font-medium">Invoices</span>
           </Link>
-
+          <Link
+            to="/events"
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
+            activeProps={{
+              className:
+                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
+            }}
+          >
+            <Home size={20} />
+            <span className="font-medium">Events</span>
+          </Link>
           {/* Demo Links Start */}
 
           {/* Demo Links End */}

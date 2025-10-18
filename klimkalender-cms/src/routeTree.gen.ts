@@ -13,6 +13,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthInvoicesRouteImport } from './routes/_auth.invoices'
+import { Route as AuthEventsRouteImport } from './routes/_auth.events'
 import { Route as AuthDashboardRouteImport } from './routes/_auth.dashboard'
 import { Route as AuthInvoicesIndexRouteImport } from './routes/_auth.invoices.index'
 import { Route as AuthInvoicesInvoiceIdRouteImport } from './routes/_auth.invoices.$invoiceId'
@@ -36,6 +37,11 @@ const AuthInvoicesRoute = AuthInvoicesRouteImport.update({
   path: '/invoices',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthEventsRoute = AuthEventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthDashboardRoute = AuthDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -56,6 +62,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthDashboardRoute
+  '/events': typeof AuthEventsRoute
   '/invoices': typeof AuthInvoicesRouteWithChildren
   '/invoices/$invoiceId': typeof AuthInvoicesInvoiceIdRoute
   '/invoices/': typeof AuthInvoicesIndexRoute
@@ -64,6 +71,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthDashboardRoute
+  '/events': typeof AuthEventsRoute
   '/invoices/$invoiceId': typeof AuthInvoicesInvoiceIdRoute
   '/invoices': typeof AuthInvoicesIndexRoute
 }
@@ -73,6 +81,7 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteWithChildren
   '/login': typeof LoginRoute
   '/_auth/dashboard': typeof AuthDashboardRoute
+  '/_auth/events': typeof AuthEventsRoute
   '/_auth/invoices': typeof AuthInvoicesRouteWithChildren
   '/_auth/invoices/$invoiceId': typeof AuthInvoicesInvoiceIdRoute
   '/_auth/invoices/': typeof AuthInvoicesIndexRoute
@@ -83,17 +92,25 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/dashboard'
+    | '/events'
     | '/invoices'
     | '/invoices/$invoiceId'
     | '/invoices/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/dashboard' | '/invoices/$invoiceId' | '/invoices'
+  to:
+    | '/'
+    | '/login'
+    | '/dashboard'
+    | '/events'
+    | '/invoices/$invoiceId'
+    | '/invoices'
   id:
     | '__root__'
     | '/'
     | '/_auth'
     | '/login'
     | '/_auth/dashboard'
+    | '/_auth/events'
     | '/_auth/invoices'
     | '/_auth/invoices/$invoiceId'
     | '/_auth/invoices/'
@@ -133,6 +150,13 @@ declare module '@tanstack/react-router' {
       path: '/invoices'
       fullPath: '/invoices'
       preLoaderRoute: typeof AuthInvoicesRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/events': {
+      id: '/_auth/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof AuthEventsRouteImport
       parentRoute: typeof AuthRoute
     }
     '/_auth/dashboard': {
@@ -175,11 +199,13 @@ const AuthInvoicesRouteWithChildren = AuthInvoicesRoute._addFileChildren(
 
 interface AuthRouteChildren {
   AuthDashboardRoute: typeof AuthDashboardRoute
+  AuthEventsRoute: typeof AuthEventsRoute
   AuthInvoicesRoute: typeof AuthInvoicesRouteWithChildren
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthDashboardRoute: AuthDashboardRoute,
+  AuthEventsRoute: AuthEventsRoute,
   AuthInvoicesRoute: AuthInvoicesRouteWithChildren,
 }
 

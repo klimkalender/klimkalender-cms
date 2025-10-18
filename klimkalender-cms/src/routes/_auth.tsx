@@ -35,6 +35,14 @@ function AuthLayout() {
             Invoices
           </Link>
         </li>
+        <li>
+          <Link
+            to="/events"
+            className="hover:underline data-[status='active']:font-semibold"
+          >
+            Events
+          </Link>
+        </li>
       </ul>
       <hr />
       <Outlet />
