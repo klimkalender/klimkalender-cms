@@ -1,0 +1,556 @@
+import { useState } from 'react';
+import {
+  Button,
+  TextInput,
+  Textarea,
+  Select,
+  Switch,
+  Group,
+  Stack,
+  Image,
+  Text,
+  Modal,
+  Notification
+} from '@mantine/core';
+
+import { useDisclosure } from '@mantine/hooks';
+import type { Event, Venue, Organizer } from '@/types';
+import { supabase } from '@/data/supabase';
+
+interface EventEditFormProps {
+  event?: Event | null;
+  venues: Venue[];
+  organizers: Organizer[];
+  onSave?: (event: Event) => void;
+  onCancel?: () => void;
+  onDelete?: (eventId: number) => void;
+}
+
+export function EventEditForm({ event, venues, organizers, onSave, onCancel, onDelete }: EventEditFormProps) {
+  const [loading, setLoading] = useState(false);
+  const [title, setTitle] = useState(event?.title || '');
+  const [description, setDescription] = useState(event?.description || '');
+  const [startDateTime, setStartDateTime] = useState(
+    event?.start_date_time ? new Date(event.start_date_time) : new Date()
+  );
+  const [endDateTime, setEndDateTime] = useState(
+    event?.end_date_time ? new Date(event.end_date_time) : new Date()
+  );
+  const [timeZone, setTimeZone] = useState(event?.time_zone || 'Europe/Amsterdam');
+  const [isFullDay, setIsFullDay] = useState(event?.is_full_day || false);
+  const [venueId, setVenueId] = useState<string | null>(
+    event?.venue_id ? event.venue_id.toString() : null
+  );
+  const [organizerId, setOrganizerId] = useState<string | null>(
+    event?.organizer_id ? event.organizer_id.toString() : null
+  );
+  const [status, setStatus] = useState(event?.status || 'DRAFT');
+  const [featured, setFeatured] = useState(event?.featured || false);
+  const [featuredText, setFeaturedText] = useState(event?.featured_text || '');
+  const [link, setLink] = useState(event?.link || '');
+  const [remarks, setRemarks] = useState(event?.remarks || '');
+  const [externalId, setExternalId] = useState(event?.external_id || '');
+
+  // Image handling
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  // UI state
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [deleteModalOpened, { open: openDeleteModal, close: closeDeleteModal }] = useDisclosure(false);
+  const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+
+  // Validation
+  const validateForm = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (venueId === '') {
+      newErrors.venueId = 'Venue is required';
+    }
+
+    if(featured && !imageFile && !event?.featured_image_ref) {
+      newErrors.featuredImage = 'Featured image is required for featured events';
+    }
+
+    if (title.trim().length < 2) {
+      newErrors.title = 'Title must be at least 2 characters';
+    }
+
+    if (endDateTime <= startDateTime) {
+      newErrors.endDateTime = 'End date must be after start date';
+    }
+
+    if (!externalId.trim()) {
+      newErrors.externalId = 'External ID is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Get current image URL if event has a featured image
+  const getCurrentImageUrl = () => {
+    if (!event?.featured_image_ref) return null;
+    const { data } = supabase.storage.from('event-images').getPublicUrl(event.featured_image_ref);
+    return data?.publicUrl;
+  };
+
+  // Handle file selection and preview
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] || null;
+    setImageFile(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImagePreview(null);
+    }
+  };
+
+  // Upload image to Supabase storage
+  const uploadImage = async (file: File): Promise<string | null> => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+
+    const { data, error } = await supabase.storage
+      .from('event-images')
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (error) {
+      console.error('Error uploading image:', error);
+      throw error;
+    }
+
+    return data?.path || null;
+  };
+
+  // Delete old image from storage
+  const deleteOldImage = async (imagePath: string) => {
+    const { error } = await supabase.storage
+      .from('event-images')
+      .remove([imagePath]);
+
+    if (error) {
+      console.error('Error deleting old image:', error);
+    }
+  };
+
+  // Handle form submission
+  const handleSubmit = async (formEvent: React.FormEvent) => {
+    formEvent.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      let featuredImageRef = event?.featured_image_ref || null;
+
+      // Handle image upload if a new image was selected
+      if (imageFile) {
+        // Upload new image
+        const newImageRef = await uploadImage(imageFile);
+        if (newImageRef) {
+          featuredImageRef = newImageRef;
+
+          // Delete old image if updating an existing event
+          if (event?.featured_image_ref && event.featured_image_ref !== newImageRef) {
+            await deleteOldImage(event.featured_image_ref);
+          }
+        }
+      }
+
+      const eventData = {
+        title: title.trim(),
+        description: description.trim() || null,
+        start_date_time: startDateTime.toISOString(),
+        end_date_time: endDateTime.toISOString(),
+        time_zone: timeZone,
+        is_full_day: isFullDay,
+        venue_id: venueId ? parseInt(venueId) : null,
+        organizer_id: organizerId ? parseInt(organizerId) : null,
+        status: status as 'DRAFT' | 'PUBLISHED' | 'ARCHIVED',
+        featured: featured,
+        featured_text: featuredText.trim() || null,
+        featured_image_ref: featuredImageRef,
+        link: link.trim() || null,
+        remarks: remarks.trim() || null,
+        external_id: externalId.trim(),
+      };
+
+      let result;
+
+      if (event?.id) {
+        // Update existing event
+        result = await supabase
+          .from('events')
+          .update(eventData)
+          .eq('id', event.id)
+          .select()
+          .single();
+      } else {
+        // Create new event
+        result = await supabase
+          .from('events')
+          .insert(eventData)
+          .select()
+          .single();
+      }
+
+      if (result.error) {
+        throw result.error;
+      }
+
+      setNotification({
+        type: 'success',
+        message: `Event ${event?.id ? 'updated' : 'created'} successfully!`
+      });
+
+      if (onSave && result.data) {
+        onSave(result.data);
+      }
+
+    } catch (error: any) {
+      console.error('Error saving event:', error);
+      setNotification({
+        type: 'error',
+        message: `Failed to ${event?.id ? 'update' : 'create'} event: ${error.message}`
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle event deletion confirmation
+  const handleDeleteClick = () => {
+    openDeleteModal();
+  };
+
+  // Execute event deletion
+  const confirmDelete = async () => {
+    if (!event?.id || !onDelete) return;
+
+    closeDeleteModal();
+    setLoading(true);
+
+    try {
+      // Delete the event image from storage if it exists
+      if (event.featured_image_ref) {
+        await deleteOldImage(event.featured_image_ref);
+      }
+
+      // Delete the event from the database
+      const { error } = await supabase
+        .from('events')
+        .delete()
+        .eq('id', event.id);
+
+      if (error) {
+        throw error;
+      }
+
+      setNotification({
+        type: 'success',
+        message: 'Event deleted successfully!'
+      });
+
+      onDelete(event.id);
+
+    } catch (error: any) {
+      console.error('Error deleting event:', error);
+      setNotification({
+        type: 'error',
+        message: `Failed to delete event: ${error.message}`
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const currentImageUrl = getCurrentImageUrl();
+
+  // Convert venues and organizers to select data
+  const venueSelectData = venues.map(venue => ({
+    value: venue.id.toString(),
+    label: venue.name
+  }));
+
+  const organizerSelectData = organizers.map(organizer => ({
+    value: organizer.id.toString(),
+    label: organizer.name
+  }));
+
+  const statusSelectData = [
+    { value: 'DRAFT', label: 'Draft' },
+    { value: 'PUBLISHED', label: 'Published' },
+    { value: 'ARCHIVED', label: 'Archived' }
+  ];
+
+  return (
+    <>
+      <form onSubmit={handleSubmit}>
+        <Stack spacing="md">
+          <Text size="lg" weight={500}>
+            {event?.id ? 'Edit Event' : 'Add Event'}
+          </Text>
+
+          <TextInput
+            label="Title"
+            placeholder="Enter event title"
+            required
+            value={title}
+            onChange={(event) => setTitle(event.currentTarget.value)}
+            error={errors.title}
+          />
+
+          <Textarea
+            label="Description"
+            placeholder="Enter event description"
+            value={description}
+            onChange={(event) => setDescription(event.currentTarget.value)}
+            minRows={3}
+          />
+
+          <Group grow>
+            <div>
+              <Text size="sm" weight={500} mb={5}>Start Date & Time *</Text>
+              <input
+                type="datetime-local"
+                value={startDateTime.toISOString().slice(0, 16)}
+                onChange={(e) => setStartDateTime(new Date(e.target.value))}
+                required
+                style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+              />
+            </div>
+            <div>
+              <Text size="sm" weight={500} mb={5}>End Date & Time *</Text>
+              <input
+                type="datetime-local"
+                value={endDateTime.toISOString().slice(0, 16)}
+                onChange={(e) => setEndDateTime(new Date(e.target.value))}
+                required
+                style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+              />
+              {errors.endDateTime && (
+                <Text size="xs" color="red" mt={5}>{errors.endDateTime}</Text>
+              )}
+            </div>
+          </Group>
+
+          <Group grow>
+            <TextInput
+              label="Time Zone"
+              placeholder="e.g., UTC, America/New_York"
+              value={timeZone}
+              onChange={(event) => setTimeZone(event.currentTarget.value)}
+            />
+            <div>
+              <Text size="sm" weight={500} mb={5}>Options</Text>
+              <Switch
+                label="Full Day Event"
+                checked={isFullDay}
+                onChange={(event) => setIsFullDay(event.currentTarget.checked)}
+              />
+            </div>
+          </Group>
+
+          <Group grow>
+            <Select
+              label="Venue"
+              placeholder="Select venue"
+              required
+              data={venueSelectData}
+              value={venueId}
+              onChange={setVenueId}
+              clearable
+              searchable
+            />
+            <Select
+              label="Organizer"
+              placeholder="Select organizer"
+              data={organizerSelectData}
+              value={organizerId}
+              onChange={setOrganizerId}
+              clearable
+              searchable
+            />
+          </Group>
+
+          <Group grow>
+            <Select
+              label="Status"
+              placeholder="Select status"
+              data={statusSelectData}
+              value={status}
+              onChange={(value) => value && setStatus(value as 'DRAFT' | 'PUBLISHED' | 'ARCHIVED')}
+              required
+            />
+            <div>
+              <Text size="sm" weight={500} mb={5}>Featured Event</Text>
+              <Switch
+                label="Mark as featured"
+                checked={featured}
+                onChange={(event) => setFeatured(event.currentTarget.checked)}
+              />
+            </div>
+          </Group>
+
+          {featured && (
+            <>
+              <Textarea
+                label="Featured Text"
+                placeholder="Enter featured text (shown for featured events)"
+                value={featuredText}
+                onChange={(event) => setFeaturedText(event.currentTarget.value)}
+                minRows={2}
+              />
+              <div>
+                <Text size="sm" weight={500} mb="xs">
+                  Featured Image
+                </Text>
+
+                {/* Current image display */}
+                {currentImageUrl && !imagePreview && (
+                  <div style={{ marginBottom: 12 }}>
+                    <Text size="xs" color="dimmed" mb="xs">Current image:</Text>
+                    <Image
+                      src={currentImageUrl}
+                      alt="Current event image"
+                      width={200}
+                      height={150}
+                      fit="cover"
+                      radius="md"
+                    />
+                  </div>
+                )}
+
+                {/* Image preview */}
+                {imagePreview && (
+                  <div style={{ marginBottom: 12 }}>
+                    <Text size="xs" color="dimmed" mb="xs">New image preview:</Text>
+                    <Image
+                      src={imagePreview}
+                      alt="New event image preview"
+                      width={200}
+                      height={150}
+                      fit="cover"
+                      radius="md"
+                      
+                    />
+                  </div>
+                )}
+
+                <div>
+                  <label htmlFor="event-image">Select image file:</label>
+                  <input
+                    id="event-image"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    style={{ marginLeft: '10px' }}
+                  />
+                </div>
+                {errors.featuredImage && (
+                  <Text size="xs" color="red" mt={5}>{errors.featuredImage}</Text>
+                )}
+              </div>
+            </>
+
+          )}
+
+          <TextInput
+            label="Link"
+            placeholder="Enter event link (optional)"
+            value={link}
+            onChange={(event) => setLink(event.currentTarget.value)}
+          />
+
+          <Textarea
+            label="Remarks"
+            placeholder="Enter remarks (optional)"
+            value={remarks}
+            onChange={(event) => setRemarks(event.currentTarget.value)}
+            minRows={2}
+          />
+
+          <Group position="apart" mt="md">
+            <div>
+              {event?.id && onDelete && (
+                <Button
+                  variant="outline"
+                  color="red"
+                  onClick={handleDeleteClick}
+                  disabled={loading}
+                >
+                  Delete Event
+                </Button>
+              )}
+            </div>
+
+            <Group position="right">
+              {onCancel && (
+                <Button variant="light" onClick={onCancel} disabled={loading}>
+                  Cancel
+                </Button>
+              )}
+              <Button type="submit" loading={loading}>
+                {event?.id ? 'Update Event' : 'Create Event'}
+              </Button>
+            </Group>
+          </Group>
+        </Stack>
+      </form>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        opened={deleteModalOpened}
+        onClose={closeDeleteModal}
+        title="Confirm Deletion"
+        size="sm"
+      >
+        <Stack spacing="md">
+          <Text>
+            Are you sure you want to delete "<strong>{event?.title}</strong>"?
+          </Text>
+          <Text size="sm" color="dimmed">
+            This action cannot be undone.
+          </Text>
+
+          <Group position="right" spacing="sm">
+            <Button variant="light" onClick={closeDeleteModal}>
+              Cancel
+            </Button>
+            <Button color="red" onClick={confirmDelete}>
+              Delete Event
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
+
+      {/* Notification */}
+      {notification && (
+        <Notification
+          color={notification.type === 'success' ? 'green' : 'red'}
+          onClose={() => setNotification(null)}
+          style={{
+            position: 'fixed',
+            top: 20,
+            right: 20,
+            zIndex: 1000,
+            minWidth: 300
+          }}
+        >
+          {notification.message}
+        </Notification>
+      )}
+    </>
+  );
+}

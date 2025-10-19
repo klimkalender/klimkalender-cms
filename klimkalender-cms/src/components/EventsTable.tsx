@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import type { Event, Organizer, Venue } from '@/types';
-import { Drawer } from '@mantine/core';
+import { Drawer, Button, Group } from '@mantine/core';
 import {
   MantineReactTable,
   useMantineReactTable,
@@ -8,10 +8,12 @@ import {
 } from 'mantine-react-table';
 import { useDisclosure } from '@mantine/hooks';
 import { sortByDate } from '@/utils/sort-by-date';
+import { EventEditForm } from './EventEditForm';
 
 export function EventsTable({ events, venues, tags, organizers }: { events: Event[], venues: Venue[], tags: { [id: string]: string[] }, organizers: Organizer[] }) {
-
-   const [opened, { open, close }] = useDisclosure(false);
+  const [opened, { open, close }] = useDisclosure(false);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [eventsList, setEventsList] = useState<Event[]>(events);
   const columns = useMemo<MRT_ColumnDef<Event>[]>(
     () => [
       {
@@ -62,9 +64,45 @@ export function EventsTable({ events, venues, tags, organizers }: { events: Even
     [],
   );
 
+  const handleRowClick = (event: Event) => {
+    setSelectedEvent(event);
+    open();
+  };
+
+  const handleEventSave = (savedEvent: Event) => {
+    setEventsList(prev => {
+      const existingIndex = prev.findIndex(e => e.id === savedEvent.id);
+      if (existingIndex >= 0) {
+        // Update existing event
+        return prev.map(e => e.id === savedEvent.id ? savedEvent : e);
+      } else {
+        // Add new event
+        return [...prev, savedEvent];
+      }
+    });
+    close();
+    setSelectedEvent(null);
+  };
+
+  const handleCancel = () => {
+    close();
+    setSelectedEvent(null);
+  };
+
+  const handleCreateNew = () => {
+    setSelectedEvent(null);
+    open();
+  };
+
+  const handleEventDelete = (eventId: number) => {
+    setEventsList(prev => prev.filter(e => e.id !== eventId));
+    close();
+    setSelectedEvent(null);
+  };
+
   const table = useMantineReactTable({
     columns,
-    data: events, 
+    data: eventsList, 
     enableGlobalFilter: true,
     enableFilters: true,
     positionGlobalFilter: 'left',
@@ -74,9 +112,8 @@ export function EventsTable({ events, venues, tags, organizers }: { events: Even
     initialState: { density: 'xs', pagination: { pageSize: 10, pageIndex: 0 } , showGlobalFilter: true,},
     sortDescFirst: true,
     mantineTableBodyRowProps: ({ row }) => ({
-      onClick: (event) => {
-        open();
-        console.info(event, row.id);
+      onClick: () => {
+        handleRowClick(row.original);
       },
       sx: {
         cursor: 'pointer', //you might want to change the cursor too when adding an onClick
@@ -88,9 +125,26 @@ export function EventsTable({ events, venues, tags, organizers }: { events: Even
 
   //note: you can also pass table options as props directly to <MantineReactTable /> instead of using useMantineReactTable
   //but that is not recommended and will likely be deprecated in the future
-  return <><MantineReactTable table={table} />
-    <Drawer position="right" size="xl" opened={opened} onClose={close}>
-      {/* Drawer content */}
-    </Drawer>
-  </>;
+  return (
+    <>
+      <Group position="right" mb="md">
+        <Button onClick={handleCreateNew}>
+        Add Event
+        </Button>
+      </Group>
+      
+      <MantineReactTable table={table} />
+      
+      <Drawer position="right" size="xl" opened={opened} onClose={close}>
+        <EventEditForm 
+          event={selectedEvent}
+          venues={venues}
+          organizers={organizers}
+          onSave={handleEventSave}
+          onCancel={handleCancel}
+          onDelete={handleEventDelete}
+        />
+      </Drawer>
+    </>
+  );
 }
