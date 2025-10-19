@@ -56,7 +56,7 @@ export function EventEditForm({ event, venues, allTags, currentTags, organizers,
     }
     return null;
   });
-  const [timeZone, setTimeZone] = useState(event?.time_zone || 'Europe/Amsterdam');
+  const [timeZone] = useState(event?.time_zone || 'Europe/Amsterdam');
   const [isFullDay, setIsFullDay] = useState(event?.is_full_day ?? true);
   const [venueId, setVenueId] = useState<string | null>(
     event?.venue_id ? event.venue_id.toString() : null
@@ -571,12 +571,6 @@ export function EventEditForm({ event, venues, allTags, currentTags, organizers,
           </Group>
 
           <Group grow>
-            <TextInput
-              label="Time Zone"
-              placeholder="e.g., UTC, America/New_York"
-              value={timeZone}
-              onChange={(event) => setTimeZone(event.currentTarget.value)}
-            />
             <div>
               <Text size="sm" weight={500} mb={5}>Options</Text>
               <Switch
