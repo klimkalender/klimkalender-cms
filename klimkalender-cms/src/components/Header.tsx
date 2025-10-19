@@ -1,7 +1,7 @@
 import { Link, useRouter, useNavigate } from '@tanstack/react-router'
 
 import { useState } from 'react'
-import { Home, Menu, X, CalendarHeart } from 'lucide-react'
+import { Home, Menu, X, CalendarHeart, MapPinHouse, Landmark, Tag } from 'lucide-react'
 import { useAuth } from '@/auth'
 import IconExit from '../icons/arrow-right-start-on-rectangle.svg?react'
 
@@ -93,18 +93,6 @@ export default function Header() {
             <span className="font-medium">Home</span>
           </Link>
           <Link
-            to="/invoices"
-            onClick={() => setIsOpen(false)}
-            className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
-            activeProps={{
-              className:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
-            }}
-          >
-            <CalendarHeart size={20} />
-            <span className="font-medium">Invoices</span>
-          </Link>
-          <Link
             to="/events"
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
@@ -113,12 +101,45 @@ export default function Header() {
                 'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
             }}
           >
-            <Home size={20} />
+            <CalendarHeart size={20} />
             <span className="font-medium">Events</span>
           </Link>
-          {/* Demo Links Start */}
-
-          {/* Demo Links End */}
+          <Link
+            to="/venues"
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
+            activeProps={{
+              className:
+                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
+            }}
+          >
+            <MapPinHouse size={20} />
+            <span className="font-medium">Venues</span>
+          </Link>
+          <Link
+            to="/organizers"
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
+            activeProps={{
+              className:
+                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
+            }}
+          >
+            <Landmark size={20} />
+            <span className="font-medium">Organizers</span>
+          </Link>
+          <Link
+            to="/tags"
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
+            activeProps={{
+              className:
+                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
+            }}
+          >
+            <Tag size={20} />
+            <span className="font-medium">Tags</span>
+          </Link>
         </nav>
       </aside>
     </>

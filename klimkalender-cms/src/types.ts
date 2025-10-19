@@ -19,4 +19,5 @@ export type CalendarEvent = {
 export type Event = Database['public']['Tables']['events']['Row'];
 export type Venue = Database['public']['Tables']['venues']['Row'];
 export type Organizer = Database['public']['Tables']['organizers']['Row'];
+export type Tag = Database['public']['Tables']['tags']['Row'];
 

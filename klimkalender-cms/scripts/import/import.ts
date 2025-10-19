@@ -78,7 +78,7 @@ async function importData() {
           await supabase
             .from('organizers')
             .upsert({ name: 'NKBV' }, { onConflict: 'name' });
-            const orgResp = await supabase
+          const orgResp = await supabase
             .from('organizers')
             .select('id, image_ref')
             .eq('name', 'NKBV')
@@ -94,15 +94,15 @@ async function importData() {
             }
           } else {
             console.log('NKBV organization image already exists, skipping upload');
-          } 
+          }
           // link organization event
-          const {  error: orgEventError } = await supabase
+          const { error: orgEventError } = await supabase
             .from('events')
             .update({ organizer_id: orgResp?.data?.id || null })
             .eq('external_id', event.id);
           if (orgEventError) {
             console.error('Error linking event to organizer:', orgEventError);
-          }else{
+          } else {
             console.log(`Linked event ${event.id} to NKBV organizer ${orgResp?.data?.id}`);
           }
         } else {
@@ -111,7 +111,7 @@ async function importData() {
           if (imagePath) {
             await supabase
               .from('venues')
-              .update({ featured_image_ref: imagePath })
+              .update({ image_ref: imagePath })
               .eq('name', event.venueName);
           }
         }
@@ -141,7 +141,7 @@ async function importData() {
       console.log('Skipping featured image upload for event:', event.id);
     }
     // exclude NKBV tag, it's handled via organization
-    for (const tag of event.tags.filter( t => t !== 'NKBV')) {
+    for (const tag of event.tags.filter(t => t !== 'NKBV')) {
       await addTagToEvent(eventResp!.id, tag);
     }
 

@@ -9,7 +9,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { sortByDate } from '@/utils/sort-by-date';
 
-export default function App({ events, venues, tags, organizers }: { events: Event[], venues: Venue[], tags: { [id: string]: string[] }, organizers: Organizer[] }) {
+export function EventsTable({ events, venues, tags, organizers }: { events: Event[], venues: Venue[], tags: { [id: string]: string[] }, organizers: Organizer[] }) {
 
    const [opened, { open, close }] = useDisclosure(false);
   const columns = useMemo<MRT_ColumnDef<Event>[]>(
@@ -44,6 +44,12 @@ export default function App({ events, venues, tags, organizers }: { events: Even
         header: 'Tags',
         accessorFn: (originalRow) => tags[originalRow.id]?.join(', ') || '-',
         id: 'tags',
+      }
+      ,
+            {
+        header: 'Featured',
+        accessorFn: (originalRow) => originalRow.featured ? 'Yes' : 'No',
+        id: 'featured',
       }
       ,
       {

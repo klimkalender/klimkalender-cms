@@ -10,7 +10,6 @@ import '@uppy/core/css/style.min.css';
 import '@uppy/dashboard/css/style.min.css';
 import '@uppy/webcam/css/style.min.css';
 import { useAuth } from '@/auth';
-import TestTable from '@/components/EventsTable';
 import type { Database } from '@/database.types';
 import type { Organizer } from '@/types';
 
@@ -177,9 +176,6 @@ function HomeComponent() {
           ))}
         </ul>
       </div>
-      <div>{venues && events && tags && organizers &&
-        <TestTable events={events} venues={venues} tags={tags} organizers={organizers} />
-      }</div>
     </div>
   )
 }
