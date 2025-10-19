@@ -547,7 +547,20 @@ export function EventEditForm({ event, venues, allTags, currentTags, organizers,
               <input
                 type="datetime-local"
                 value={formatDateInputTime(startDateTime!)}
-                onChange={(e) => setStartDateTime(new Date(e.target.value))}
+                onChange={(e) => {
+                  const newStartDate = new Date(e.target.value);
+                  if(isFullDay){
+                    newStartDate.setHours(0, 0, 0, 0); // Set to 00:00:00
+                  }
+                  setStartDateTime(newStartDate);
+                  
+                  // If full day event and start date is provided, set end date to same date at 23:59
+                  if (isFullDay && newStartDate) {
+                    const newEndDate = new Date(newStartDate);
+                    newEndDate.setHours(23, 59, 0, 0); // Set to 23:59:00
+                    setEndDateTime(newEndDate);
+                  }
+                }}
                 required
                 style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
               />
@@ -580,13 +593,14 @@ export function EventEditForm({ event, venues, allTags, currentTags, organizers,
                   const isChecked = event.currentTarget.checked;
                   setIsFullDay(isChecked);
 
-                  // When full day is toggled on, set times to 00:00 and 23:59
-                  if (isChecked && startDateTime && endDateTime) {
+                  // When full day is toggled on, set start time to 00:00 and end date to same date at 23:59
+                  if (isChecked && startDateTime) {
                     const newStartDate = new Date(startDateTime);
                     newStartDate.setHours(0, 0, 0, 0); // Set to 00:00:00
                     setStartDateTime(newStartDate);
 
-                    const newEndDate = new Date(endDateTime);
+                    // Set end date to same date as start date at 23:59
+                    const newEndDate = new Date(startDateTime);
                     newEndDate.setHours(23, 59, 0, 0); // Set to 23:59:00
                     setEndDateTime(newEndDate);
                   }
