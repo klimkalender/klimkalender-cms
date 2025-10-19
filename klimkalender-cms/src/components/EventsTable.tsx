@@ -56,17 +56,14 @@ export default function App({ events, venues, tags, organizers }: { events: Even
     [],
   );
 
-  //pass table options to useMantineReactTable
   const table = useMantineReactTable({
     columns,
-    data: events, //must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
-    enableRowSelection: true, //enable some features
-    //   enableColumnOrdering: true,
-    enableGlobalFilter: true, //turn off a feature
+    data: events, 
+    enableGlobalFilter: true,
     enableFilters: false,
     enableDensityToggle: false,
     enableFullScreenToggle: false,
-    initialState: { density: 'xs' },
+    initialState: { density: 'xs', pagination: { pageSize: 10, pageIndex: 0 } },
     sortDescFirst: true,
     mantineTableBodyRowProps: ({ row }) => ({
       onClick: (event) => {
