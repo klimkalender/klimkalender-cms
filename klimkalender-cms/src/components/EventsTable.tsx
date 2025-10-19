@@ -19,7 +19,12 @@ export function EventsTable({ events, venues, tags, organizers }: { events: Even
       {
         header: 'Date',
         sortingFn: (a, b) => sortByDate(a.original.start_date_time, b.original.start_date_time),
-        accessorFn: (originalRow) => new Date(originalRow.start_date_time).toLocaleDateString(),
+        accessorFn: (originalRow) => {
+          if (!originalRow.is_full_day) {
+            return `${new Date(originalRow.start_date_time).toLocaleDateString()} ${new Date(originalRow.start_date_time).toLocaleTimeString().substring(0,5)}`;
+          }
+          return new Date(originalRow.start_date_time).toLocaleDateString();
+        },
         id: 'start_date',
       },
       {
