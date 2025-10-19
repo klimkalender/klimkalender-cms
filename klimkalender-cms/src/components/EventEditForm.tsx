@@ -17,6 +17,7 @@ import { useDisclosure } from '@mantine/hooks';
 import type { Event, Venue, Organizer } from '@/types';
 import { supabase } from '@/data/supabase';
 import { DateTime } from 'luxon';
+import { BookCheck } from 'lucide-react';
 
 interface EventEditFormProps {
   event?: Event | null;
@@ -250,6 +251,48 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
     }
   };
 
+  // Handle publish action
+  const handlePublish = async () => {
+    if (!event?.id) return;
+    
+    setLoading(true);
+    
+    try {
+      // Update event status to PUBLISHED
+      const result = await supabase
+        .from('events')
+        .update({ status: 'PUBLISHED' })
+        .eq('id', event.id)
+        .select()
+        .single();
+
+      if (result.error) {
+        throw result.error;
+      }
+
+      // Update local state
+      setStatus('PUBLISHED');
+
+      setNotification({
+        type: 'success',
+        message: 'Event published successfully!'
+      });
+
+      if (onSave && result.data) {
+        onSave(result.data);
+      }
+
+    } catch (error: any) {
+      console.error('Error publishing event:', error);
+      setNotification({
+        type: 'error',
+        message: `Failed to publish event: ${error.message}`
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Handle event deletion confirmation
   const handleDeleteClick = () => {
     openDeleteModal();
@@ -319,9 +362,23 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
     <>
       <form onSubmit={handleSubmit}>
         <Stack spacing="md">
-          <Text size="lg" weight={500}>
-            {event?.id ? 'Edit Event' : 'Add Event'}
-          </Text>
+          <Group position="apart" align="center">
+            <Text size="lg" weight={500}>
+              {event?.id ? 'Edit Event' : 'Add Event'}
+            </Text>
+            
+            {/* Publish Button - only show for existing events in draft status */}
+            {event?.id && status === 'DRAFT' && (
+              <Button 
+                color="green" 
+                onClick={handlePublish} 
+                loading={loading}
+                leftIcon={<BookCheck />}
+              >
+                Publish Event
+              </Button>
+            )}
+          </Group>
 
           <TextInput
             label="Title"
