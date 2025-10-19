@@ -25,7 +25,7 @@ export function EventsTable({ events, venues, tags, organizers }: { events: Even
         header: 'Title',
         sortingFn: (a, b) => a.original.title.localeCompare(b.original.title),
         mantineTableHeadCellProps: { sx: { color: 'green' } }, //custom props
-        accessorFn: (originalRow) => <span dangerouslySetInnerHTML={{ __html: originalRow.title }} />, //alternate way
+        accessorKey: 'title',
         id: 'title', //id required if you use accessorFn instead of accessorKey
       },
       {
@@ -66,10 +66,12 @@ export function EventsTable({ events, venues, tags, organizers }: { events: Even
     columns,
     data: events, 
     enableGlobalFilter: true,
-    enableFilters: false,
+    enableFilters: true,
+    positionGlobalFilter: 'left',
+    enableColumnFilters: false,
     enableDensityToggle: false,
     enableFullScreenToggle: false,
-    initialState: { density: 'xs', pagination: { pageSize: 10, pageIndex: 0 } },
+    initialState: { density: 'xs', pagination: { pageSize: 10, pageIndex: 0 } , showGlobalFilter: true,},
     sortDescFirst: true,
     mantineTableBodyRowProps: ({ row }) => ({
       onClick: (event) => {

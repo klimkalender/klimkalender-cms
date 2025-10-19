@@ -16,7 +16,7 @@ export function OrganizersTable({ organizers }: { organizers: Organizer[] }) {
       {
         header: 'Name',
         sortingFn: (a, b) => a.original.name.localeCompare(b.original.name),
-        accessorFn: (originalRow) => <span dangerouslySetInnerHTML={{ __html: originalRow.name }} />, //alternate way
+        accessorKey: 'name',
         id: 'name', //id required if you use accessorFn instead of accessorKey
       },
     ],
@@ -25,12 +25,14 @@ export function OrganizersTable({ organizers }: { organizers: Organizer[] }) {
 
   const table = useMantineReactTable({
     columns,
-    data: organizers,
+    data: organizers, 
     enableGlobalFilter: true,
-    enableFilters: false,
+    enableFilters: true,
+    positionGlobalFilter: 'left',
+    enableColumnFilters: false,
     enableDensityToggle: false,
     enableFullScreenToggle: false,
-    initialState: { density: 'xs', pagination: { pageSize: 10, pageIndex: 0 } },
+    initialState: { density: 'xs', pagination: { pageSize: 10, pageIndex: 0 } , showGlobalFilter: true,},
     sortDescFirst: true,
     mantineTableBodyRowProps: ({ row }) => ({
       onClick: (event) => {

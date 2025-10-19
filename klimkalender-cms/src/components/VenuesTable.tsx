@@ -19,7 +19,8 @@ export function VenuesTable({ venues }: { venues: Venue[] }) {
       {
         header: 'Name',
         sortingFn: (a, b) => a.original.name.localeCompare(b.original.name),
-        accessorFn: (originalRow) => <span dangerouslySetInnerHTML={{ __html: originalRow.name }} />, //alternate way
+         accessorFn: (originalRow) => originalRow.name,
+        // accessorFn: (originalRow) => <span dangerouslySetInnerHTML={{ __html: originalRow.name }} />, //alternate way
         id: 'name', //id required if you use accessorFn instead of accessorKey
       },
       {
@@ -89,12 +90,14 @@ export function VenuesTable({ venues }: { venues: Venue[] }) {
 
   const table = useMantineReactTable({
     columns,
-    data: venuesList,
+    data: venuesList, 
     enableGlobalFilter: true,
-    enableFilters: false,
+    positionGlobalFilter: 'left',
+    enableFilters: true,
+    enableColumnFilters: false,
     enableDensityToggle: false,
     enableFullScreenToggle: false,
-    initialState: { density: 'xs', pagination: { pageSize: 10, pageIndex: 0 } },
+    initialState: { density: 'xs', pagination: { pageSize: 10, pageIndex: 0 } , showGlobalFilter: true,},
     sortDescFirst: true,
     mantineTableBodyRowProps: ({ row }) => ({
       onClick: () => {
