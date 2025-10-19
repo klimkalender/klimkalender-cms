@@ -1,4 +1,5 @@
 import type { Database } from "@/database.types";
+import type { Tag } from "@/types";
 import { createClient } from "@supabase/supabase-js";
 
 export const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
@@ -68,26 +69,22 @@ export async function readTags(setTags: React.Dispatch<React.SetStateAction<{
 }
 
 export async function readTagsMap(setTags: React.Dispatch<React.SetStateAction<{
-  [id: string]: string[];
+  [id: number]: Tag[];
 } | null>>) {
-  const { data, error } = await supabase.from("event_tags").select('event_id, tags (name)');
+   const { data: tagsData } = await supabase.from("tags").select();
+  const { data, error } = await supabase.from("event_tags").select('event_id, tag_id');
   if (data) {
-    const tagsMap: { [id: string]: string[] } = {};
-    // supabase has typing wrong here, so we need to cast
-    const fixedData = data as unknown as {
-      event_id: any;
-      tags: {
-        name: any;
-      };
-    }[];
-    fixedData.forEach(tag => {
-      if (!tagsMap[tag.event_id]) {
-        tagsMap[tag.event_id] = [];
+    const tagsMap: { [id: number]: Tag[] } = {};
+    
+    data.forEach((et) => {
+      const tag = tagsData?.find(t => t.id === et.tag_id);
+      if (tag) {
+        if (!tagsMap[et.event_id]) {
+          tagsMap[et.event_id] = [];
+        }
+        tagsMap[et.event_id].push(tag);
       }
-      // console.dir(tag.tags.name);
-      tagsMap[tag.event_id].push(tag.tags.name);
     });
-    // console.dir(tagsMap);
     setTags(tagsMap);
   }
   if (error) console.error("Error fetching tags:", error);

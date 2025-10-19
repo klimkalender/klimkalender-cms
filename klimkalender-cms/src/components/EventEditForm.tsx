@@ -14,7 +14,7 @@ import {
 } from '@mantine/core';
 
 import { useDisclosure } from '@mantine/hooks';
-import type { Event, Venue, Organizer } from '@/types';
+import type { Event, Venue, Organizer, Tag } from '@/types';
 import { supabase } from '@/data/supabase';
 import { DateTime } from 'luxon';
 import { BookCheck } from 'lucide-react';
@@ -22,6 +22,8 @@ import { BookCheck } from 'lucide-react';
 interface EventEditFormProps {
   event?: Event | null;
   venues: Venue[];
+  allTags: Tag[];
+  currentTags: Tag[];
   organizers: Organizer[];
   onSave?: (event: Event) => void;
   onCancel?: () => void;
@@ -53,7 +55,7 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
     return null;
   });
   const [timeZone, setTimeZone] = useState(event?.time_zone || 'Europe/Amsterdam');
-  const [isFullDay, setIsFullDay] = useState(event?.is_full_day || false);
+  const [isFullDay, setIsFullDay] = useState(event?.is_full_day ?? true);
   const [venueId, setVenueId] = useState<string | null>(
     event?.venue_id ? event.venue_id.toString() : null
   );

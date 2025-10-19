@@ -1,7 +1,7 @@
 import { Link, useRouter, useNavigate } from '@tanstack/react-router'
 
 import { useState } from 'react'
-import { Home, Menu, X, CalendarHeart, MapPinHouse, Landmark, Tag } from 'lucide-react'
+import { Menu, X, CalendarHeart, MapPinHouse, Landmark, Tag } from 'lucide-react'
 import { useAuth } from '@/auth'
 import IconExit from '../icons/arrow-right-start-on-rectangle.svg?react'
 

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { Event, Organizer, Venue } from '@/types';
+import type { Event, Organizer, Tag, Venue } from '@/types';
 import { Drawer, Button, Group, Tabs } from '@mantine/core';
 import {
   MantineReactTable,
@@ -10,7 +10,15 @@ import { useDisclosure } from '@mantine/hooks';
 import { sortByDate } from '@/utils/sort-by-date';
 import { EventEditForm } from './EventEditForm';
 
-export function EventsTable({ events, venues, tags, organizers }: { events: Event[], venues: Venue[], tags: { [id: string]: string[] }, organizers: Organizer[] }) {
+type EventsTableProps = {
+  events: Event[];
+  venues: Venue[];
+  tagsPerEvent: { [id: number]: Tag[] };
+  allTags: Tag[]
+  organizers: Organizer[];
+};
+
+export function EventsTable({ events, venues, tagsPerEvent, allTags, organizers }: EventsTableProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [eventsList, setEventsList] = useState<Event[]>(events);
@@ -52,7 +60,7 @@ export function EventsTable({ events, venues, tags, organizers }: { events: Even
       },
       {
         header: 'Tags',
-        accessorFn: (originalRow) => tags[originalRow.id]?.join(', ') || '-',
+        accessorFn: (originalRow) => tagsPerEvent[originalRow.id]?.map(tag => tag.name).join(', ') || '-',
         id: 'tags',
       }
       ,
@@ -164,6 +172,8 @@ export function EventsTable({ events, venues, tags, organizers }: { events: Even
           event={selectedEvent}
           venues={venues}
           organizers={organizers}
+          currentTags={tagsPerEvent[selectedEvent?.id || 0] || []}
+          allTags={allTags}
           onSave={handleEventSave}
           onCancel={handleCancel}
           onDelete={handleEventDelete}
