@@ -39,6 +39,7 @@ export function EventsTable({ events, venues, tags, organizers }: { events: Even
       {
         header: 'Status',
         accessorKey: 'status', //simple recommended way to define a column
+        enableHiding: false,
         hidden: true,
       },
       {
@@ -125,7 +126,7 @@ export function EventsTable({ events, venues, tags, organizers }: { events: Even
     enableDensityToggle: false,
     enableFilterMatchHighlighting: true,
     enableFullScreenToggle: false,
-    initialState: { density: 'xs', pagination: { pageSize: 10, pageIndex: 0 }, showGlobalFilter: true, },
+    initialState: { density: 'xs', pagination: { pageSize: 10, pageIndex: 0 }, showGlobalFilter: true, columnVisibility: { status: false } },
     sortDescFirst: true,
     mantineTableBodyRowProps: ({ row }) => ({
       onClick: () => {
