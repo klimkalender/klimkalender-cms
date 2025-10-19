@@ -81,6 +81,12 @@ export function VenuesTable({ venues }: { venues: Venue[] }) {
     open();
   };
 
+  const handleVenueDelete = (venueId: number) => {
+    setVenuesList(prev => prev.filter(v => v.id !== venueId));
+    close();
+    setSelectedVenue(null);
+  };
+
   const table = useMantineReactTable({
     columns,
     data: venuesList,
@@ -106,7 +112,7 @@ export function VenuesTable({ venues }: { venues: Venue[] }) {
     <>
       <Group position="right" mb="md">
         <Button onClick={handleCreateNew}>
-          Create New Venue
+          Add Venue
         </Button>
       </Group>
       
@@ -117,6 +123,7 @@ export function VenuesTable({ venues }: { venues: Venue[] }) {
           venue={selectedVenue}
           onSave={handleVenueSave}
           onCancel={handleCancel}
+          onDelete={handleVenueDelete}
         />
       </Drawer>
     </>

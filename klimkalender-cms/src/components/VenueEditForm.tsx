@@ -6,8 +6,11 @@ import {
   Group,
   Stack,
   Image,
-  Text
+  Text,
+  Modal,
+  Notification
 } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import type { Venue } from '@/types';
 import { supabase } from '@/data/supabase';
 
@@ -15,9 +18,10 @@ interface VenueEditFormProps {
   venue?: Venue | null;
   onSave?: (venue: Venue) => void;
   onCancel?: () => void;
+  onDelete?: (venueId: number) => void;
 }
 
-export function VenueEditForm({ venue, onSave, onCancel }: VenueEditFormProps) {
+export function VenueEditForm({ venue, onSave, onCancel, onDelete }: VenueEditFormProps) {
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState(venue?.name || '');
   const [lat, setLat] = useState<number | undefined>(venue?.lat || undefined);
@@ -25,6 +29,8 @@ export function VenueEditForm({ venue, onSave, onCancel }: VenueEditFormProps) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [deleteModalOpened, { open: openDeleteModal, close: closeDeleteModal }] = useDisclosure(false);
+  const [notification, setNotification] = useState<{type: 'success' | 'error', message: string} | null>(null);
 
   // Validation
   const validateForm = () => {
@@ -156,13 +162,67 @@ export function VenueEditForm({ venue, onSave, onCancel }: VenueEditFormProps) {
         throw result.error;
       }
 
+      setNotification({
+        type: 'success',
+        message: `Venue ${venue?.id ? 'updated' : 'created'} successfully!`
+      });
+
       if (onSave && result.data) {
         onSave(result.data);
       }
 
     } catch (error: any) {
       console.error('Error saving venue:', error);
-      alert(`Failed to ${venue?.id ? 'update' : 'create'} venue: ${error.message}`);
+      setNotification({
+        type: 'error',
+        message: `Failed to ${venue?.id ? 'update' : 'create'} venue: ${error.message}`
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle venue deletion confirmation
+  const handleDeleteClick = () => {
+    openDeleteModal();
+  };
+
+  // Execute venue deletion
+  const confirmDelete = async () => {
+    if (!venue?.id || !onDelete) return;
+    
+    closeDeleteModal();
+    setLoading(true);
+    
+    try {
+      // Delete the venue image from storage if it exists
+      if (venue.image_ref) {
+        await deleteOldImage(venue.image_ref);
+      }
+
+      // Delete the venue from the database
+      const { error } = await supabase
+        .from('venues')
+        .delete()
+        .eq('id', venue.id);
+
+      if (error) {
+        throw error;
+      }
+
+      setNotification({
+        type: 'success',
+        message: 'Venue deleted successfully!'
+      });
+      
+      onDelete(venue.id);
+
+    } catch (error: any) {
+      console.error('Error deleting venue:', error);
+      setNotification({
+        type: 'error',
+        message: `Failed to delete venue: ${error.message}`
+      });
     } finally {
       setLoading(false);
     }
@@ -171,6 +231,7 @@ export function VenueEditForm({ venue, onSave, onCancel }: VenueEditFormProps) {
   const currentImageUrl = getCurrentImageUrl();
 
   return (
+    <>
     <form onSubmit={handleSubmit}>
       <Stack spacing="md">
         <Text size="lg" weight={500}>
@@ -252,17 +313,76 @@ export function VenueEditForm({ venue, onSave, onCancel }: VenueEditFormProps) {
           </div>
         </div>
 
-        <Group position="right" mt="md">
-          {onCancel && (
-            <Button variant="light" onClick={onCancel} disabled={loading}>
-              Cancel
+        <Group position="apart" mt="md">
+          <div>
+            {venue?.id && onDelete && (
+              <Button 
+                variant="outline" 
+                color="red" 
+                onClick={handleDeleteClick} 
+                disabled={loading}
+              >
+                Delete Venue
+              </Button>
+            )}
+          </div>
+          
+          <Group position="right">
+            {onCancel && (
+              <Button variant="light" onClick={onCancel} disabled={loading}>
+                Cancel
+              </Button>
+            )}
+            <Button type="submit" loading={loading}>
+              {venue?.id ? 'Update Venue' : 'Create Venue'}
             </Button>
-          )}
-          <Button type="submit" loading={loading}>
-            {venue?.id ? 'Update Venue' : 'Create Venue'}
-          </Button>
+          </Group>
         </Group>
       </Stack>
     </form>
+
+    {/* Delete Confirmation Modal */}
+    <Modal
+      opened={deleteModalOpened}
+      onClose={closeDeleteModal}
+      title="Confirm Deletion"
+      size="sm"
+    >
+      <Stack spacing="md">
+        <Text>
+          Are you sure you want to delete "<strong>{venue?.name}</strong>"?
+        </Text>
+        <Text size="sm" color="dimmed">
+          This action cannot be undone.
+        </Text>
+        
+        <Group position="right" spacing="sm">
+          <Button variant="light" onClick={closeDeleteModal}>
+            Cancel
+          </Button>
+          <Button color="red" onClick={confirmDelete}>
+            Delete Venue
+          </Button>
+        </Group>
+      </Stack>
+    </Modal>
+
+    {/* Notification */}
+    {notification && (
+      <Notification
+        color={notification.type === 'success' ? 'green' : 'red'}
+        onClose={() => setNotification(null)}
+        style={{
+          position: 'fixed',
+          top: 20,
+          right: 20,
+          zIndex: 1000,
+          minWidth: 300
+        }}
+      >
+        {notification.message}
+      </Notification>
+    )}
+    </>
   );
 }
