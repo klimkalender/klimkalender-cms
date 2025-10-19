@@ -18,11 +18,12 @@ type EventsTableProps = {
   organizers: Organizer[];
 };
 
-export function EventsTable({ events, venues, tagsPerEvent, allTags, organizers }: EventsTableProps) {
+export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent, allTags, organizers }: EventsTableProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [eventsList, setEventsList] = useState<Event[]>(events);
   const [activeTab, setActiveTab] = useState<string>('PUBLISHED');
+  const [tagsPerEvent, setTagsPerEvent] = useState<{ [id: number]: Tag[] }>(defaultTagsPerEvent);
   const columns = useMemo<MRT_ColumnDef<Event>[]>(
     () => [
       {
@@ -60,7 +61,9 @@ export function EventsTable({ events, venues, tagsPerEvent, allTags, organizers 
       },
       {
         header: 'Tags',
-        accessorFn: (originalRow) => tagsPerEvent[originalRow.id]?.map(tag => tag.name).join(', ') || '-',
+        accessorFn: (originalRow) => {
+          return tagsPerEvent[originalRow.id]?.map(tag => tag.name).join(', ') || '-';
+        },
         id: 'tags',
       }
       ,
@@ -77,7 +80,7 @@ export function EventsTable({ events, venues, tagsPerEvent, allTags, organizers 
         accessorKey: 'organizer',
       }
     ],
-    [],
+    [tagsPerEvent],
   );
 
   const handleRowClick = (event: Event) => {
@@ -85,7 +88,12 @@ export function EventsTable({ events, venues, tagsPerEvent, allTags, organizers 
     open();
   };
 
-  const handleEventSave = (savedEvent: Event) => {
+  const handleEventSave = (savedEvent: Event, tags: Tag[]) => {
+    setTagsPerEvent(prev => ({
+      ...prev,
+      [savedEvent.id]: tags,
+    }));
+
     setEventsList(prev => {
       const existingIndex = prev.findIndex(e => e.id === savedEvent.id);
       if (existingIndex >= 0) {
@@ -117,7 +125,6 @@ export function EventsTable({ events, venues, tagsPerEvent, allTags, organizers 
   };
 
   useEffect(() => {
-    console.log('Active Tab:', activeTab);
     // setEventsList(events.filter(e => e.status === activeTab));
     table.setColumnFilters([
       { id: 'status', value: activeTab }

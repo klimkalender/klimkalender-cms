@@ -11,7 +11,8 @@ import {
   Text,
   Modal,
   Notification,
-  Radio
+  Radio,
+  MultiSelect
 } from '@mantine/core';
 
 import { useDisclosure } from '@mantine/hooks';
@@ -26,7 +27,7 @@ interface EventEditFormProps {
   allTags: Tag[];
   currentTags: Tag[];
   organizers: Organizer[];
-  onSave?: (event: Event) => void;
+  onSave?: (event: Event, tags: Tag[]) => void;
   onCancel?: () => void;
   onDelete?: (eventId: number) => void;
 }
@@ -37,7 +38,7 @@ function formatDateInputTime(tzDate: Date) {
   return `${tzDate.getFullYear()}-${pad(tzDate.getMonth() + 1)}-${pad(tzDate.getDate())}T${pad(tzDate.getHours())}:${pad(tzDate.getMinutes())}`;
 }
 
-export function EventEditForm({ event, venues, organizers, onSave, onCancel, onDelete }: EventEditFormProps) {
+export function EventEditForm({ event, venues, allTags, currentTags, organizers, onSave, onCancel, onDelete }: EventEditFormProps) {
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState(event?.title || '');
 
@@ -68,6 +69,11 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
   const [featuredText, setFeaturedText] = useState(event?.featured_text || '');
   const [link, setLink] = useState(event?.link || '');
   const [remarks, setRemarks] = useState(event?.remarks || '');
+  
+  // Tags handling
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>(
+    currentTags.map(tag => tag.id.toString())
+  );
 
   // Image handling
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -183,6 +189,40 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
     }
   };
 
+  // Helper function to manage event tags
+  const manageEventTags = async (eventId: number, newTagIds: string[]) => {
+    try {
+      // First, delete existing tags for this event
+      const deleteResult = await supabase
+        .from('event_tags')
+        .delete()
+        .eq('event_id', eventId);
+
+      if (deleteResult.error) {
+        throw deleteResult.error;
+      }
+
+      // Then insert new tag relationships if any tags are selected
+      if (newTagIds.length > 0) {
+        const tagInserts = newTagIds.map(tagId => ({
+          event_id: eventId,
+          tag_id: parseInt(tagId)
+        }));
+
+        const insertResult = await supabase
+          .from('event_tags')
+          .insert(tagInserts);
+
+        if (insertResult.error) {
+          throw insertResult.error;
+        }
+      }
+    } catch (error) {
+      console.error('Error managing event tags:', error);
+      throw error;
+    }
+  };
+
   // Handle form submission
   const handleSubmit = async (formEvent: React.FormEvent) => {
     formEvent.preventDefault();
@@ -257,13 +297,18 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
         throw result.error;
       }
 
+      // Manage event tags
+      if (result.data?.id) {
+        await manageEventTags(result.data.id, selectedTagIds);
+      }
+
       setNotification({
         type: 'success',
         message: `Event ${event?.id ? 'updated' : 'created'} successfully!`
       });
 
       if (onSave && result.data) {
-        onSave(result.data);
+        onSave(result.data, allTags.filter(tag => selectedTagIds.includes(tag.id.toString())));
       }
 
     } catch (error: any) {
@@ -305,7 +350,7 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
       });
 
       if (onSave && result.data) {
-        onSave(result.data);
+        onSave(result.data, allTags.filter(tag => selectedTagIds.includes(tag.id.toString())));
       }
 
     } catch (error: any) {
@@ -365,13 +410,18 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
         throw result.error;
       }
 
+      // Manage event tags
+      if (result.data?.id) {
+        await manageEventTags(result.data.id, selectedTagIds);
+      }
+
       setNotification({
         type: 'success',
         message: 'Event created and published successfully!'
       });
 
       if (onSave && result.data) {
-        onSave(result.data);
+        onSave(result.data, allTags.filter(tag => selectedTagIds.includes(tag.id.toString())));
       }
 
     } catch (error: any) {
@@ -442,6 +492,11 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
   const organizerSelectData = organizers.map(organizer => ({
     value: organizer.id.toString(),
     label: organizer.name
+  }));
+
+  const tagsSelectData = allTags.map(tag => ({
+    value: tag.id.toString(),
+    label: tag.name
   }));
 
   return (
@@ -556,6 +611,16 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
               searchable
             />
           </Group>
+
+          <MultiSelect
+            label="Tags"
+            placeholder="Select tags for this event"
+            data={tagsSelectData}
+            value={selectedTagIds}
+            onChange={setSelectedTagIds}
+            searchable
+            clearable
+          />
 
           <Group grow>
             <div>
