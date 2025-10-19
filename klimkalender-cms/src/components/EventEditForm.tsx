@@ -427,7 +427,21 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
               <Switch
                 label="Full Day Event"
                 checked={isFullDay}
-                onChange={(event) => setIsFullDay(event.currentTarget.checked)}
+                onChange={(event) => {
+                  const isChecked = event.currentTarget.checked;
+                  setIsFullDay(isChecked);
+                  
+                  // When full day is toggled on, set times to 00:00 and 23:59
+                  if (isChecked && startDateTime && endDateTime) {
+                    const newStartDate = new Date(startDateTime);
+                    newStartDate.setHours(0, 0, 0, 0); // Set to 00:00:00
+                    setStartDateTime(newStartDate);
+                    
+                    const newEndDate = new Date(endDateTime);
+                    newEndDate.setHours(23, 59, 0, 0); // Set to 23:59:00
+                    setEndDateTime(newEndDate);
+                  }
+                }}
               />
             </div>
           </Group>
