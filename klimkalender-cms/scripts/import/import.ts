@@ -18,9 +18,25 @@ const supabase = createClient(
 
 
 function mapEventToSupabaseRow(event: CalendarEvent): Omit<Event, 'id'> {
+  // Helper to decode HTML entities in the title
+  function decodeHtmlEntities(str: string): string {
+    return str
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&#x27;/g, "'")
+      .replace(/&#x2F;/g, '/')
+      .replace(/&#96;/g, '`')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&hellip;/g, '…')
+      .replace(/&#8211;/g, '–');
+  }
+
   return {
     external_id: event.id,
-    title: event.title,
+    title: decodeHtmlEntities(event.title),
     start_date_time: event.startTimeUtc.toISOString(),
     end_date_time: event.endTimeUtc.toISOString(),
     is_full_day: isDateFullDate(event),
@@ -29,11 +45,12 @@ function mapEventToSupabaseRow(event: CalendarEvent): Omit<Event, 'id'> {
     link: event.link,
     featured: event.featured || false,
     featured_text: event.featuredText || '',
-    description: '', // No description in import data
     remarks: '', // No remarks in import data
     venue_id: null, // To be set after venue upsert
     organizer_id: null, // To be set after organizer upsert
     featured_image_ref: null, // To be set after image upload
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   };
 }
 
