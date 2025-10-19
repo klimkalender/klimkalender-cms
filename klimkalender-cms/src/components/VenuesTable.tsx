@@ -24,6 +24,11 @@ export function VenuesTable({ venues }: { venues: Venue[] }) {
         id: 'name', //id required if you use accessorFn instead of accessorKey
       },
       {
+        header: 'Full Address',
+        accessorFn: (originalRow) => originalRow.full_address || '-',
+        id: 'fullAddress',
+      },
+      {
         // accessorKey: 'name', //simple recommended way to define a column
         header: 'Geo Location',
         accessorFn: (originalRow) =>  originalRow.lat && originalRow.long ? `(${originalRow.lat}, ${originalRow.long})` : '-',

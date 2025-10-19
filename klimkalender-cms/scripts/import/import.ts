@@ -82,7 +82,7 @@ async function importData() {
     // upsert venue
     const { data: venueResp, error: venueError } = await supabase
       .from('venues')
-      .upsert({ name: event.venueName }, { onConflict: 'name' })
+      .upsert({ name: event.venueName, full_address: event.venueAddress }, { onConflict: 'name' })
       .select('id, image_ref')
       .single();
 

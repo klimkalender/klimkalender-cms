@@ -35,6 +35,7 @@ export async function readVenues(setVenues: React.Dispatch<React.SetStateAction<
   lat: number | null;
   long: number | null;
   name: string;
+  full_address: string | null;
   created_at: string;
   updated_at: string;
 }[] | null>>) {

@@ -1,48 +1,5 @@
 [
     {
-        "id": "3406",
-        "title": "WBL 1 &#8211; Evolution Wall",
-        "date": "2025-10-17T00:00:00+00:00",
-        "startTimeUtc": "2025-10-16T22:00:00+00:00",
-        "endTimeUtc": "2025-11-13T22:59:59+00:00",
-        "timezone": "Europe\/Amsterdam",
-        "venueName": "The Climbing Corner, Heerlen",
-        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/09\/climbing_corner.avif",
-        "link": "https:\/\/www.theclimbingcorner.com\/nl",
-        "tags": [
-            "BOULDER"
-        ]
-    },
-    {
-        "id": "3261",
-        "title": "Jeugd Boulder Series Noord-Holland 1",
-        "date": "2025-10-18T00:00:00+00:00",
-        "startTimeUtc": "2025-10-17T22:00:00+00:00",
-        "endTimeUtc": "2025-10-18T21:59:59+00:00",
-        "timezone": "Europe\/Amsterdam",
-        "venueName": "Impact Boulderhal, Almere",
-        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
-        "link": "https:\/\/was.nkbv.nl\/competitions\/4786",
-        "tags": [
-            "BOULDER",
-            "NKBV"
-        ]
-    },
-    {
-        "id": "3233",
-        "title": "Birds of Spray",
-        "date": "2025-10-18T10:00:00+00:00",
-        "startTimeUtc": "2025-10-18T08:00:00+00:00",
-        "endTimeUtc": "2025-10-18T16:00:00+00:00",
-        "timezone": "Europe\/Amsterdam",
-        "venueName": "Wildflower Climbing Gym, Leiden",
-        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/09\/wildflower.png",
-        "link": "https:\/\/atmaclimbing.com\/events\/birds-of-spray\/?fbclid=PAZXh0bgNhZW0CMTEAAafueh09uVwZpb5HQB0wauND_D9Y_jnNXifsriNS677FwcN8xQPC0NwfbCNTIQ_aem_Iva4GHmVOsq3C01b8PHhAg",
-        "tags": [
-            "BOULDER"
-        ]
-    },
-    {
         "id": "2964",
         "title": "Catch040E",
         "date": "2025-10-24T19:30:00+00:00",
@@ -51,6 +8,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Boulder Eindhoven",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2025\/01\/boulder_eind.jpg",
+        "venueAddress": "Vijfkamplaan 27, 5624 EB, Eindhoven, Netherlands",
         "link": "https:\/\/boulderneoliet.nl\/nl\/eindhoven\/boulder-wedstrijd-catch040\/",
         "tags": [
             "BOULDER"
@@ -65,6 +23,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "The Island boulderzaal, Antwerpen",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/09\/the_islan.png",
+        "venueAddress": "Natiestraat 2, 2060, Antwerpen, Belgium",
         "link": "https:\/\/boulderzaaltheisland.be\/events\/the-island-championships-2025\/",
         "tags": [
             "BOULDER"
@@ -79,6 +38,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Boulderhal Kunststof, Leiden",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/09\/kunststof.png",
+        "venueAddress": "Rooseveltstraat 49 E, 2321 BL, Leiden, Netherlands",
         "link": "https:\/\/www.boulderhalkunststof.nl\/events",
         "tags": [
             "BOULDER"
@@ -93,6 +53,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Mountain Network Nieuwegein",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/Ontwerp-zonder-titel.png",
+        "venueAddress": "Blokhoeve 12, 3438 LC, Nieuwegein, Netherlands",
         "link": "https:\/\/solidaridad.kentaa.nl\/project\/nieuwegein-klimmen-tegen-klimaatarmoede-2025",
         "tags": [
             "LEAD"
@@ -107,6 +68,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Neoliet Eindhoven Noord",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Vijfkamplaan 14, 5624 EB, Eindhoven, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4810",
         "tags": [
             "LEAD",
@@ -115,21 +77,22 @@
     },
     {
         "id": "3073",
-        "title": "Nationale Boulder Wedstrijd (NBW)",
+        "title": "NBW",
         "date": "2025-10-25T00:00:00+00:00",
         "startTimeUtc": "2025-10-24T22:00:00+00:00",
         "endTimeUtc": "2025-10-25T21:59:59+00:00",
         "timezone": "Europe\/Amsterdam",
         "venueName": "Revolt Bouldering Gym, Delft",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Kleveringweg 35, 2616 LZ, Delft, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4765",
         "tags": [
             "BOULDER",
             "NKBV"
         ],
         "featured": true,
-        "featuredImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2025\/09\/Feed_NationaleBoulderWedstrijd-scaled.jpg",
-        "featuredText": "\nOnderstaande informatie is automatisch overgenomen uit het Wedstrijdadministratiesysteem (WAS) van de NKBV. Let op: kijk voor de meest actuele informatie altijd op het WAS via de link bij deze wed..."
+        "featuredImage": "",
+        "featuredText": "\n\nOnderstaande informatie is automatisch overgenomen uit het Wedstrijdadministratiesysteem (WAS) van de NKBV. Let op: kijk voor de meest actuele informatie altijd op het WAS via de link bij deze we..."
     },
     {
         "id": "3264",
@@ -140,6 +103,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Rijnboulder Arnhem",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Olympus 3, 6832 EL, Arnhem, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4835",
         "tags": [
             "BOULDER",
@@ -155,6 +119,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Mountain Network Noardwand, Leeuwarden",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/Ontwerp-zonder-titel.png",
+        "venueAddress": "Fiswerderweg 3, 8917 EW, Leeuwarden, Netherlands",
         "link": "https:\/\/solidaridad.kentaa.nl\/project\/leeuwarden-klimmen-tegen-klimaatarmoede-2025",
         "tags": [
             "LEAD"
@@ -169,6 +134,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Neoliet Eindhoven Noord",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Vijfkamplaan 14, 5624 EB, Eindhoven, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4804",
         "tags": [
             "LEAD",
@@ -184,6 +150,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Rijnboulder Arnhem",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Olympus 3, 6832 EL, Arnhem, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4780",
         "tags": [
             "BOULDER",
@@ -199,6 +166,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Bouldercentrum Delfts Bleau",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/09\/delfts_bleau.jpeg",
+        "venueAddress": "Schieweg 15L, 2627 AN, Delft, Netherlands",
         "link": "http:\/\/delftsbleau.nl\/db9",
         "tags": [
             "BOULDER"
@@ -213,6 +181,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Boulderstation Enschede",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/08\/boulder_stattion.jpeg",
+        "venueAddress": "Goolkatenweg 65, 7521 BE, Enschede, Netherlands",
         "link": "https:\/\/app.toplogger.nu\/en-gb\/boulderstation\/competitions\/dnytp2yyn8zwv5mmi7qwd",
         "tags": [
             "BOULDER"
@@ -227,6 +196,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Monk Bouldergym Eindhoven",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Berkenstraat 1A, 5616 LV, Eindhoven, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4769",
         "tags": [
             "BOULDER",
@@ -242,6 +212,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Neoliet Heerlen",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Stadionbaan 52, 6416 CS, Heerlen, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4800",
         "tags": [
             "LEAD",
@@ -249,15 +220,31 @@
         ]
     },
     {
-        "id": "2981",
-        "title": "GRIP OPEN",
+        "id": "3512",
+        "title": "Volwassenen Klim Series Midden Nederland 1",
+        "date": "2025-11-07T00:00:00+00:00",
+        "startTimeUtc": "2025-11-06T23:00:00+00:00",
+        "endTimeUtc": "2025-11-07T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Mountain Network Nieuwegein",
+        "venueImage": null,
+        "venueAddress": "Blokhoeve 12, 3438 LC, Nieuwegein, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4853",
+        "tags": [
+            "LEAD"
+        ]
+    },
+    {
+        "id": "3511",
+        "title": "GRIP OPEN 8\/11",
         "date": "2025-11-08T00:00:00+00:00",
         "startTimeUtc": "2025-11-07T23:00:00+00:00",
         "endTimeUtc": "2025-11-08T22:59:59+00:00",
         "timezone": "Europe\/Amsterdam",
         "venueName": "GRIP Boulderhal, Nijmegen",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/grip.png",
-        "link": "https:\/\/www.instagram.com\/p\/DF5Y-s8xpZB\/",
+        "venueAddress": "Kamerlingh Onnesstraat 35, 6533 HK, Nijmegen, Netherlands",
+        "link": "https:\/\/gripnijmegen.nl\/boulderhal\/2025\/09\/19\/grip-open-8-11\/",
         "tags": [
             "BOULDER"
         ]
@@ -271,10 +258,41 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Neoliet Heerlen",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Stadionbaan 52, 6416 CS, Heerlen, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4832",
         "tags": [
             "LEAD",
             "NKBV"
+        ]
+    },
+    {
+        "id": "3424",
+        "title": "Walhalla Team Battle",
+        "date": "2025-11-08T13:00:00+00:00",
+        "startTimeUtc": "2025-11-08T12:00:00+00:00",
+        "endTimeUtc": "2025-11-08T16:00:00+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Boulderhal Walhalla, Den Haag",
+        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/09\/logo_walhalla.png",
+        "venueAddress": "Johan Van Veenplein 12, 2521 AC, Den Haag, Netherlands",
+        "link": "https:\/\/www.instagram.com\/p\/DPWg2CIiIC0\/?hl=en",
+        "tags": [
+            "BOULDER"
+        ]
+    },
+    {
+        "id": "3509",
+        "title": "Jeugd Klim Series Midden Nederland 1",
+        "date": "2025-11-09T00:00:00+00:00",
+        "startTimeUtc": "2025-11-08T23:00:00+00:00",
+        "endTimeUtc": "2025-11-09T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Mountain Network Heerenveen",
+        "venueImage": null,
+        "venueAddress": "Abe Lenstra Boulevard 23a, 8448 JA, Heerenveen, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4843",
+        "tags": [
+            "LEAD"
         ]
     },
     {
@@ -286,6 +304,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "The Climbing Corner, Heerlen",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/09\/climbing_corner.avif",
+        "venueAddress": "In de Cramer 14, 6411 RS, Heerlen, Netherlands",
         "link": "https:\/\/www.theclimbingcorner.com\/nl",
         "tags": [
             "BOULDER"
@@ -300,6 +319,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Radium Boulders, Maastricht",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/09\/radium_logo.png",
+        "venueAddress": "Lage Frontweg 2b, 6219PD, Maastricht, Netherlands",
         "link": "https:\/\/www.radiumboulders.nl\/events\/",
         "tags": [
             "BOULDER"
@@ -314,22 +334,8 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Boulderstation Enschede",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Goolkatenweg 65, 7521 BE, Enschede, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4767",
-        "tags": [
-            "BOULDER",
-            "NKBV"
-        ]
-    },
-    {
-        "id": "3267",
-        "title": "Jeugd Boulder Series Noord-Holland 2",
-        "date": "2025-11-15T00:00:00+00:00",
-        "startTimeUtc": "2025-11-14T23:00:00+00:00",
-        "endTimeUtc": "2025-11-15T22:59:59+00:00",
-        "timezone": "Europe\/Amsterdam",
-        "venueName": "BAZ Bouldergym, Zaandam",
-        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
-        "link": "https:\/\/was.nkbv.nl\/competitions\/4822",
         "tags": [
             "BOULDER",
             "NKBV"
@@ -344,6 +350,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Alpamayo, Beringen",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "be-MINE 21, 3583, Beringen, Belgium",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4801",
         "tags": [
             "LEAD",
@@ -359,6 +366,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Boulder Veldhoven",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Blaarthemseweg 13, 5022 JR, Veldhoven, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4836",
         "tags": [
             "BOULDER",
@@ -374,7 +382,23 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Boulder Amsterdam",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2025\/01\/boulder_eind.jpg",
+        "venueAddress": "Gillis van Ledenberchstraat 62, 1052VK, Amsterdam, Netherlands",
         "link": "https:\/\/boulderneoliet.nl\/nl\/amsterdam\/boulder-wedstrijd-catch020\/",
+        "tags": [
+            "BOULDER"
+        ]
+    },
+    {
+        "id": "3507",
+        "title": "Jeugd Boulder Series Noord-Oost 1",
+        "date": "2025-11-22T00:00:00+00:00",
+        "startTimeUtc": "2025-11-21T23:00:00+00:00",
+        "endTimeUtc": "2025-11-22T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Cube Bouldergym, Enschede",
+        "venueImage": null,
+        "venueAddress": "Hoge Bothofstraat 49, 7511 ZA, Enschede, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4876",
         "tags": [
             "BOULDER"
         ]
@@ -388,6 +412,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Alpamayo, Beringen",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "be-MINE 21, 3583, Beringen, Belgium",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4833",
         "tags": [
             "LEAD",
@@ -403,6 +428,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Boulder Veldhoven",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Blaarthemseweg 13, 5022 JR, Veldhoven, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4819",
         "tags": [
             "BOULDER",
@@ -418,21 +444,8 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Wildflower Climbing Gym, Leiden",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/09\/wildflower.png",
+        "venueAddress": "Dorus Rijkersweg 15, 2315 WC, Leiden, Netherlands",
         "link": "https:\/\/atmaclimbing.com\/events\/birds-of-spray\/?fbclid=PAZXh0bgNhZW0CMTEAAafueh09uVwZpb5HQB0wauND_D9Y_jnNXifsriNS677FwcN8xQPC0NwfbCNTIQ_aem_Iva4GHmVOsq3C01b8PHhAg",
-        "tags": [
-            "BOULDER"
-        ]
-    },
-    {
-        "id": "3082",
-        "title": "Elevate XL Grand Finale",
-        "date": "2025-11-29T00:00:00+00:00",
-        "startTimeUtc": "2025-11-28T23:00:00+00:00",
-        "endTimeUtc": "2025-11-29T22:59:59+00:00",
-        "timezone": "Europe\/Amsterdam",
-        "venueName": "Apex Boulders, Groningen",
-        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/09\/apex_logo.png",
-        "link": "https:\/\/www.apexboulders.nl\/events",
         "tags": [
             "BOULDER"
         ]
@@ -446,24 +459,55 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Rijnboulder Arnhem",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/Ontwerp-zonder-titel.png",
+        "venueAddress": "Olympus 3, 6832 EL, Arnhem, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4770",
         "tags": [
             "BOULDER"
         ]
     },
     {
-        "id": "3084",
-        "title": "Volwassenen Klim Series Limburg 4",
-        "date": "2025-12-12T00:00:00+00:00",
-        "startTimeUtc": "2025-12-11T23:00:00+00:00",
-        "endTimeUtc": "2025-12-12T22:59:59+00:00",
+        "id": "3082",
+        "title": "Elevate XL Grand Finale",
+        "date": "2025-11-29T00:00:00+00:00",
+        "startTimeUtc": "2025-11-28T23:00:00+00:00",
+        "endTimeUtc": "2025-11-29T22:59:59+00:00",
         "timezone": "Europe\/Amsterdam",
-        "venueName": "IVY Climbing, Sittard",
-        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
-        "link": "https:\/\/was.nkbv.nl\/competitions\/4802",
+        "venueName": "Apex Boulders, Groningen",
+        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/09\/apex_logo.png",
+        "venueAddress": "Atoomweg 19A, 9743 AJ, Groningen, Netherlands",
+        "link": "https:\/\/www.apexboulders.nl\/events",
         "tags": [
-            "LEAD",
-            "NKBV"
+            "BOULDER"
+        ]
+    },
+    {
+        "id": "3505",
+        "title": "Jeugd Klim Series Noord-Oost 1",
+        "date": "2025-12-06T00:00:00+00:00",
+        "startTimeUtc": "2025-12-05T23:00:00+00:00",
+        "endTimeUtc": "2025-12-06T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Klim- &#038; Outdoorcentrum Yosemite, Zwolle",
+        "venueImage": null,
+        "venueAddress": "Van der Heydenstraat 8, 8014ZZ, Zwolle, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4859",
+        "tags": [
+            "LEAD"
+        ]
+    },
+    {
+        "id": "3504",
+        "title": "Volwassenen Klim Series Noord-Oost 1",
+        "date": "2025-12-07T00:00:00+00:00",
+        "startTimeUtc": "2025-12-06T23:00:00+00:00",
+        "endTimeUtc": "2025-12-07T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Klim- &#038; Outdoorcentrum Yosemite, Zwolle",
+        "venueImage": null,
+        "venueAddress": "Van der Heydenstraat 8, 8014ZZ, Zwolle, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4868",
+        "tags": [
+            "LEAD"
         ]
     },
     {
@@ -475,6 +519,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "The Climbing Corner, Heerlen",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/09\/climbing_corner.avif",
+        "venueAddress": "In de Cramer 14, 6411 RS, Heerlen, Netherlands",
         "link": "https:\/\/www.theclimbingcorner.com\/nl",
         "tags": [
             "BOULDER"
@@ -489,9 +534,41 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Klim- en Boulderhal Sendmast, Alkmaar",
         "venueImage": null,
+        "venueAddress": "Koelmalaan 354, 1812 PS, Alkmaar, Netherlands",
         "link": "https:\/\/www.boulderhalsendmast.nl\/",
         "tags": [
             "BOULDER"
+        ]
+    },
+    {
+        "id": "3084",
+        "title": "Volwassenen Klim Series Limburg 4",
+        "date": "2025-12-12T00:00:00+00:00",
+        "startTimeUtc": "2025-12-11T23:00:00+00:00",
+        "endTimeUtc": "2025-12-12T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "IVY Climbing, Sittard",
+        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Milaanstraat 115, 6135 LH, Sittard, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4802",
+        "tags": [
+            "LEAD",
+            "NKBV"
+        ]
+    },
+    {
+        "id": "3503",
+        "title": "Volwassenen Klim Series Midden Nederland 2",
+        "date": "2025-12-12T00:00:00+00:00",
+        "startTimeUtc": "2025-12-11T23:00:00+00:00",
+        "endTimeUtc": "2025-12-12T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Klimmuur Utrecht",
+        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/10\/klimmuur_utrecht.jpeg",
+        "venueAddress": "Vlampijpstraat 79, 3534 AR, Utrecht, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4854",
+        "tags": [
+            "LEAD"
         ]
     },
     {
@@ -503,23 +580,10 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Boulderhal Energiehaven, Utrecht",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/09\/boulderhal_energiehaven_logo.jpeg",
+        "venueAddress": "Elektronweg 10A, 3542 AC, Utrecht, Netherlands",
         "link": "https:\/\/www.boulderhalenergiehaven.nl\/events",
         "tags": [
             "BOULDER"
-        ]
-    },
-    {
-        "id": "3087",
-        "title": "UIAA Ice Climbing Continental Cup Utrecht 2025",
-        "date": "2025-12-13T00:00:00+00:00",
-        "startTimeUtc": "2025-12-12T23:00:00+00:00",
-        "endTimeUtc": "2025-12-13T22:59:59+00:00",
-        "timezone": "Europe\/Amsterdam",
-        "venueName": "Sportcentrum Olympos (Kalymnos), Utrecht",
-        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/10\/olympos_sports_centre_utrecht_logo.jpeg",
-        "link": "https:\/\/was.nkbv.nl\/competitions\/4794",
-        "tags": [
-            "LEAD"
         ]
     },
     {
@@ -531,9 +595,56 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "GRIP Boulderhal, Nijmegen",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Kamerlingh Onnesstraat 35, 6533 HK, Nijmegen, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4781",
         "tags": [
             "BOULDER",
+            "NKBV"
+        ]
+    },
+    {
+        "id": "3087",
+        "title": "UIAA Ice Climbing Continental Cup Utrecht 2025",
+        "date": "2025-12-13T00:00:00+00:00",
+        "startTimeUtc": "2025-12-12T23:00:00+00:00",
+        "endTimeUtc": "2025-12-13T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Sportcentrum Olympos (Kalymnos), Utrecht",
+        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/10\/olympos_sports_centre_utrecht_logo.jpeg",
+        "venueAddress": "Uppsalaan 3, 3584 CT, Utrecht, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4794",
+        "tags": [
+            "LEAD"
+        ]
+    },
+    {
+        "id": "3502",
+        "title": "Jeugd Klim Series Midden Nederland 2",
+        "date": "2025-12-13T00:00:00+00:00",
+        "startTimeUtc": "2025-12-12T23:00:00+00:00",
+        "endTimeUtc": "2025-12-13T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Klimmuur Utrecht",
+        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/10\/klimmuur_utrecht.jpeg",
+        "venueAddress": "Vlampijpstraat 79, 3534 AR, Utrecht, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4852",
+        "tags": [
+            "LEAD"
+        ]
+    },
+    {
+        "id": "3275",
+        "title": "Jeugd Klim Series Limburg 4",
+        "date": "2025-12-13T00:00:00+00:00",
+        "startTimeUtc": "2025-12-12T23:00:00+00:00",
+        "endTimeUtc": "2025-12-13T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "IVY Climbing, Sittard",
+        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Milaanstraat 115, 6135 LH, Sittard, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4834",
+        "tags": [
+            "LEAD",
             "NKBV"
         ]
     },
@@ -546,24 +657,10 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Boulderhal Krachtstof, Leiden",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Admiraal Banckertweg 2, 2315SR, Leiden, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4824",
         "tags": [
             "BOULDER",
-            "NKBV"
-        ]
-    },
-    {
-        "id": "3275",
-        "title": "Jeugd Klim Series Limburg 4",
-        "date": "2025-12-13T00:00:00+00:00",
-        "startTimeUtc": "2025-12-12T23:00:00+00:00",
-        "endTimeUtc": "2025-12-13T22:59:59+00:00",
-        "timezone": "Europe\/Amsterdam",
-        "venueName": "IVY Climbing, Sittard",
-        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
-        "link": "https:\/\/was.nkbv.nl\/competitions\/4834",
-        "tags": [
-            "LEAD",
             "NKBV"
         ]
     },
@@ -576,6 +673,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Boulderhal Roest, Zwolle",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/roest.png",
+        "venueAddress": "Marsweg 10, 8013 PD, Zwolle, Netherlands",
         "link": "https:\/\/www.boulderhalroest.nl\/events",
         "tags": [
             "BOULDER"
@@ -590,9 +688,26 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "The Climbing Corner, Heerlen",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/09\/climbing_corner.avif",
+        "venueAddress": "In de Cramer 14, 6411 RS, Heerlen, Netherlands",
         "link": "https:\/\/www.theclimbingcorner.com\/nl",
         "tags": [
             "BOULDER"
+        ]
+    },
+    {
+        "id": "3279",
+        "title": "Jeugd Boulder Series Noord-Holland 2",
+        "date": "2026-01-10T00:00:00+00:00",
+        "startTimeUtc": "2026-01-09T23:00:00+00:00",
+        "endTimeUtc": "2026-01-10T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Monk Bouldergym Amsterdam",
+        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Aambeeldstraat 26, 1021 KB, Amsterdam, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4787",
+        "tags": [
+            "BOULDER",
+            "NKBV"
         ]
     },
     {
@@ -604,22 +719,8 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Boulderhal Nirvana, Den Haag",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Berkenbosch Blokstraat 9a, 2586 HD, Den Haag, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4823",
-        "tags": [
-            "BOULDER",
-            "NKBV"
-        ]
-    },
-    {
-        "id": "3279",
-        "title": "Jeugd Boulder Series Noord-Holland 3",
-        "date": "2026-01-10T00:00:00+00:00",
-        "startTimeUtc": "2026-01-09T23:00:00+00:00",
-        "endTimeUtc": "2026-01-10T22:59:59+00:00",
-        "timezone": "Europe\/Amsterdam",
-        "venueName": "Monk Bouldergym Amsterdam",
-        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
-        "link": "https:\/\/was.nkbv.nl\/competitions\/4787",
         "tags": [
             "BOULDER",
             "NKBV"
@@ -634,9 +735,25 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Wildflower Climbing Gym, Leiden",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/09\/wildflower.png",
+        "venueAddress": "Dorus Rijkersweg 15, 2315 WC, Leiden, Netherlands",
         "link": "https:\/\/atmaclimbing.com\/events\/birds-of-spray\/?fbclid=PAZXh0bgNhZW0CMTEAAafueh09uVwZpb5HQB0wauND_D9Y_jnNXifsriNS677FwcN8xQPC0NwfbCNTIQ_aem_Iva4GHmVOsq3C01b8PHhAg",
         "tags": [
             "BOULDER"
+        ]
+    },
+    {
+        "id": "3501",
+        "title": "Volwassenen Klim Series Midden Nederland 3",
+        "date": "2026-01-16T00:00:00+00:00",
+        "startTimeUtc": "2026-01-15T23:00:00+00:00",
+        "endTimeUtc": "2026-01-16T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Sport- en klimcentrum RockSteady, Bussum",
+        "venueImage": null,
+        "venueAddress": "Zanderijweg 12, 1403 XV, Bussum, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4855",
+        "tags": [
+            "LEAD"
         ]
     },
     {
@@ -648,6 +765,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Block013, Tilburg",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Lovense Kanaaldijk 47, 5013 BJ, Tilburg, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4837",
         "tags": [
             "BOULDER",
@@ -663,6 +781,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Block013, Tilburg",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Lovense Kanaaldijk 47, 5013 BJ, Tilburg, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4782",
         "tags": [
             "BOULDER",
@@ -678,9 +797,55 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Boulderhal Energiehaven, Utrecht",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/09\/boulderhal_energiehaven_logo.jpeg",
+        "venueAddress": "Elektronweg 10A, 3542 AC, Utrecht, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4773",
         "tags": [
             "BOULDER"
+        ]
+    },
+    {
+        "id": "3499",
+        "title": "Jeugd Klim Series Noord-Oost 2",
+        "date": "2026-01-17T00:00:00+00:00",
+        "startTimeUtc": "2026-01-16T23:00:00+00:00",
+        "endTimeUtc": "2026-01-17T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "ACLO, Groningen",
+        "venueImage": null,
+        "venueAddress": "Blauwborgje 16, 9747 AC, Groningen, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4860",
+        "tags": [
+            "LEAD"
+        ]
+    },
+    {
+        "id": "3496",
+        "title": "Volwassenen Klim Series Noord-Oost 2",
+        "date": "2026-01-18T00:00:00+00:00",
+        "startTimeUtc": "2026-01-17T23:00:00+00:00",
+        "endTimeUtc": "2026-01-18T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "ACLO, Groningen",
+        "venueImage": null,
+        "venueAddress": "Blauwborgje 16, 9747 AC, Groningen, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4870",
+        "tags": [
+            "LEAD"
+        ]
+    },
+    {
+        "id": "3498",
+        "title": "Jeugd Klim Series Midden Nederland 3",
+        "date": "2026-01-18T00:00:00+00:00",
+        "startTimeUtc": "2026-01-17T23:00:00+00:00",
+        "endTimeUtc": "2026-01-18T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Sport- en klimcentrum RockSteady, Bussum",
+        "venueImage": null,
+        "venueAddress": "Zanderijweg 12, 1403 XV, Bussum, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4844",
+        "tags": [
+            "LEAD"
         ]
     },
     {
@@ -692,10 +857,26 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Klimcentrum Yellow Stone, Roosendaal",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Buijenstraat 16, 4705 RD, Roosendaal, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4811",
         "tags": [
             "LEAD",
             "NKBV"
+        ]
+    },
+    {
+        "id": "3493",
+        "title": "Jeugd Boulder Series Zuid-Holland 3",
+        "date": "2026-01-24T00:00:00+00:00",
+        "startTimeUtc": "2026-01-23T23:00:00+00:00",
+        "endTimeUtc": "2026-01-24T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Bouldercentrum Delfts Bleau",
+        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/09\/delfts_bleau.jpeg",
+        "venueAddress": "Schieweg 15L, 2627 AN, Delft, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4828",
+        "tags": [
+            "BOULDER"
         ]
     },
     {
@@ -707,10 +888,26 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Klimcentrum Yellow Stone, Roosendaal",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Buijenstraat 16, 4705 RD, Roosendaal, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4815",
         "tags": [
             "LEAD",
             "NKBV"
+        ]
+    },
+    {
+        "id": "3491",
+        "title": "Jeugd Boulder Series Noord-Oost 2",
+        "date": "2026-01-31T00:00:00+00:00",
+        "startTimeUtc": "2026-01-30T23:00:00+00:00",
+        "endTimeUtc": "2026-01-31T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Boulderhal Roest, Zwolle",
+        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/roest.png",
+        "venueAddress": "Marsweg 10, 8013 PD, Zwolle, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4877",
+        "tags": [
+            "BOULDER"
         ]
     },
     {
@@ -722,6 +919,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Monk Hilversum",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/08\/monk_hilversum-1.png",
+        "venueAddress": "Vreelandseweg 5, 1216 CG, Hilversum, Netherlands",
         "link": "https:\/\/monk.nl\/loco\/",
         "tags": [
             "BOULDER"
@@ -736,36 +934,54 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Klimzaal Blok, Antwerpen",
         "venueImage": null,
+        "venueAddress": "IJskelderstraat 12\/1, 2660, Antwerpen, Belgium",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4768",
         "tags": [
             "BOULDER"
         ]
     },
     {
-        "id": "3283",
-        "title": "Jeugd Boulder Series Zuid-Holland 3",
+        "id": "3489",
+        "title": "Jeugd Klim Series Noord-Oost 3",
         "date": "2026-02-07T00:00:00+00:00",
         "startTimeUtc": "2026-02-06T23:00:00+00:00",
         "endTimeUtc": "2026-02-07T22:59:59+00:00",
         "timezone": "Europe\/Amsterdam",
-        "venueName": "Boulder Rotterdam",
-        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
-        "link": "https:\/\/was.nkbv.nl\/competitions\/4825",
+        "venueName": "Arqu\u00e9 Klimcentrum, Enschede",
+        "venueImage": null,
+        "venueAddress": "J.J. van Deinselaan 20, 7541 BR, Enschede, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4861",
         "tags": [
-            "BOULDER",
-            "NKBV"
+            "LEAD"
         ]
     },
     {
         "id": "3285",
-        "title": "Jeugd Boulder Series Noord-Holland 4",
+        "title": "Jeugd Boulder Series Noord-Holland 3",
         "date": "2026-02-07T00:00:00+00:00",
         "startTimeUtc": "2026-02-06T23:00:00+00:00",
         "endTimeUtc": "2026-02-07T22:59:59+00:00",
         "timezone": "Europe\/Amsterdam",
         "venueName": "Boulderhal De Fabriek &#8211; Haarlem",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Ben Viljoenstraat 1, 2021 AA, Haarlem, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4788",
+        "tags": [
+            "BOULDER",
+            "NKBV"
+        ]
+    },
+    {
+        "id": "3283",
+        "title": "Jeugd Boulder Series Zuid-Holland 4",
+        "date": "2026-02-07T00:00:00+00:00",
+        "startTimeUtc": "2026-02-06T23:00:00+00:00",
+        "endTimeUtc": "2026-02-07T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Boulder Rotterdam",
+        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Keilestraat 7J, 3029 BP, Rotterdam, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4825",
         "tags": [
             "BOULDER",
             "NKBV"
@@ -780,6 +996,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Monk Bouldergym Hasselt",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/09\/monk_hasselt.png",
+        "venueAddress": "Sint-Jozefsstraat 10\/1.1, 3500, Hasselt, Belgium",
         "link": "https:\/\/monk.nl\/loco\/",
         "tags": [
             "BOULDER"
@@ -794,7 +1011,23 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "De Waagnatie",
         "venueImage": null,
+        "venueAddress": "",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4774",
+        "tags": [
+            "BOULDER"
+        ]
+    },
+    {
+        "id": "3488",
+        "title": "Jeugd Boulder Series Noord-Oost 3",
+        "date": "2026-02-14T00:00:00+00:00",
+        "startTimeUtc": "2026-02-13T23:00:00+00:00",
+        "endTimeUtc": "2026-02-14T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Gropo Bouldergym, Groningen",
+        "venueImage": null,
+        "venueAddress": "Ulgersmaweg 8, 9731BS, Groningen, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4878",
         "tags": [
             "BOULDER"
         ]
@@ -808,10 +1041,26 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Stadsmuur Nijmegen",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Van Rosenburgweg 52, 6537 TM, Nijmegen, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4812",
         "tags": [
             "LEAD",
             "NKBV"
+        ]
+    },
+    {
+        "id": "3486",
+        "title": "Jeugd Klim Series Noord-Oost 4",
+        "date": "2026-02-21T00:00:00+00:00",
+        "startTimeUtc": "2026-02-20T23:00:00+00:00",
+        "endTimeUtc": "2026-02-21T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Klim- &#038; Outdoorcentrum Yosemite, Zwolle",
+        "venueImage": null,
+        "venueAddress": "Van der Heydenstraat 8, 8014ZZ, Zwolle, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4862",
+        "tags": [
+            "LEAD"
         ]
     },
     {
@@ -823,10 +1072,26 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Stadsmuur Nijmegen",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Van Rosenburgweg 52, 6537 TM, Nijmegen, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4816",
         "tags": [
             "LEAD",
             "NKBV"
+        ]
+    },
+    {
+        "id": "3485",
+        "title": "Volwassenen Klim Series Noord-Oost 3",
+        "date": "2026-02-22T00:00:00+00:00",
+        "startTimeUtc": "2026-02-21T23:00:00+00:00",
+        "endTimeUtc": "2026-02-22T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Klim- &#038; Outdoorcentrum Yosemite, Zwolle",
+        "venueImage": null,
+        "venueAddress": "Van der Heydenstraat 8, 8014ZZ, Zwolle, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4871",
+        "tags": [
+            "LEAD"
         ]
     },
     {
@@ -838,6 +1103,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Boulderhal Bossche Boulders, 's-Hertogenbosch",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Jagersheuvelstraat 32, 5222 BJ, 's-Hertogenbosch, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4838",
         "tags": [
             "BOULDER",
@@ -853,6 +1119,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Klimzaal De Stordeur, Wilsele",
         "venueImage": null,
+        "venueAddress": "Aarschotsesteenweg 112, 3012, Wilsele, Belgium",
         "link": "https:\/\/cmbel.shiftf5.be\/competitions\/4656",
         "tags": [
             "LEAD"
@@ -867,6 +1134,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Boulderhal Bossche Boulders, 's-Hertogenbosch",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Jagersheuvelstraat 32, 5222 BJ, 's-Hertogenbosch, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4783",
         "tags": [
             "BOULDER",
@@ -875,13 +1143,14 @@
     },
     {
         "id": "3289",
-        "title": "Jeugd Boulder Series Zuid-Holland 4",
+        "title": "Jeugd Boulder Series Zuid-Holland 5",
         "date": "2026-02-28T00:00:00+00:00",
         "startTimeUtc": "2026-02-27T23:00:00+00:00",
         "endTimeUtc": "2026-02-28T22:59:59+00:00",
         "timezone": "Europe\/Amsterdam",
         "venueName": "Revolt Bouldering Gym, Delft",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Kleveringweg 35, 2616 LZ, Delft, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4826",
         "tags": [
             "BOULDER",
@@ -897,6 +1166,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Monk Bouldergym Rotterdam",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/monk_rotterdam.png",
+        "venueAddress": "Ceintuurbaan 183, 3051 KC, Rotterdam, Netherlands",
         "link": "https:\/\/monk.nl\/loco\/",
         "tags": [
             "BOULDER"
@@ -911,10 +1181,26 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Boulderhal De Campus, Den Haag",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Kerketuinenweg 55, 2544 CV, Den Haag, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4771",
         "tags": [
             "BOULDER",
             "NKBV"
+        ]
+    },
+    {
+        "id": "3484",
+        "title": "Jeugd Klim Series Noord-Oost 5",
+        "date": "2026-03-07T00:00:00+00:00",
+        "startTimeUtc": "2026-03-06T23:00:00+00:00",
+        "endTimeUtc": "2026-03-07T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Mountain Network Heerenveen",
+        "venueImage": null,
+        "venueAddress": "Abe Lenstra Boulevard 23a, 8448 JA, Heerenveen, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4863",
+        "tags": [
+            "LEAD"
         ]
     },
     {
@@ -926,9 +1212,40 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Monk Bouldergym Eindhoven",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/monk_eindhoven.png",
+        "venueAddress": "Berkenstraat 1A, 5616 LV, Eindhoven, Netherlands",
         "link": "https:\/\/monk.nl\/loco\/",
         "tags": [
             "BOULDER"
+        ]
+    },
+    {
+        "id": "3483",
+        "title": "Volwassenen Klim Series Noord-Oost 4",
+        "date": "2026-03-08T00:00:00+00:00",
+        "startTimeUtc": "2026-03-07T23:00:00+00:00",
+        "endTimeUtc": "2026-03-08T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Mountain Network Heerenveen",
+        "venueImage": null,
+        "venueAddress": "Abe Lenstra Boulevard 23a, 8448 JA, Heerenveen, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4873",
+        "tags": [
+            "LEAD"
+        ]
+    },
+    {
+        "id": "3482",
+        "title": "Volwassenen Klim Series Midden Nederland 4",
+        "date": "2026-03-13T00:00:00+00:00",
+        "startTimeUtc": "2026-03-12T23:00:00+00:00",
+        "endTimeUtc": "2026-03-13T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Neoliet Utrecht",
+        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/10\/neoliet_eindhoven.png",
+        "venueAddress": "Componistenlaan 6, 3451 SX, Utrecht, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4856",
+        "tags": [
+            "LEAD"
         ]
     },
     {
@@ -940,6 +1257,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Locatie nog niet bekend",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4813",
         "tags": [
             "LEAD",
@@ -947,30 +1265,47 @@
         ]
     },
     {
-        "id": "3291",
-        "title": "Jeugd Boulder Series Zuid-Holland 5",
+        "id": "3481",
+        "title": "Jeugd Klim Series Midden Nederland 4",
         "date": "2026-03-14T00:00:00+00:00",
         "startTimeUtc": "2026-03-13T23:00:00+00:00",
         "endTimeUtc": "2026-03-14T22:59:59+00:00",
         "timezone": "Europe\/Amsterdam",
-        "venueName": "Boulderhal Walhalla, Den Haag",
-        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
-        "link": "https:\/\/was.nkbv.nl\/competitions\/4827",
+        "venueName": "Neoliet Utrecht",
+        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/10\/neoliet_eindhoven.png",
+        "venueAddress": "Componistenlaan 6, 3451 SX, Utrecht, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4845",
         "tags": [
-            "BOULDER",
-            "NKBV"
+            "LEAD"
         ]
     },
     {
         "id": "3293",
-        "title": "Jeugd Boulder Series Noord-Holland 5",
+        "title": "Jeugd Boulder Series Noord-Holland 4",
         "date": "2026-03-14T00:00:00+00:00",
         "startTimeUtc": "2026-03-13T23:00:00+00:00",
         "endTimeUtc": "2026-03-14T22:59:59+00:00",
         "timezone": "Europe\/Amsterdam",
         "venueName": "Klim- en Boulderhal Sendmast, Alkmaar",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Koelmalaan 354, 1812 PS, Alkmaar, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4789",
+        "tags": [
+            "BOULDER",
+            "NKBV"
+        ]
+    },
+    {
+        "id": "3291",
+        "title": "Jeugd Boulder Series Zuid-Holland 6",
+        "date": "2026-03-14T00:00:00+00:00",
+        "startTimeUtc": "2026-03-13T23:00:00+00:00",
+        "endTimeUtc": "2026-03-14T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Boulderhal Walhalla, Den Haag",
+        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Johan Van Veenplein 12, 2521 AC, Den Haag, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4827",
         "tags": [
             "BOULDER",
             "NKBV"
@@ -985,6 +1320,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Monk Bouldergym Amsterdam",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/09\/monk_amsterdam.png",
+        "venueAddress": "Aambeeldstraat 26, 1021 KB, Amsterdam, Netherlands",
         "link": "https:\/\/monk.nl\/loco\/",
         "tags": [
             "BOULDER"
@@ -999,6 +1335,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Wildflower Climbing Gym, Leiden",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/09\/wildflower.png",
+        "venueAddress": "Dorus Rijkersweg 15, 2315 WC, Leiden, Netherlands",
         "link": "https:\/\/atmaclimbing.com\/events\/birds-of-spray\/?fbclid=PAZXh0bgNhZW0CMTEAAafueh09uVwZpb5HQB0wauND_D9Y_jnNXifsriNS677FwcN8xQPC0NwfbCNTIQ_aem_Iva4GHmVOsq3C01b8PHhAg",
         "tags": [
             "BOULDER"
@@ -1013,6 +1350,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Locatie nog niet bekend",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4817",
         "tags": [
             "LEAD",
@@ -1020,18 +1358,65 @@
         ]
     },
     {
+        "id": "3480",
+        "title": "Jeugd Boulder Series Noord-Oost 4",
+        "date": "2026-03-15T00:00:00+00:00",
+        "startTimeUtc": "2026-03-14T23:00:00+00:00",
+        "endTimeUtc": "2026-03-15T22:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Boulderstation Enschede",
+        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/08\/boulder_stattion.jpeg",
+        "venueAddress": "Goolkatenweg 65, 7521 BE, Enschede, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4879",
+        "tags": [
+            "BOULDER"
+        ]
+    },
+    {
         "id": "3295",
-        "title": "Jeugd Boulder Series Zuid-Holland 6",
+        "title": "Jeugd Boulder Series Zuid-Holland 7",
         "date": "2026-03-28T00:00:00+00:00",
         "startTimeUtc": "2026-03-27T23:00:00+00:00",
         "endTimeUtc": "2026-03-28T22:59:59+00:00",
         "timezone": "Europe\/Amsterdam",
         "venueName": "Monk Bouldergym Rotterdam",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Ceintuurbaan 183, 3051 KC, Rotterdam, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4829",
         "tags": [
             "BOULDER",
             "NKBV"
+        ]
+    },
+    {
+        "id": "3267",
+        "title": "Jeugd Boulder Series Noord-Holland 5",
+        "date": "2026-04-04T00:00:00+00:00",
+        "startTimeUtc": "2026-04-03T22:00:00+00:00",
+        "endTimeUtc": "2026-04-04T21:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "BAZ Bouldergym, Zaandam",
+        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Oostzijde 381, 1508 EP, Zaandam, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4822",
+        "tags": [
+            "BOULDER",
+            "NKBV"
+        ]
+    },
+    {
+        "id": "3478",
+        "title": "Volwassenen Boulder Series Brabant &#8211; Gelderland 5",
+        "date": "2026-04-10T00:00:00+00:00",
+        "startTimeUtc": "2026-04-09T22:00:00+00:00",
+        "endTimeUtc": "2026-04-10T21:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Monk Bouldergym Eindhoven",
+        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/monk_eindhoven.png",
+        "venueAddress": "Berkenstraat 1A, 5616 LV, Eindhoven, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4841",
+        "tags": [
+            "BOULDER"
         ]
     },
     {
@@ -1043,6 +1428,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Locatie nog niet bekend",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4784",
         "tags": [
             "BOULDER",
@@ -1050,14 +1436,31 @@
         ]
     },
     {
+        "id": "3475",
+        "title": "Open NK Speed 2026 \/ Speed Cup",
+        "date": "2026-04-11T00:00:00+00:00",
+        "startTimeUtc": "2026-04-10T22:00:00+00:00",
+        "endTimeUtc": "2026-04-11T21:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Mountain Network Noardwand, Leeuwarden",
+        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Fiswerderweg 3, 8917 EW, Leeuwarden, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4867",
+        "tags": [
+            "OTHER",
+            "NKBV"
+        ]
+    },
+    {
         "id": "3297",
-        "title": "Jeugd Boulder Series Zuid-Holland 7",
+        "title": "Jeugd Boulder Series Zuid-Holland 8",
         "date": "2026-04-18T00:00:00+00:00",
         "startTimeUtc": "2026-04-17T22:00:00+00:00",
         "endTimeUtc": "2026-04-18T21:59:59+00:00",
         "timezone": "Europe\/Amsterdam",
         "venueName": "Boulderhal De Campus, Den Haag",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Kerketuinenweg 55, 2544 CV, Den Haag, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4830",
         "tags": [
             "BOULDER",
@@ -1065,18 +1468,139 @@
         ]
     },
     {
+        "id": "3474",
+        "title": "Jeugd Klim Series Noord-Oost 6",
+        "date": "2026-05-02T00:00:00+00:00",
+        "startTimeUtc": "2026-05-01T22:00:00+00:00",
+        "endTimeUtc": "2026-05-02T21:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Klim- &#038; Outdoorcentrum Yosemite, Zwolle",
+        "venueImage": null,
+        "venueAddress": "Van der Heydenstraat 8, 8014ZZ, Zwolle, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4864",
+        "tags": [
+            "LEAD"
+        ]
+    },
+    {
+        "id": "3473",
+        "title": "Volwassenen Klim Series Noord-Oost 5",
+        "date": "2026-05-03T00:00:00+00:00",
+        "startTimeUtc": "2026-05-02T22:00:00+00:00",
+        "endTimeUtc": "2026-05-03T21:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Klim- &#038; Outdoorcentrum Yosemite, Zwolle",
+        "venueImage": null,
+        "venueAddress": "Van der Heydenstraat 8, 8014ZZ, Zwolle, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4874",
+        "tags": [
+            "LEAD"
+        ]
+    },
+    {
+        "id": "3472",
+        "title": "Volwassenen Klim Series Midden Nederland 5",
+        "date": "2026-05-08T00:00:00+00:00",
+        "startTimeUtc": "2026-05-07T22:00:00+00:00",
+        "endTimeUtc": "2026-05-08T21:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Mountain Network Nieuwegein",
+        "venueImage": null,
+        "venueAddress": "Blokhoeve 12, 3438 LC, Nieuwegein, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4858",
+        "tags": [
+            "LEAD"
+        ]
+    },
+    {
+        "id": "3471",
+        "title": "Jeugd Klim Series Midden Nederland Finale",
+        "date": "2026-05-10T00:00:00+00:00",
+        "startTimeUtc": "2026-05-09T22:00:00+00:00",
+        "endTimeUtc": "2026-05-10T21:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Mountain Network Nieuwegein",
+        "venueImage": null,
+        "venueAddress": "Blokhoeve 12, 3438 LC, Nieuwegein, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4846",
+        "tags": [
+            "LEAD"
+        ]
+    },
+    {
+        "id": "3469",
+        "title": "Volwassenen Boulder Series Noord-Oost 1",
+        "date": "2026-05-29T00:00:00+00:00",
+        "startTimeUtc": "2026-05-28T22:00:00+00:00",
+        "endTimeUtc": "2026-05-29T21:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Mountain Network Noardwand, Leeuwarden",
+        "venueImage": null,
+        "venueAddress": "Fiswerderweg 3, 8917 EW, Leeuwarden, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4882",
+        "tags": [
+            "BOULDER"
+        ]
+    },
+    {
+        "id": "3470",
+        "title": "Volwassenen Klim Series Midden Nederland 6",
+        "date": "2026-05-29T00:00:00+00:00",
+        "startTimeUtc": "2026-05-28T22:00:00+00:00",
+        "endTimeUtc": "2026-05-29T21:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Sportcentrum Olympos (Kalymnos), Utrecht",
+        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/10\/olympos_sports_centre_utrecht_logo.jpeg",
+        "venueAddress": "Uppsalaan 3, 3584 CT, Utrecht, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4857",
+        "tags": [
+            "LEAD"
+        ]
+    },
+    {
         "id": "3299",
-        "title": "Volwassenen Boulder Series Brabant &#8211; Gelderland 5",
+        "title": "Volwassenen Boulder Series Brabant &#8211; Gelderland 6",
         "date": "2026-05-29T00:00:00+00:00",
         "startTimeUtc": "2026-05-28T22:00:00+00:00",
         "endTimeUtc": "2026-05-29T21:59:59+00:00",
         "timezone": "Europe\/Amsterdam",
         "venueName": "Boulder Tilburg",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Jules Verneweg 9, 5015 BD, Tilburg, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4839",
         "tags": [
             "BOULDER",
             "NKBV"
+        ]
+    },
+    {
+        "id": "3465",
+        "title": "Jeugd Boulder Series Brabant Gelderland 8",
+        "date": "2026-05-30T00:00:00+00:00",
+        "startTimeUtc": "2026-05-29T22:00:00+00:00",
+        "endTimeUtc": "2026-05-30T21:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Boulder Veldhoven",
+        "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2025\/01\/boulder_eind.jpg",
+        "venueAddress": "Blaarthemseweg 13, 5022 JR, Veldhoven, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4820",
+        "tags": [
+            "BOULDER"
+        ]
+    },
+    {
+        "id": "3467",
+        "title": "Jeugd Boulder Series Noord-Oost 5",
+        "date": "2026-05-30T00:00:00+00:00",
+        "startTimeUtc": "2026-05-29T22:00:00+00:00",
+        "endTimeUtc": "2026-05-30T21:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Mountain Network Noardwand, Leeuwarden",
+        "venueImage": null,
+        "venueAddress": "Fiswerderweg 3, 8917 EW, Leeuwarden, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4880",
+        "tags": [
+            "BOULDER"
         ]
     },
     {
@@ -1088,6 +1612,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Monk Bouldergym Hasselt",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/09\/monk_hasselt.png",
+        "venueAddress": "Sint-Jozefsstraat 10\/1.1, 3500, Hasselt, Belgium",
         "link": "https:\/\/monk.nl\/loco\/",
         "tags": [
             "BOULDER"
@@ -1102,6 +1627,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Locatie nog niet bekend",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4814",
         "tags": [
             "LEAD",
@@ -1117,6 +1643,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Wildflower Climbing Gym, Leiden",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/09\/wildflower.png",
+        "venueAddress": "Dorus Rijkersweg 15, 2315 WC, Leiden, Netherlands",
         "link": "https:\/\/atmaclimbing.com\/events\/birds-of-spray\/?fbclid=PAZXh0bgNhZW0CMTEAAafueh09uVwZpb5HQB0wauND_D9Y_jnNXifsriNS677FwcN8xQPC0NwfbCNTIQ_aem_Iva4GHmVOsq3C01b8PHhAg",
         "tags": [
             "BOULDER"
@@ -1131,6 +1658,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Neoliet Eindhoven Noord",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/variant.jpg",
+        "venueAddress": "Vijfkamplaan 14, 5624 EB, Eindhoven, Netherlands",
         "link": "https:\/\/was.nkbv.nl\/competitions\/4818",
         "tags": [
             "LEAD",
@@ -1146,9 +1674,25 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Monk Bouldergym Amsterdam",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/09\/monk_amsterdam.png",
+        "venueAddress": "Aambeeldstraat 26, 1021 KB, Amsterdam, Netherlands",
         "link": "https:\/\/monk.nl\/loco\/",
         "tags": [
             "BOULDER"
+        ]
+    },
+    {
+        "id": "3463",
+        "title": "Jeugd Klim Series Noord-Oost 7",
+        "date": "2026-06-20T00:00:00+00:00",
+        "startTimeUtc": "2026-06-19T22:00:00+00:00",
+        "endTimeUtc": "2026-06-20T21:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Mountain Network Noardwand, Leeuwarden",
+        "venueImage": null,
+        "venueAddress": "Fiswerderweg 3, 8917 EW, Leeuwarden, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4865",
+        "tags": [
+            "LEAD"
         ]
     },
     {
@@ -1160,9 +1704,25 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Monk Hilversum",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/08\/monk_hilversum-1.png",
+        "venueAddress": "Vreelandseweg 5, 1216 CG, Hilversum, Netherlands",
         "link": "https:\/\/monk.nl\/loco\/",
         "tags": [
             "BOULDER"
+        ]
+    },
+    {
+        "id": "3462",
+        "title": "Volwassenen Klim Series Noord-Oost 6",
+        "date": "2026-06-21T00:00:00+00:00",
+        "startTimeUtc": "2026-06-20T22:00:00+00:00",
+        "endTimeUtc": "2026-06-21T21:59:59+00:00",
+        "timezone": "Europe\/Amsterdam",
+        "venueName": "Mountain Network Noardwand, Leeuwarden",
+        "venueImage": null,
+        "venueAddress": "Fiswerderweg 3, 8917 EW, Leeuwarden, Netherlands",
+        "link": "https:\/\/was.nkbv.nl\/competitions\/4875",
+        "tags": [
+            "LEAD"
         ]
     },
     {
@@ -1174,6 +1734,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Monk Bouldergym Eindhoven",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/monk_eindhoven.png",
+        "venueAddress": "Berkenstraat 1A, 5616 LV, Eindhoven, Netherlands",
         "link": "https:\/\/monk.nl\/loco\/",
         "tags": [
             "BOULDER"
@@ -1188,6 +1749,7 @@
         "timezone": "Europe\/Amsterdam",
         "venueName": "Monk Bouldergym Rotterdam",
         "venueImage": "https:\/\/www.klimkalender.nl\/wp-content\/uploads\/2024\/07\/monk_rotterdam.png",
+        "venueAddress": "Ceintuurbaan 183, 3051 KC, Rotterdam, Netherlands",
         "link": "https:\/\/monk.nl\/loco\/",
         "tags": [
             "BOULDER"

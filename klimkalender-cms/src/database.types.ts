@@ -161,6 +161,7 @@ export type Database = {
       venues: {
         Row: {
           created_at: string
+          full_address: string | null
           id: number
           image_ref: string | null
           lat: number | null
@@ -170,6 +171,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          full_address?: string | null
           id?: number
           image_ref?: string | null
           lat?: number | null
@@ -179,6 +181,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          full_address?: string | null
           id?: number
           image_ref?: string | null
           lat?: number | null

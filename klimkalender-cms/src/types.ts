@@ -14,6 +14,7 @@ export type CalendarEvent = {
   featured?: boolean;
   featuredImage?: string;
   featuredText?: string;
+  venueAddress?: string;
 };
 
 export type Event = Database['public']['Tables']['events']['Row'];
