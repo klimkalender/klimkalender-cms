@@ -10,9 +10,6 @@ import '@uppy/core/css/style.min.css';
 import '@uppy/dashboard/css/style.min.css';
 import '@uppy/webcam/css/style.min.css';
 import { useAuth } from '@/auth';
-import type { Database } from '@/database.types';
-import type { Organizer } from '@/types';
-
 export const Route = createFileRoute('/')({
   component: HomeComponent,
   beforeLoad: ({ context, location }) => {
@@ -29,17 +26,10 @@ export const Route = createFileRoute('/')({
 
 const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
 
-type Venue = Database['public']['Tables']['venues']['Row'];
-type Event = Database['public']['Tables']['events']['Row'];
-
 function HomeComponent() {
   const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
   const auth = useAuth();
-  const [events, setEvents] = useState<Event[]|null>(null);
   const [files, setFiles] = useState<FileObject[]>([]);
-  const [venues, setVenues] = useState<Venue[]|null>(null);
-  const [tags, setTags] = useState<{ [id: string]: string[] }|null>(null);
-  const [organizers, setOrganizers] = useState<Organizer[]|null>(null);
   const [uploading, setUploading] = useState(false);
   const supabaseStorageURL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/upload/resumable`
 
@@ -100,56 +90,6 @@ function HomeComponent() {
   });
 
 
-  useEffect(() => {
-    readEvents();
-    readVenues();
-    readTags();
-    readOrganizers();
-  }, []);
-
-
-  async function readEvents() {
-    const { data, error } = await supabase.from("events").select().order("start_date_time", { ascending: true });
-    if (data) setEvents(data);
-    if (error) console.error("Error fetching events:", error);
-  }
-
-  async function readVenues() {
-    const { data, error } = await supabase.from("venues").select().order("name", { ascending: true });
-    if (data) setVenues(data);
-    if (error) console.error("Error fetching venues:", error);
-  }
-
-  async function readOrganizers() {
-    const { data, error } = await supabase.from("organizers").select().order("name", { ascending: true });
-    if (data) setOrganizers(data);
-    console.dir(data);
-    if (error) console.error("Error fetching organizers:", error);
-  }
-
-  async function readTags() {
-    const { data, error } = await supabase.from("event_tags").select('event_id, tags (name)');
-    if (data) {
-      const tagsMap: { [id: string]: string[] } = {};
-      // supabase has typing wrong here, so we need to cast
-      const fixedData = data as unknown as {
-        event_id: any;
-        tags: {
-          name: any;
-        };  
-      }[];
-      fixedData.forEach(tag => {
-          if (!tagsMap[tag.event_id]) {
-            tagsMap[tag.event_id] = [];
-          }
-          // console.dir(tag.tags.name);
-          tagsMap[tag.event_id].push(tag.tags.name);
-        });
-      // console.dir(tagsMap);
-      setTags(tagsMap);
-    }
-    if (error) console.error("Error fetching tags:", error);
-  }
 
 
 

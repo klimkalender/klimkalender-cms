@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { Event, Organizer, Venue } from '@/types';
+import type { Venue } from '@/types';
 import { Drawer } from '@mantine/core';
 import {
   MantineReactTable,
@@ -7,7 +7,6 @@ import {
   type MRT_ColumnDef, //if using TypeScript (optional, but recommended)
 } from 'mantine-react-table';
 import { useDisclosure } from '@mantine/hooks';
-import { sortByDate } from '@/utils/sort-by-date';
 import { supabase } from '@/data/supabase';
 
 export function VenuesTable({ venues }: { venues: Venue[] }) {

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { Event, Organizer, Tag, Venue } from '@/types';
+import type { Tag } from '@/types';
 import { Drawer } from '@mantine/core';
 import {
   MantineReactTable,
