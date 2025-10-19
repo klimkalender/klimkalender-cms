@@ -10,7 +10,8 @@ import {
   Image,
   Text,
   Modal,
-  Notification
+  Notification,
+  Radio
 } from '@mantine/core';
 
 import { useDisclosure } from '@mantine/hooks';
@@ -99,6 +100,15 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
 
     if (endDateTime && startDateTime && endDateTime <= startDateTime) {
       newErrors.endDateTime = 'End date must be after start date';
+    }
+
+    if(!endDateTime) {
+      newErrors.endDateTime = 'End date is required';
+    }
+
+    console.log(startDateTime);
+    if(!startDateTime) {
+      newErrors.startDateTime = 'Start date is required';
     }
 
     if (!link.trim()) {
@@ -309,6 +319,72 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
     }
   };
 
+  // Handle publish action for new events
+  const handlePublishNew = async () => {
+    if (!validateForm()) {
+      return;
+    }
+    
+    setLoading(true);
+    
+    try {
+      let featuredImageRef = null;
+      
+      // Handle image upload if a new image was selected
+      if (imageFile) {
+        const newImageRef = await uploadImage(imageFile);
+        if (newImageRef) {
+          featuredImageRef = newImageRef;
+        }
+      }
+
+      const eventData = {
+        title: title.trim(),
+        start_date_time: startDateTime!.toISOString(),
+        end_date_time: endDateTime!.toISOString(),
+        time_zone: timeZone,
+        is_full_day: isFullDay,
+        venue_id: venueId ? parseInt(venueId) : null,
+        organizer_id: organizerId ? parseInt(organizerId) : null,
+        status: 'PUBLISHED' as const,
+        featured: featured,
+        featured_text: featuredText.trim() || null,
+        featured_image_ref: featuredImageRef,
+        link: link.trim(),
+        remarks: remarks.trim() || null,
+      };
+
+      // Create and publish new event
+      const result = await supabase
+        .from('events')
+        .insert(eventData)
+        .select()
+        .single();
+
+      if (result.error) {
+        throw result.error;
+      }
+
+      setNotification({
+        type: 'success',
+        message: 'Event created and published successfully!'
+      });
+
+      if (onSave && result.data) {
+        onSave(result.data);
+      }
+
+    } catch (error: any) {
+      console.error('Error creating and publishing event:', error);
+      setNotification({
+        type: 'error',
+        message: `Failed to create and publish event: ${error.message}`
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Handle event deletion confirmation
   const handleDeleteClick = () => {
     openDeleteModal();
@@ -368,12 +444,6 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
     label: organizer.name
   }));
 
-  const statusSelectData = [
-    { value: 'DRAFT', label: 'Draft' },
-    { value: 'PUBLISHED', label: 'Published' },
-    { value: 'ARCHIVED', label: 'Archived' }
-  ];
-
   return (
     <>
       <form onSubmit={handleSubmit}>
@@ -383,11 +453,11 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
               {event?.id ? 'Edit Event' : 'Add Event'}
             </Text>
             
-            {/* Publish Button - only show for existing events in draft status */}
-            {event?.id && status === 'DRAFT' && (
+            {/* Publish Button - show for existing events in draft status OR new events */}
+            {((event?.id && status === 'DRAFT') || !event?.id) && (
               <Button 
                 color="green" 
-                onClick={handlePublish} 
+                onClick={event?.id ? handlePublish : handlePublishNew} 
                 loading={loading}
                 leftIcon={<BookCheck />}
               >
@@ -415,6 +485,9 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
                 required
                 style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
               />
+              {errors.startDateTime && (
+                <Text size="xs" color="red" mt={5}>{errors.startDateTime}</Text>
+              )}
             </div>
             <div>
               <Text size="sm" weight={500} mb={5}>End Date & Time *</Text>
@@ -485,14 +558,20 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
           </Group>
 
           <Group grow>
-            <Select
-              label="Status"
-              placeholder="Select status"
-              data={statusSelectData}
-              value={status}
-              onChange={(value) => value && setStatus(value as 'DRAFT' | 'PUBLISHED' | 'ARCHIVED')}
-              required
-            />
+            <div>
+              <Text size="sm" weight={500} mb={5}>Status *</Text>
+              <Radio.Group
+                value={status}
+                onChange={(value) => setStatus(value as 'DRAFT' | 'PUBLISHED' | 'ARCHIVED')}
+                required
+              >
+                <Stack spacing="xs">
+                  <Radio value="DRAFT" label="Draft" />
+                  <Radio value="PUBLISHED" label="Published" />
+                  <Radio value="ARCHIVED" label="Archived" />
+                </Stack>
+              </Radio.Group>
+            </div>
             <div>
               <Text size="sm" weight={500} mb={5}>Featured Event</Text>
               <Switch
@@ -605,7 +684,7 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
                 </Button>
               )}
               <Button type="submit" loading={loading}>
-                {event?.id ? 'Update Event' : 'Create Event'}
+                {event?.id ? 'Update Event' : 'Save as Draft'}
               </Button>
             </Group>
           </Group>
