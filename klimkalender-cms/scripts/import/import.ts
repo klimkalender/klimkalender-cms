@@ -22,6 +22,7 @@ function mapEventToSupabaseRow(event: CalendarEvent): Omit<Event, 'id'> {
   function decodeHtmlEntities(str: string): string {
     return str
       .replace(/&amp;/g, '&')
+      .replace(/&#038;/g, '&')
       .replace(/&lt;/g, '<')
       .replace(/&gt;/g, '>')
       .replace(/&quot;/g, '"')
@@ -82,7 +83,8 @@ async function importData() {
     // upsert venue
     const { data: venueResp, error: venueError } = await supabase
       .from('venues')
-      .upsert({ name: event.venueName, full_address: event.venueAddress }, { onConflict: 'name' })
+      // remove city from venue name
+      .upsert({ name: event.venueName.split(',')[0], full_address: event.venueAddress }, { onConflict: 'name' })
       .select('id, image_ref')
       .single();
 

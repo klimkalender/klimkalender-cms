@@ -14,7 +14,7 @@ export function EventsTable({ events, venues, tags, organizers }: { events: Even
   const [opened, { open, close }] = useDisclosure(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [eventsList, setEventsList] = useState<Event[]>(events);
-  const [activeTab, setActiveTab] = useState<string>('DRAFT');
+  const [activeTab, setActiveTab] = useState<string>('PUBLISHED');
   const columns = useMemo<MRT_ColumnDef<Event>[]>(
     () => [
       {

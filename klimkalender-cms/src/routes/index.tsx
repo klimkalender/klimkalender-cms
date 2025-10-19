@@ -20,6 +20,13 @@ export const Route = createFileRoute('/')({
           redirect: location.href,
         },
       })
+    }else{
+       throw redirect({
+        to: '/events',
+        search: {
+          redirect: location.href,
+        },
+      })
     }
   },
 })
@@ -39,6 +46,7 @@ function HomeComponent() {
     apikey: string,
   };
 
+  // dead code below - remove some day (has an uppy demo)
   useEffect(() => {
     console.log('Fetching files from Supabase storage...');
     supabase.storage.from('event-images').list().then(({ data, error }) => {

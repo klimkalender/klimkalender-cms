@@ -16,7 +16,6 @@ import { Route as AuthVenuesRouteImport } from './routes/_auth.venues'
 import { Route as AuthTagsRouteImport } from './routes/_auth.tags'
 import { Route as AuthOrganizersRouteImport } from './routes/_auth.organizers'
 import { Route as AuthEventsRouteImport } from './routes/_auth.events'
-import { Route as AuthDashboardRouteImport } from './routes/_auth.dashboard'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -52,16 +51,10 @@ const AuthEventsRoute = AuthEventsRouteImport.update({
   path: '/events',
   getParentRoute: () => AuthRoute,
 } as any)
-const AuthDashboardRoute = AuthDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AuthRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/dashboard': typeof AuthDashboardRoute
   '/events': typeof AuthEventsRoute
   '/organizers': typeof AuthOrganizersRoute
   '/tags': typeof AuthTagsRoute
@@ -70,7 +63,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/dashboard': typeof AuthDashboardRoute
   '/events': typeof AuthEventsRoute
   '/organizers': typeof AuthOrganizersRoute
   '/tags': typeof AuthTagsRoute
@@ -81,7 +73,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteWithChildren
   '/login': typeof LoginRoute
-  '/_auth/dashboard': typeof AuthDashboardRoute
   '/_auth/events': typeof AuthEventsRoute
   '/_auth/organizers': typeof AuthOrganizersRoute
   '/_auth/tags': typeof AuthTagsRoute
@@ -89,29 +80,14 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/login'
-    | '/dashboard'
-    | '/events'
-    | '/organizers'
-    | '/tags'
-    | '/venues'
+  fullPaths: '/' | '/login' | '/events' | '/organizers' | '/tags' | '/venues'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/login'
-    | '/dashboard'
-    | '/events'
-    | '/organizers'
-    | '/tags'
-    | '/venues'
+  to: '/' | '/login' | '/events' | '/organizers' | '/tags' | '/venues'
   id:
     | '__root__'
     | '/'
     | '/_auth'
     | '/login'
-    | '/_auth/dashboard'
     | '/_auth/events'
     | '/_auth/organizers'
     | '/_auth/tags'
@@ -175,18 +151,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthEventsRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_auth/dashboard': {
-      id: '/_auth/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthDashboardRouteImport
-      parentRoute: typeof AuthRoute
-    }
   }
 }
 
 interface AuthRouteChildren {
-  AuthDashboardRoute: typeof AuthDashboardRoute
   AuthEventsRoute: typeof AuthEventsRoute
   AuthOrganizersRoute: typeof AuthOrganizersRoute
   AuthTagsRoute: typeof AuthTagsRoute
@@ -194,7 +162,6 @@ interface AuthRouteChildren {
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
-  AuthDashboardRoute: AuthDashboardRoute,
   AuthEventsRoute: AuthEventsRoute,
   AuthOrganizersRoute: AuthOrganizersRoute,
   AuthTagsRoute: AuthTagsRoute,
