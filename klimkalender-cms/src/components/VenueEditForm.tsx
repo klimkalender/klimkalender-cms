@@ -77,7 +77,7 @@ export function VenueEditForm({ venue, onSave, onCancel, onDelete }: VenueEditFo
   // Upload image to Supabase storage
   const uploadImage = async (file: File): Promise<string | null> => {
     const fileBaseName = file.name.split('/').pop();
-    const fileName = `${Math.random().toString(36).substring(7)}.${fileBaseName}`;
+    const fileName = `${Math.random().toString(36).substring(2,6)}.${fileBaseName}`;
     
     const { data, error } = await supabase.storage
       .from('venue-images')

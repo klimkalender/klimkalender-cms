@@ -17,12 +17,11 @@ enum EventStatus {
 
 model Event {
   id               Int         @id @default(autoincrement())
-  externalId       String      @unique @map("external_id")
+  externalId       String?     @unique @map("external_id")
   title            String
   status           EventStatus @default(DRAFT) @map("status")
-  description      String?     @map("description")
-  startDateTime    DateTime    @map("start_date_time")
-  endDateTime      DateTime    @map("end_date_time")
+  startDateTime    DateTime    @map("start_date_time") @db.Timestamptz(3)
+  endDateTime      DateTime    @map("end_date_time") @db.Timestamptz(3)
   isFullDay        Boolean     @default(false) @map("is_full_day")
   timeZone         String      @default("Europe/Amsterdam") @map("time_zone")
   venueId          Int?        @map("venue_id")
@@ -32,6 +31,8 @@ model Event {
   featuredImageRef String?     @map("featured_image_ref")
   remarks          String?     @map("remarks")
   link             String?     @map("link")
+  createdAt        DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   venue     Venue?     @relation(fields: [venueId], references: [id])
   organizer Organizer? @relation(fields: [organizerId], references: [id])
@@ -61,9 +62,11 @@ model EventTag {
 }
 
 model Organizer {
-  id       Int     @id @default(autoincrement())
-  name     String  @unique
-  imageRef String? @map("image_ref")
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  imageRef  String?  @map("image_ref")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   events Event[]
 
@@ -71,11 +74,13 @@ model Organizer {
 }
 
 model Venue {
-  id       Int     @id @default(autoincrement())
-  name     String  @unique
-  imageRef String? @map("image_ref")
-  lat      Float?
-  long     Float?
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  imageRef  String?  @map("image_ref")
+  lat       Float?
+  long      Float?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   events Event[]
 

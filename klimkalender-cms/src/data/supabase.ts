@@ -4,9 +4,8 @@ import { createClient } from "@supabase/supabase-js";
 export const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
 
 export async function readEvents(setEvents: React.Dispatch<React.SetStateAction<{
-  description: string | null;
   end_date_time: string;
-  external_id: string;
+  external_id: string | null;
   featured: boolean | null;
   featured_image_ref: string | null;
   featured_text: string | null;
@@ -20,6 +19,8 @@ export async function readEvents(setEvents: React.Dispatch<React.SetStateAction<
   time_zone: string;
   title: string;
   venue_id: number | null;
+  created_at: string;
+  updated_at: string;
 }[] | null>>
 ) {
   const { data, error } = await supabase.from("events").select().order("start_date_time", { ascending: true });
@@ -34,6 +35,8 @@ export async function readVenues(setVenues: React.Dispatch<React.SetStateAction<
   lat: number | null;
   long: number | null;
   name: string;
+  created_at: string;
+  updated_at: string;
 }[] | null>>) {
   const { data, error } = await supabase.from("venues").select().order("name", { ascending: true });
   if (data) setVenues(data);
@@ -44,6 +47,8 @@ export async function readOrganizers(setOrganizers: React.Dispatch<React.SetStat
   id: number;
   image_ref: string | null;
   name: string;
+  created_at: string;
+  updated_at: string;
 }[] | null>>) {
   const { data, error } = await supabase.from("organizers").select().order("name", { ascending: true });
   if (data) setOrganizers(data);

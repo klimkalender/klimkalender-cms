@@ -16,6 +16,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import type { Event, Venue, Organizer } from '@/types';
 import { supabase } from '@/data/supabase';
+import { DateTime } from 'luxon';
 
 interface EventEditFormProps {
   event?: Event | null;
@@ -26,16 +27,30 @@ interface EventEditFormProps {
   onDelete?: (eventId: number) => void;
 }
 
+function formatDateInputTime(tzDate: Date) {
+  if (!tzDate) return undefined;
+  const pad = (n: number) => n.toString().padStart(2, '0');
+  return `${tzDate.getFullYear()}-${pad(tzDate.getMonth() + 1)}-${pad(tzDate.getDate())}T${pad(tzDate.getHours())}:${pad(tzDate.getMinutes())}`;
+}
+
 export function EventEditForm({ event, venues, organizers, onSave, onCancel, onDelete }: EventEditFormProps) {
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState(event?.title || '');
-  const [description, setDescription] = useState(event?.description || '');
-  const [startDateTime, setStartDateTime] = useState(
-    event?.start_date_time ? new Date(event.start_date_time) : new Date()
-  );
-  const [endDateTime, setEndDateTime] = useState(
-    event?.end_date_time ? new Date(event.end_date_time) : new Date()
-  );
+
+  const [startDateTime, setStartDateTime] = useState(() => {
+    if (event?.start_date_time) {
+      const tz = event.time_zone || 'Europe/Amsterdam';
+      return DateTime.fromISO(event.start_date_time).setZone(tz).toJSDate();
+    }
+    return null;
+  });
+  const [endDateTime, setEndDateTime] = useState(() => {
+    if (event?.end_date_time) {
+      const tz = event.time_zone || 'Europe/Amsterdam';
+      return DateTime.fromISO(event.end_date_time).setZone(tz).toJSDate();
+    }
+    return null;
+  });
   const [timeZone, setTimeZone] = useState(event?.time_zone || 'Europe/Amsterdam');
   const [isFullDay, setIsFullDay] = useState(event?.is_full_day || false);
   const [venueId, setVenueId] = useState<string | null>(
@@ -49,7 +64,6 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
   const [featuredText, setFeaturedText] = useState(event?.featured_text || '');
   const [link, setLink] = useState(event?.link || '');
   const [remarks, setRemarks] = useState(event?.remarks || '');
-  const [externalId, setExternalId] = useState(event?.external_id || '');
 
   // Image handling
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -68,21 +82,22 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
       newErrors.venueId = 'Venue is required';
     }
 
-    if(featured && !imageFile && !event?.featured_image_ref) {
+    if (featured && !imageFile && !event?.featured_image_ref) {
       newErrors.featuredImage = 'Featured image is required for featured events';
+    }
+
+    if (featured && !featuredText) {
+      newErrors.featuredText = 'Featured text is required for featured events';
     }
 
     if (title.trim().length < 2) {
       newErrors.title = 'Title must be at least 2 characters';
     }
 
-    if (endDateTime <= startDateTime) {
+    if (endDateTime && startDateTime && endDateTime <= startDateTime) {
       newErrors.endDateTime = 'End date must be after start date';
     }
 
-    if (!externalId.trim()) {
-      newErrors.externalId = 'External ID is required';
-    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -113,7 +128,7 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
   // Upload image to Supabase storage
   const uploadImage = async (file: File): Promise<string | null> => {
     const fileExt = file.name.split('.').pop();
-    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 6)}.${fileExt}`;
 
     const { data, error } = await supabase.storage
       .from('event-images')
@@ -168,11 +183,18 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
         }
       }
 
+
+      let resStartDateTime = startDateTime;
+      let resEndDateTime = endDateTime;
+      if (isFullDay) {
+        startDateTime?.setHours(0, 0, 0, 0);
+        endDateTime?.setHours(23, 59, 59, 999);
+      }
+
       const eventData = {
         title: title.trim(),
-        description: description.trim() || null,
-        start_date_time: startDateTime.toISOString(),
-        end_date_time: endDateTime.toISOString(),
+        start_date_time: resStartDateTime?.toISOString(),
+        end_date_time: resEndDateTime?.toISOString(),
         time_zone: timeZone,
         is_full_day: isFullDay,
         venue_id: venueId ? parseInt(venueId) : null,
@@ -183,7 +205,6 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
         featured_image_ref: featuredImageRef,
         link: link.trim() || null,
         remarks: remarks.trim() || null,
-        external_id: externalId.trim(),
       };
 
       let result;
@@ -311,20 +332,12 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
             error={errors.title}
           />
 
-          <Textarea
-            label="Description"
-            placeholder="Enter event description"
-            value={description}
-            onChange={(event) => setDescription(event.currentTarget.value)}
-            minRows={3}
-          />
-
           <Group grow>
             <div>
               <Text size="sm" weight={500} mb={5}>Start Date & Time *</Text>
               <input
                 type="datetime-local"
-                value={startDateTime.toISOString().slice(0, 16)}
+                value={formatDateInputTime(startDateTime!)}
                 onChange={(e) => setStartDateTime(new Date(e.target.value))}
                 required
                 style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
@@ -334,7 +347,7 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
               <Text size="sm" weight={500} mb={5}>End Date & Time *</Text>
               <input
                 type="datetime-local"
-                value={endDateTime.toISOString().slice(0, 16)}
+                value={formatDateInputTime(endDateTime!)}
                 onChange={(e) => setEndDateTime(new Date(e.target.value))}
                 required
                 style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
@@ -411,6 +424,7 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
                 value={featuredText}
                 onChange={(event) => setFeaturedText(event.currentTarget.value)}
                 minRows={2}
+                error={errors.featuredText}
               />
               <div>
                 <Text size="sm" weight={500} mb="xs">
@@ -443,7 +457,7 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
                       height={150}
                       fit="cover"
                       radius="md"
-                      
+
                     />
                   </div>
                 )}

@@ -46,9 +46,9 @@ export type Database = {
       }
       events: {
         Row: {
-          description: string | null
+          created_at: string
           end_date_time: string
-          external_id: string
+          external_id: string | null
           featured: boolean | null
           featured_image_ref: string | null
           featured_text: string | null
@@ -61,12 +61,13 @@ export type Database = {
           status: Database["public"]["Enums"]["EventStatus"]
           time_zone: string
           title: string
+          updated_at: string
           venue_id: number | null
         }
         Insert: {
-          description?: string | null
+          created_at?: string
           end_date_time: string
-          external_id: string
+          external_id?: string | null
           featured?: boolean | null
           featured_image_ref?: string | null
           featured_text?: string | null
@@ -79,12 +80,13 @@ export type Database = {
           status?: Database["public"]["Enums"]["EventStatus"]
           time_zone?: string
           title: string
+          updated_at: string
           venue_id?: number | null
         }
         Update: {
-          description?: string | null
+          created_at?: string
           end_date_time?: string
-          external_id?: string
+          external_id?: string | null
           featured?: boolean | null
           featured_image_ref?: string | null
           featured_text?: string | null
@@ -97,6 +99,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["EventStatus"]
           time_zone?: string
           title?: string
+          updated_at?: string
           venue_id?: number | null
         }
         Relationships: [
@@ -118,19 +121,25 @@ export type Database = {
       }
       organizers: {
         Row: {
+          created_at: string
           id: number
           image_ref: string | null
           name: string
+          updated_at: string
         }
         Insert: {
+          created_at?: string
           id?: number
           image_ref?: string | null
           name: string
+          updated_at: string
         }
         Update: {
+          created_at?: string
           id?: number
           image_ref?: string | null
           name?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -151,25 +160,31 @@ export type Database = {
       }
       venues: {
         Row: {
+          created_at: string
           id: number
           image_ref: string | null
           lat: number | null
           long: number | null
           name: string
+          updated_at: string
         }
         Insert: {
+          created_at?: string
           id?: number
           image_ref?: string | null
           lat?: number | null
           long?: number | null
           name: string
+          updated_at: string
         }
         Update: {
+          created_at?: string
           id?: number
           image_ref?: string | null
           lat?: number | null
           long?: number | null
           name?: string
+          updated_at?: string
         }
         Relationships: []
       }
