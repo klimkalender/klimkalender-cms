@@ -7,7 +7,7 @@ import {
   type MRT_ColumnDef, //if using TypeScript (optional, but recommended)
 } from 'mantine-react-table';
 import { useDisclosure } from '@mantine/hooks';
-import { supabase } from '@/data/supabase';
+import { getImageTag } from '@/data/supabase';
 import { VenueEditForm } from './VenueEditForm';
 
 export function VenuesTable({ venues }: { venues: Venue[] }) {
@@ -38,19 +38,6 @@ export function VenuesTable({ venues }: { venues: Venue[] }) {
     [],
   );
 
-  function getImageUrl(imageRef: string | null, bucket: string) {
-    if (!imageRef) return null;
-    const { data } = supabase.storage.from(bucket).getPublicUrl(imageRef);
-    console.dir(data);  
-    return data?.publicUrl;
-  }
-
-  function getImageTag(imageRef: string | null, bucket: string) {
-    console.log(`${imageRef}, ${bucket}`);
-    const url = getImageUrl(imageRef, bucket);
-    if (!url) return '-';
-    return <img src={url} alt="Venue Image" style={{ maxWidth: '20px', maxHeight: '20px' }} />;
-  }
 
   const handleRowClick = (venue: Venue) => {
     setSelectedVenue(venue);

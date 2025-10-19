@@ -55,10 +55,10 @@ export async function readOrganizers(setOrganizers: React.Dispatch<React.SetStat
   console.dir(data);
   if (error) console.error("Error fetching organizers:", error);
 }
-  
+
 export async function readTags(setTags: React.Dispatch<React.SetStateAction<{
-    id: number;
-    name: string;
+  id: number;
+  name: string;
 }[] | null>>) {
   const { data, error } = await supabase.from("tags").select().order("name", { ascending: true });
   if (data) setTags(data);
@@ -66,8 +66,8 @@ export async function readTags(setTags: React.Dispatch<React.SetStateAction<{
   if (error) console.error("Error fetching tags:", error);
 }
 
-export async function readTagsMap( setTags: React.Dispatch<React.SetStateAction<{
-    [id: string]: string[];
+export async function readTagsMap(setTags: React.Dispatch<React.SetStateAction<{
+  [id: string]: string[];
 } | null>>) {
   const { data, error } = await supabase.from("event_tags").select('event_id, tags (name)');
   if (data) {
@@ -90,4 +90,18 @@ export async function readTagsMap( setTags: React.Dispatch<React.SetStateAction<
     setTags(tagsMap);
   }
   if (error) console.error("Error fetching tags:", error);
+}
+
+export function getImageUrl(imageRef: string | null, bucket: string) {
+  if (!imageRef) return null;
+  const { data } = supabase.storage.from(bucket).getPublicUrl(imageRef);
+  console.dir(data);
+  return data?.publicUrl;
+}
+
+export function getImageTag(imageRef: string | null, bucket: string) {
+  console.log(`${imageRef}, ${bucket}`);
+  const url = getImageUrl(imageRef, bucket);
+  if (!url) return '-';
+  return <img src={url} alt="Venue Image" style={{ maxWidth: '20px', maxHeight: '20px' }} />;
 }

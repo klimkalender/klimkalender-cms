@@ -7,6 +7,7 @@ import {
   type MRT_ColumnDef, //if using TypeScript (optional, but recommended)
 } from 'mantine-react-table';
 import { useDisclosure } from '@mantine/hooks';
+import { getImageTag } from '@/data/supabase';
 
 export function OrganizersTable({ organizers }: { organizers: Organizer[] }) {
 
@@ -19,20 +20,25 @@ export function OrganizersTable({ organizers }: { organizers: Organizer[] }) {
         accessorKey: 'name',
         id: 'name', //id required if you use accessorFn instead of accessorKey
       },
+      {
+        header: 'Image',
+        accessorFn: (originalRow) => getImageTag(originalRow.image_ref, 'organizer-images'),
+        id: 'image',
+      }
     ],
     [],
   );
 
   const table = useMantineReactTable({
     columns,
-    data: organizers, 
+    data: organizers,
     enableGlobalFilter: true,
     enableFilters: true,
     positionGlobalFilter: 'left',
     enableColumnFilters: false,
     enableDensityToggle: false,
     enableFullScreenToggle: false,
-    initialState: { density: 'xs', pagination: { pageSize: 10, pageIndex: 0 } , showGlobalFilter: true,},
+    initialState: { density: 'xs', pagination: { pageSize: 10, pageIndex: 0 }, showGlobalFilter: true, },
     sortDescFirst: true,
     mantineTableBodyRowProps: ({ row }) => ({
       onClick: (event) => {
