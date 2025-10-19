@@ -99,6 +99,20 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
       newErrors.endDateTime = 'End date must be after start date';
     }
 
+    if (!link.trim()) {
+      newErrors.link = 'Event link is required';
+    } else {
+      // Validate URL format
+      try {
+        const url = new URL(link.trim());
+        // Check if it's http or https protocol
+        if (!['http:', 'https:'].includes(url.protocol)) {
+          newErrors.link = 'Link must be a valid HTTP or HTTPS URL';
+        }
+      } catch (error) {
+        newErrors.link = 'Please enter a valid URL (e.g., https://example.com)';
+      }
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -204,7 +218,7 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
         featured: featured,
         featured_text: featuredText.trim() || null,
         featured_image_ref: featuredImageRef,
-        link: link.trim() || null,
+        link: link.trim(),
         remarks: remarks.trim() || null,
       };
 
@@ -553,9 +567,11 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
 
           <TextInput
             label="Link"
-            placeholder="Enter event link (optional)"
+            placeholder="Enter event link"
+            required
             value={link}
             onChange={(event) => setLink(event.currentTarget.value)}
+            error={errors.link}
           />
 
           <Textarea
