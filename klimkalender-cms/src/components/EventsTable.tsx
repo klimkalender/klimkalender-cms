@@ -78,6 +78,8 @@ export function EventsTable({ events, venues, tags, organizers }: { events: Even
       },
       sx: {
         cursor: 'pointer', //you might want to change the cursor too when adding an onClick
+        fontWeight: row.original.featured ? 'bold' : undefined,
+        color: row.original.featured ? 'darkblue' : undefined,
       },
     }),
   });
