@@ -108,12 +108,12 @@ export function EventEditForm({ event, venues, allTags, currentTags, organizers,
       newErrors.endDateTime = 'End date must be after start date';
     }
 
-    if(!endDateTime) {
+    if (!endDateTime) {
       newErrors.endDateTime = 'End date is required';
     }
 
     console.log(startDateTime);
-    if(!startDateTime) {
+    if (!startDateTime) {
       newErrors.startDateTime = 'Start date is required';
     }
 
@@ -192,19 +192,28 @@ export function EventEditForm({ event, venues, allTags, currentTags, organizers,
   // Helper function to manage event tags
   const manageEventTags = async (eventId: number, newTagIds: string[]) => {
     try {
-      // First, delete existing tags for this event
-      const deleteResult = await supabase
-        .from('event_tags')
-        .delete()
-        .eq('event_id', eventId);
+      const originalTagIds = currentTags.map(tag => tag.id.toString());
 
-      if (deleteResult.error) {
-        throw deleteResult.error;
+      // Find tag IDs that are in newTagIds but not in originalTagIds
+      const addedTagIds = newTagIds.filter(tagId => !originalTagIds.includes(tagId));
+      // Find tag IDs that are in originalTagIds but not in newTagIds
+      const removedTagIds = originalTagIds.filter(tagId => !newTagIds.includes(tagId));
+      if (removedTagIds.length > 0) {
+        const { error: removeError } = await supabase
+          .from('event_tags')
+          .delete()
+          .eq('event_id', eventId)
+          .in('tag_id', removedTagIds.map(id => parseInt(id)));
+
+        if (removeError) {
+          throw removeError;
+        }
+      } else {
+        console.log('No tags to remove');
       }
-
       // Then insert new tag relationships if any tags are selected
-      if (newTagIds.length > 0) {
-        const tagInserts = newTagIds.map(tagId => ({
+      if (addedTagIds.length > 0) {
+        const tagInserts = addedTagIds.map(tagId => ({
           event_id: eventId,
           tag_id: parseInt(tagId)
         }));
@@ -216,6 +225,8 @@ export function EventEditForm({ event, venues, allTags, currentTags, organizers,
         if (insertResult.error) {
           throw insertResult.error;
         }
+      } else {
+        console.log('No tags to add');
       }
     } catch (error) {
       console.error('Error managing event tags:', error);
@@ -325,9 +336,9 @@ export function EventEditForm({ event, venues, allTags, currentTags, organizers,
   // Handle publish action
   const handlePublish = async () => {
     if (!event?.id) return;
-    
+
     setLoading(true);
-    
+
     try {
       // Update event status to PUBLISHED
       const result = await supabase
@@ -369,12 +380,12 @@ export function EventEditForm({ event, venues, allTags, currentTags, organizers,
     if (!validateForm()) {
       return;
     }
-    
+
     setLoading(true);
-    
+
     try {
       let featuredImageRef = null;
-      
+
       // Handle image upload if a new image was selected
       if (imageFile) {
         const newImageRef = await uploadImage(imageFile);
@@ -507,12 +518,12 @@ export function EventEditForm({ event, venues, allTags, currentTags, organizers,
             <Text size="lg" weight={500}>
               {event?.id ? 'Edit Event' : 'Add Event'}
             </Text>
-            
+
             {/* Publish Button - show for existing events in draft status OR new events */}
             {((event?.id && status === 'DRAFT') || !event?.id) && (
-              <Button 
-                color="green" 
-                onClick={event?.id ? handlePublish : handlePublishNew} 
+              <Button
+                color="green"
+                onClick={event?.id ? handlePublish : handlePublishNew}
                 loading={loading}
                 leftIcon={<BookCheck />}
               >
@@ -574,13 +585,13 @@ export function EventEditForm({ event, venues, allTags, currentTags, organizers,
                 onChange={(event) => {
                   const isChecked = event.currentTarget.checked;
                   setIsFullDay(isChecked);
-                  
+
                   // When full day is toggled on, set times to 00:00 and 23:59
                   if (isChecked && startDateTime && endDateTime) {
                     const newStartDate = new Date(startDateTime);
                     newStartDate.setHours(0, 0, 0, 0); // Set to 00:00:00
                     setStartDateTime(newStartDate);
-                    
+
                     const newEndDate = new Date(endDateTime);
                     newEndDate.setHours(23, 59, 0, 0); // Set to 23:59:00
                     setEndDateTime(newEndDate);
