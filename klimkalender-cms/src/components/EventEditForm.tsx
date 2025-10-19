@@ -575,7 +575,7 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
           />
 
           <Textarea
-            label="Remarks"
+            label="Remarks (internal use only)"
             placeholder="Enter remarks (optional)"
             value={remarks}
             onChange={(event) => setRemarks(event.currentTarget.value)}

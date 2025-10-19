@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Event, Organizer, Venue } from '@/types';
-import { Drawer, Button, Group } from '@mantine/core';
+import { Drawer, Button, Group, Tabs } from '@mantine/core';
 import {
   MantineReactTable,
   useMantineReactTable,
@@ -14,6 +14,7 @@ export function EventsTable({ events, venues, tags, organizers }: { events: Even
   const [opened, { open, close }] = useDisclosure(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [eventsList, setEventsList] = useState<Event[]>(events);
+  const [activeTab, setActiveTab] = useState<string>('DRAFT');
   const columns = useMemo<MRT_ColumnDef<Event>[]>(
     () => [
       {
@@ -21,7 +22,7 @@ export function EventsTable({ events, venues, tags, organizers }: { events: Even
         sortingFn: (a, b) => sortByDate(a.original.start_date_time, b.original.start_date_time),
         accessorFn: (originalRow) => {
           if (!originalRow.is_full_day) {
-            return `${new Date(originalRow.start_date_time).toLocaleDateString()} ${new Date(originalRow.start_date_time).toLocaleTimeString().substring(0,5)}`;
+            return `${new Date(originalRow.start_date_time).toLocaleDateString()} ${new Date(originalRow.start_date_time).toLocaleTimeString().substring(0, 5)}`;
           }
           return new Date(originalRow.start_date_time).toLocaleDateString();
         },
@@ -38,6 +39,7 @@ export function EventsTable({ events, venues, tags, organizers }: { events: Even
       {
         header: 'Status',
         accessorKey: 'status', //simple recommended way to define a column
+        hidden: true,
       },
       {
         header: 'Venue',
@@ -53,7 +55,7 @@ export function EventsTable({ events, venues, tags, organizers }: { events: Even
         id: 'tags',
       }
       ,
-            {
+      {
         header: 'Featured',
         accessorFn: (originalRow) => originalRow.featured ? 'Yes' : 'No',
         id: 'featured',
@@ -105,16 +107,25 @@ export function EventsTable({ events, venues, tags, organizers }: { events: Even
     setSelectedEvent(null);
   };
 
+  useEffect(() => {
+    console.log('Active Tab:', activeTab);
+    // setEventsList(events.filter(e => e.status === activeTab));
+    table.setColumnFilters([
+      { id: 'status', value: activeTab }
+    ]);
+  }, [activeTab, events]);
+
   const table = useMantineReactTable({
     columns,
-    data: eventsList, 
+    data: eventsList,
     enableGlobalFilter: true,
     enableFilters: true,
     positionGlobalFilter: 'left',
     enableColumnFilters: false,
     enableDensityToggle: false,
+    enableFilterMatchHighlighting: true,
     enableFullScreenToggle: false,
-    initialState: { density: 'xs', pagination: { pageSize: 10, pageIndex: 0 } , showGlobalFilter: true,},
+    initialState: { density: 'xs', pagination: { pageSize: 10, pageIndex: 0 }, showGlobalFilter: true, },
     sortDescFirst: true,
     mantineTableBodyRowProps: ({ row }) => ({
       onClick: () => {
@@ -134,14 +145,21 @@ export function EventsTable({ events, venues, tags, organizers }: { events: Even
     <>
       <Group position="right" mb="md">
         <Button onClick={handleCreateNew}>
-        Add Event
+          Add Event
         </Button>
       </Group>
-      
+      <Tabs value={activeTab} onTabChange={(a) => setActiveTab(a || 'DRAFT')}>
+        <Tabs.List>
+          <Tabs.Tab value="DRAFT">Draft</Tabs.Tab>
+          <Tabs.Tab value="PUBLISHED">Published</Tabs.Tab>
+          <Tabs.Tab value="ARCHIVED">Archived</Tabs.Tab>
+        </Tabs.List>
+      </Tabs>
+
       <MantineReactTable table={table} />
-      
+
       <Drawer position="right" size="xl" opened={opened} onClose={close}>
-        <EventEditForm 
+        <EventEditForm
           event={selectedEvent}
           venues={venues}
           organizers={organizers}
