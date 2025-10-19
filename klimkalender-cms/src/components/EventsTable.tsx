@@ -7,6 +7,7 @@ import {
   type MRT_ColumnDef, //if using TypeScript (optional, but recommended)
 } from 'mantine-react-table';
 import { useDisclosure } from '@mantine/hooks';
+import { sortByDate } from '@/utils/sort-by-date';
 
 export default function App({ events, venues, tags, organizers }: { events: Event[], venues: Venue[], tags: { [id: string]: string[] }, organizers: Organizer[] }) {
 
@@ -26,7 +27,6 @@ export default function App({ events, venues, tags, organizers }: { events: Even
         mantineTableHeadCellProps: { sx: { color: 'green' } }, //custom props
         accessorFn: (originalRow) => <span dangerouslySetInnerHTML={{ __html: originalRow.title }} />, //alternate way
         id: 'title', //id required if you use accessorFn instead of accessorKey
-        // Header: <i style={{ color: 'red' }}>Title</i>, //optional custom markup
       },
       {
         header: 'Status',
@@ -83,9 +83,4 @@ export default function App({ events, venues, tags, organizers }: { events: Even
       {/* Drawer content */}
     </Drawer>
   </>;
-}
-function sortByDate(dateA: string | Date, dateB: string | Date): number {
-  const a = new Date(dateA).getTime();
-  const b = new Date(dateB).getTime();
-  return a - b;
 }
