@@ -568,7 +568,7 @@ export function EventEditForm({ event, venues, organizers, onSave, onCancel, onD
                 <Stack spacing="xs">
                   <Radio value="DRAFT" label="Draft" />
                   <Radio value="PUBLISHED" label="Published" />
-                  <Radio value="ARCHIVED" label="Archived" />
+                  {event?.id && <Radio value="ARCHIVED" label="Archived" />}
                 </Stack>
               </Radio.Group>
             </div>
