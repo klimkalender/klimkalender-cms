@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Upload, Loader2 } from 'lucide-react'
 import { Notification } from '@mantine/core'
-import { useAuth } from '@/auth'
 import { supabase } from '@/data/supabase'
 
 export default function PublishButton() {
