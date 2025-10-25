@@ -2,6 +2,8 @@ import { Link, useRouter, useNavigate } from '@tanstack/react-router'
 
 import { useState } from 'react'
 import { Menu, X, CalendarHeart, MapPinHouse, Landmark, Tag } from 'lucide-react'
+import { Modal, Button, Text, Group, Stack } from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
 import { useAuth } from '@/auth'
 import IconExit from '../icons/arrow-right-start-on-rectangle.svg?react'
 import PublishButton from './PublishButton'
@@ -9,18 +11,22 @@ import PublishButton from './PublishButton'
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
+  const [logoutModalOpened, { open: openLogoutModal, close: closeLogoutModal }] = useDisclosure(false)
   const auth = useAuth()
   const router = useRouter()
   const navigate = useNavigate()
 
-  const handleLogout = () => {
-    if (window.confirm('Are you sure you want to logout?')) {
-      auth.logout().then(() => {
-        router.invalidate().finally(() => {
-          navigate({ to: '/' })
-        })
+  const handleLogoutClick = () => {
+    openLogoutModal()
+  }
+
+  const confirmLogout = () => {
+    closeLogoutModal()
+    auth.logout().then(() => {
+      router.invalidate().finally(() => {
+        navigate({ to: '/' })
       })
-    }
+    })
   }
 
   return (
@@ -56,7 +62,7 @@ export default function Header() {
               <button
                 type="button"
                 className="hover:underline"
-                onClick={handleLogout}
+                onClick={handleLogoutClick}
               >
                 <IconExit />
               </button>
@@ -133,6 +139,29 @@ export default function Header() {
           </Link>
         </nav>
       </aside>
+
+      {/* Logout Confirmation Modal */}
+      <Modal
+        opened={logoutModalOpened}
+        onClose={closeLogoutModal}
+        title="Confirm Logout"
+        size="sm"
+      >
+        <Stack spacing="md">
+          <Text>
+            Are you sure you want to logout?
+          </Text>
+
+          <Group position="right" spacing="sm">
+            <Button variant="light" onClick={closeLogoutModal}>
+              Cancel
+            </Button>
+            <Button color="red" onClick={confirmLogout}>
+              Logout
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
     </>
   )
 }
