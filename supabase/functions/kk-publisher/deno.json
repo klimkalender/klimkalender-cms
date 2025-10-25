@@ -1,0 +1,7 @@
+{
+  "imports": {
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2",
+    "@octokit/rest": "https://esm.sh/@octokit/rest",
+    "base64": "https://deno.land/std@0.203.0/encoding/base64.ts"
+  }
+}
