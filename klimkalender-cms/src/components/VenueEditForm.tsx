@@ -2,7 +2,6 @@ import { useState } from 'react';
 import {
   Button,
   TextInput,
-  Textarea,
   NumberInput,
   Group,
   Stack,
