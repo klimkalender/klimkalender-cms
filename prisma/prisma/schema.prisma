@@ -79,7 +79,10 @@ model Venue {
   imageRef    String?  @map("image_ref")
   lat         Float?
   long        Float?
-  fullAddress String?  @map("full_address")
+  address     String?  @map("address")
+  postalCode  String?  @map("postal_code")
+  city        String?
+  country     String?
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
 

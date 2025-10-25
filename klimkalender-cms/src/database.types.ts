@@ -160,33 +160,42 @@ export type Database = {
       }
       venues: {
         Row: {
+          address: string | null
+          city: string | null
+          country: string | null
           created_at: string
-          full_address: string | null
           id: number
           image_ref: string | null
           lat: number | null
           long: number | null
           name: string
+          postal_code: string | null
           updated_at: string
         }
         Insert: {
+          address?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string
-          full_address?: string | null
           id?: number
           image_ref?: string | null
           lat?: number | null
           long?: number | null
           name: string
+          postal_code?: string | null
           updated_at: string
         }
         Update: {
+          address?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string
-          full_address?: string | null
           id?: number
           image_ref?: string | null
           lat?: number | null
           long?: number | null
           name?: string
+          postal_code?: string | null
           updated_at?: string
         }
         Relationships: []

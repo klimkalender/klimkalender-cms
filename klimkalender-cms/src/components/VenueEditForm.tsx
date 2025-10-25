@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   Button,
   TextInput,
+  Textarea,
   NumberInput,
   Group,
   Stack,
@@ -24,6 +25,10 @@ interface VenueEditFormProps {
 export function VenueEditForm({ venue, onSave, onCancel, onDelete }: VenueEditFormProps) {
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState(venue?.name || '');
+  const [address, setAddress] = useState(venue?.address || '');
+  const [city, setCity] = useState(venue?.city || '');
+  const [country, setCountry] = useState(venue?.country || '');
+  const [postalCode, setPostalCode] = useState(venue?.postal_code || '');
   const [lat, setLat] = useState<number | undefined>(venue?.lat || undefined);
   const [long, setLong] = useState<number | undefined>(venue?.long || undefined);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -134,6 +139,10 @@ export function VenueEditForm({ venue, onSave, onCancel, onDelete }: VenueEditFo
 
       const venueData = {
         name: name.trim(),
+        address: address.trim() || null,
+        city: city.trim() || null,
+        country: country.trim() || null,
+        postal_code: postalCode.trim() || null,
         lat: lat || null,
         long: long || null,
         image_ref: imageRef,
@@ -246,6 +255,37 @@ export function VenueEditForm({ venue, onSave, onCancel, onDelete }: VenueEditFo
           onChange={(event) => setName(event.currentTarget.value)}
           error={errors.name}
         />
+
+        <TextInput
+          label="Address"
+          placeholder="Enter street address"
+          value={address}
+          onChange={(event) => setAddress(event.currentTarget.value)}
+        />
+
+        <Group grow>
+          <TextInput
+            label="City"
+            placeholder="Enter city"
+            value={city}
+            onChange={(event) => setCity(event.currentTarget.value)}
+          />
+          <TextInput
+            label="Postal Code"
+            placeholder="Enter postal code"
+            value={postalCode}
+            onChange={(event) => setPostalCode(event.currentTarget.value)}
+          />
+        </Group>
+
+        <Group grow>
+          <TextInput
+            label="Country"
+            placeholder="Enter country"
+            value={country}
+            onChange={(event) => setCountry(event.currentTarget.value)}
+          />
+        </Group>
 
         <Group grow>
           <NumberInput
