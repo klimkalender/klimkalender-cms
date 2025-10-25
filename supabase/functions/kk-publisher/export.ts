@@ -35,7 +35,7 @@ export async function generateExport(supabase: SupabaseClient) {
         venue_id,
         created_at,
         updated_at,
-        venue: venues (id, name, image_ref, full_address),
+        venue: venues (id, name, image_ref, address, postal_code, city, country),
         organizer: organizers (id, name, image_ref),
         tags: event_tags (tag_id, tags!inner (name) )
       `)
@@ -82,6 +82,12 @@ export async function generateExport(supabase: SupabaseClient) {
     }
     const featured = event.featured || false;
 
+    let venueName = (event.venue as any)?.name || "N/A";
+    const venueCity = (event.venue as any)?.city;
+    if (venueCity && !venueName.toLowerCase().includes(venueCity.toLowerCase())) {
+      venueName = `${venueName}, ${venueCity}`;
+    }
+
     exportedEvents.push({
       id: event.external_id || event.id,
       title: event.title,
@@ -89,7 +95,7 @@ export async function generateExport(supabase: SupabaseClient) {
       startTimeUtc: event.start_date_time,
       endTimeUtc: event.end_date_time,
       timezone: event.time_zone,
-      venueName: (event.venue as any).name,
+      venueName: venueName,
       venueImage: venueImageUrl || "",
       venueAddress: (event.venue as any).full_address,
       link: event.link,
