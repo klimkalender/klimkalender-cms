@@ -200,7 +200,7 @@ export async function executeExport(
       const imagePath = repoImageMap[imageName];
       console.log(`Image ${imageName} not used anymore, deleting from repo`);
       filesToDelete.push({
-        path: `${baseDirectory}${IMAGE_DIRECTORY_IN_REPO}/${imagePath}`,
+        path: imagePath,
         content: null,
       });
     }
