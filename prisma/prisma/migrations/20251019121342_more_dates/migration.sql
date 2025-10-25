@@ -15,7 +15,9 @@ ADD COLUMN     "updated_at" TIMESTAMPTZ(3) NOT NULL;
 
 
 CREATE OR REPLACE FUNCTION updated_at_trigger() RETURNS trigger
-   LANGUAGE plpgsql AS
+   LANGUAGE plpgsql
+SET search_path = public, pg_temp
+AS 
 $$BEGIN
    NEW.updated_at := current_timestamp;
    RETURN NEW;
