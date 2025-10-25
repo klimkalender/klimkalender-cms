@@ -1,13 +1,15 @@
 import { Link, useRouter, useNavigate } from '@tanstack/react-router'
 
 import { useState } from 'react'
-import { Menu, X, CalendarHeart, MapPinHouse, Landmark, Tag } from 'lucide-react'
+import { Menu, X, CalendarHeart, MapPinHouse, Landmark, Tag, Upload, Loader2 } from 'lucide-react'
 import { useAuth } from '@/auth'
 import IconExit from '../icons/arrow-right-start-on-rectangle.svg?react'
+import { supabase } from '@/data/supabase'
 
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
+  const [isPublishing, setIsPublishing] = useState(false)
   const auth = useAuth()
   const router = useRouter()
   const navigate = useNavigate()
@@ -19,6 +21,37 @@ export default function Header() {
           navigate({ to: '/' })
         })
       })
+    }
+  }
+
+  const handlePublish = async () => {
+    const session = await supabase.auth.getSession()
+    const accessToken = session.data.session?.access_token;
+    console.log(`Publishing with token: |Bearer ${accessToken}|...`)
+    console.dir(auth) 
+
+    setIsPublishing(true)
+    
+    try {                        
+      const response = await fetch('https://zrshjxlfodmuulctapbw.supabase.co/functions/v1/kk-publisher', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (response.ok) {
+        alert('Published successfully!')
+      } else {
+        const errorText = await response.text()
+        alert(`Publish failed: ${errorText}`)
+      }
+    } catch (error) {
+      console.error('Publish error:', error)
+      alert(`Publish failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    } finally {
+      setIsPublishing(false)
     }
   }
 
@@ -45,11 +78,25 @@ export default function Header() {
         <div className="ml-4 text-2xl font-bold text-black">
           CMS
         </div>
-        <div className="ml-auto text-black align-right flex items-center gap-1">
+        <div className="ml-auto text-black align-right flex items-center gap-3">
           {auth.isAuthenticated ? (
-            <><span className="text-sm">
-              <strong>{auth.user?.user?.email}</strong>
-            </span>
+            <>
+              <button
+                type="button"
+                onClick={handlePublish}
+                disabled={isPublishing}
+                className="flex items-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {isPublishing ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  <Upload size={16} />
+                )}
+                {isPublishing ? 'Publishing...' : 'Publish'}
+              </button>
+              <span className="text-sm">
+                <strong>{auth.user?.user?.email}</strong>
+              </span>
               <button
                 type="button"
                 className="hover:underline"
