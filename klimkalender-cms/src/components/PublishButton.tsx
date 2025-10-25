@@ -7,13 +7,10 @@ import { supabase } from '@/data/supabase'
 export default function PublishButton() {
   const [isPublishing, setIsPublishing] = useState(false)
   const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null)
-  const auth = useAuth()
 
   const handlePublish = async () => {
     const session = await supabase.auth.getSession()
     const accessToken = session.data.session?.access_token;
-    console.log(`Publishing with token: |Bearer ${accessToken}|...`)
-    console.dir(auth)
 
     setIsPublishing(true)
 
@@ -73,7 +70,8 @@ export default function PublishButton() {
           style={{
             position: 'fixed',
             top: 20,
-            right: 20,
+            left: '50%',
+            transform: 'translateX(-50%)',
             zIndex: 1000,
             minWidth: 300
           }}
