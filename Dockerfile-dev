@@ -14,5 +14,7 @@ RUN mkdir -p \
   /workspace/klimkalender-cms/node_modules
 
 USER node
+
+RUN curl -fsSL https://deno.land/install.sh | sh
 RUN touch  /home/node/.bashrc && echo "source /usr/share/bash-completion/completions/git" >> /home/node/.bashrc
 ENV SHELL /bin/bash

@@ -70,7 +70,7 @@
   "remoteUser": "node",
   "workspaceFolder": "/workspace",
   "remoteEnv": {
-    "PATH": "${containerEnv:PATH}:/workspace/node_modules/.bin:/workspace/prisma/node_modules/.bin:/workspace/klimkalender-cms/node_modules/.bin",
+    "PATH": "${containerEnv:PATH}:/workspace/node_modules/.bin:/workspace/prisma/node_modules/.bin:/workspace/klimkalender-cms/node_modules/.bin:/home/node/.deno/bin",
     "EDITOR": "nano",
     "AWS_PROFILE": "rocsys-int",
     "DATABASE_URL": "postgres://root:root@db:5432/rocsyscloud"

@@ -25,7 +25,7 @@ export default function PublishButton() {
       if (response.ok) {
         setNotification({
           type: 'success',
-          message: 'Published successfully!'
+          message: 'Published successfully! (it can take a few minutes until changes are visible)'
         })
       } else {
         const errorText = await response.text()
