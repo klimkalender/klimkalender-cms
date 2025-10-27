@@ -1,5 +1,5 @@
 import winston from 'winston';
-import * as cheerio from 'cheerio';
+import { parse } from 'node-html-parser';
 import axios from 'axios';
 import { Bot } from '../Bot.ts';
 import { CompData, Classification, EventCategory } from '../CompData.ts';
@@ -61,30 +61,30 @@ export class WasBot implements Bot {
     private async processEventsPage(page: WasPage): Promise<CompData[]> {
         const eventsFound: CompData[] = [];
 
-        this.logger.info(`Scraping WAS ${page.type}`);
+        this.logger.info(`cxScraping WAS ${page.type}`);
 
         try {
             const response = await axios.get(page.eventPageUrl);
-            const $ = cheerio.load(response.data);
+            const root = parse(response.data);
             const urlInfo = new URL(page.eventPageUrl);
             const baseUrl = `${urlInfo.protocol}//${urlInfo.host}`;
 
             // Find event containers (this is a simplified version)
-            for (const eventDiv of $(`.uitslagen-wrapper .${page.categoryId}`)) {
+            const eventDivs = root.querySelectorAll(`.uitslagen-wrapper .${page.categoryId}`);
+            for (const eventDiv of eventDivs) {
                 try {
-                    const $eventDiv = $(eventDiv);
                     const eventData = new CompData();
 
                     // Extract event name
-                    const nameElement = $eventDiv.find('.naam').first();
-                    if (nameElement.length) {
-                        eventData.eventName = nameElement.text().trim();
+                    const nameElement = eventDiv.querySelector('.naam');
+                    if (nameElement) {
+                        eventData.eventName = nameElement.text.trim();
                     }
 
                     // Extract date
-                    const dateElement = $eventDiv.find('.date, .event-date, .datum').first();
-                    if (dateElement.length) {
-                        const dateText = dateElement.text().trim();
+                    const dateElement = eventDiv.querySelector('.date, .event-date, .datum');
+                    if (dateElement) {
+                        const dateText = dateElement.text.trim();
                         try {
                             eventData.eventDate = DateTime.fromFormat(dateText, 'dd-MM-yyyy', { zone: 'Europe/Amsterdam' }).toJSDate();
                             if (isNaN(eventData.eventDate.getTime())) {
@@ -97,9 +97,9 @@ export class WasBot implements Bot {
                     }
 
                     // Extract venue/hall
-                    const venueElement = $eventDiv.find('.plaats').first();
-                    if (venueElement.length) {
-                        eventData.hall.name = venueElement.text().trim();
+                    const venueElement = eventDiv.querySelector('.plaats');
+                    if (venueElement) {
+                        eventData.hall.name = venueElement.text.trim();
                         if (eventData.hall.name.includes(',')) {
                             const parts = eventData.hall.name.split(',', 2);
                             eventData.hall.name = parts[0].trim();
@@ -107,9 +107,9 @@ export class WasBot implements Bot {
                     }
 
                     // Extract event URL
-                    const linkElement = $eventDiv.find('a').first();
-                    if (linkElement.length) {
-                        const href = linkElement.attr('href');
+                    const linkElement = eventDiv.querySelector('a');
+                    if (linkElement) {
+                        const href = linkElement.getAttribute('href');
                         if (href) {
                             eventData.eventUrl = href.startsWith('http') ? href : `${baseUrl}${href}`;
                         }
@@ -124,7 +124,7 @@ export class WasBot implements Bot {
                     eventData.classification = Classification.COMPETITION;
 
                     // Determine event category
-                    const eventText = (eventData.eventName + ' ' + $eventDiv.text()).toLowerCase();
+                    const eventText = (eventData.eventName + ' ' + eventDiv.text).toLowerCase();
                     if (eventText.includes('boulder')) {
                         eventData.eventCategory = EventCategory.BOULDER;
                     } else if (eventText.includes('lead') || eventText.includes('voorklim')) {
@@ -176,12 +176,12 @@ export class WasBot implements Bot {
             }
 
             const response = await axios.get(eventData.eventUrl);
-            const $ = cheerio.load(response.data);
+            const root = parse(response.data);
 
             // Extract image URL if available
-            const descriptionElement = $('.w-layout-blockcontainer').first();
-            if (descriptionElement.length) {
-                eventData.fullDescriptionHtml = descriptionElement.html() || '';
+            const descriptionElement = root.querySelector('.w-layout-blockcontainer');
+            if (descriptionElement) {
+                eventData.fullDescriptionHtml = descriptionElement.innerHTML || '';
             }
         } catch (error: any) {
             this.logger.error(`Failed to process event page ${eventData.eventUrl}: ${error.message}`);

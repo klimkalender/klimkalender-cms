@@ -1,5 +1,5 @@
 import winston from 'winston';
-import * as cheerio from 'cheerio';
+import { parse } from 'node-html-parser';
 import axios from 'axios';
 import { Bot } from '../Bot.ts';
 import { CompData, Classification, EventCategory } from '../CompData.ts';
@@ -66,52 +66,53 @@ export class WerckStofBot implements Bot {
         try {
             const eventsPage = `${hall.eventPageUrl}events`;
             const response = await axios.get(eventsPage);
-            const $ = cheerio.load(response.data);
+            const root = parse(response.data);
 
-            const eventDivs = $('.eventItemBox.future');
+            const eventDivs = root.querySelectorAll('.eventItemBox.future');
 
-            eventDivs.each((_, eventDiv) => {
+            for (const eventDiv of eventDivs) {
                 try {
                     const eventData = new CompData();
-                    const $eventDiv = $(eventDiv);
 
                     // Extract unique ID
-                    const divId = $eventDiv.attr('id') || '';
+                    const divId = eventDiv.getAttribute('id') || '';
                     const [, id] = divId.split('_');
                     if (id) {
                         eventData.uniqueRemoteId = `${this.identifier()}:${hall.name.toLowerCase()}:${id}`;
                     }
 
                     // Image URL
-                    const imageDiv = $eventDiv.find('.eventLeftBox');
-                    if (imageDiv.length) {
-                        const style = imageDiv.attr('style') || '';
+                    const imageDiv = eventDiv.querySelector('.eventLeftBox');
+                    if (imageDiv) {
+                        const style = imageDiv.getAttribute('style') || '';
                         eventData.imageUrl = this.extractUrlFromStyle(style, hall);
                     } else {
                         this.logger.warn(`No image div found for event in hall ${hall.name}`);
                     }
 
                     // Event Name
-                    const eventNameNode = $eventDiv.find('h2');
-                    if (eventNameNode.length) {
-                        eventData.eventName = eventNameNode.text().trim();
+                    const eventNameNode = eventDiv.querySelector('h2');
+                    if (eventNameNode) {
+                        eventData.eventName = eventNameNode.text.trim();
                     }
 
                     // Event Date
-                    const dayText = $eventDiv.find('.eventdaynr').text();
-                    const monthText = $eventDiv.find('.eventdateMonth').text();
+                    const dayNode = eventDiv.querySelector('.eventdaynr');
+                    const monthNode = eventDiv.querySelector('.eventdateMonth');
+                    const dayText = dayNode ? dayNode.text : '';
+                    const monthText = monthNode ? monthNode.text : '';
                     eventData.eventDate = this.parseEventDateFromMiniContainer(dayText, monthText);
 
                     // Short Description
-                    const shortDescriptionNode = $eventDiv.find('.cSubTitle');
-                    if (shortDescriptionNode.length) {
-                        eventData.shortDescription = shortDescriptionNode.text().trim();
+                    const shortDescriptionNode = eventDiv.querySelector('.cSubTitle');
+                    if (shortDescriptionNode) {
+                        eventData.shortDescription = shortDescriptionNode.text.trim();
                     }
 
                     // Full Description
-                    const fullDescriptionNode = $eventDiv.find('.detailEventDescription');
-                    if (fullDescriptionNode.length) {
-                        eventData.fullDescriptionHtml = fullDescriptionNode.html()?.trim() || '';
+                    const fullDescriptionNode = eventDiv.querySelector('.detailEventDescription');
+                    if (fullDescriptionNode) {
+                        eventData.fullDescriptionHtml = fullDescriptionNode.innerHTML.trim() || '';
                     }
                     // Event URL
                     eventData.eventUrl = `${hall.eventPageUrl}events`;
@@ -134,7 +135,7 @@ export class WerckStofBot implements Bot {
                 } catch (error: any) {
                     this.logger.error(`Error processing event: ${error.message}`);
                 }
-            });
+            }
         } catch (error: any) {
             this.logger.error(`Failed to fetch events from ${hall.name}: ${error.message}`);
         }

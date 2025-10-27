@@ -1,5 +1,5 @@
 import winston from 'winston';
-import * as cheerio from 'cheerio';
+import { parse } from 'node-html-parser';
 import axios from 'axios';
 import { Bot } from '../Bot.ts';
 import { CompData, Classification } from '../CompData.ts';
@@ -34,17 +34,18 @@ export class GripBot implements Bot {
 
         try {
             const response = await axios.get(this.eventsUrl);
-            const $ = cheerio.load(response.data);
+            const root = parse(response.data);
 
             // Find all <a> tags containing the divs with the class "news card"
             const eventLinks: string[] = [];
-            $('.news').each((_, news) => {
-                const $link = $(news);
-                const href = $link.find('a').attr('href');
+            const newsElements = root.querySelectorAll('.news');
+            for (const news of newsElements) {
+                const linkElement = news.querySelector('a');
+                const href = linkElement?.getAttribute('href');
                 if (href) {
                     eventLinks.push(href);
                 }
-            });
+            }
 
             // Process each event page
             for (const url of eventLinks) {
@@ -74,25 +75,25 @@ export class GripBot implements Bot {
 
         try {
             const response = await axios.get(url);
-            const $ = cheerio.load(response.data);
+            const root = parse(response.data);
 
             // Find the h1 tag for the title
-            const titleElement = $('h1').first();
-            if (titleElement.length) {
-                compData.eventName = titleElement.text().trim();
+            const titleElement = root.querySelector('h1');
+            if (titleElement) {
+                compData.eventName = titleElement.text.trim();
             }
 
             // Extract content for description (simplified version)
-            const contentElement = $('.content, .description, .entry-content').first();
-            if (contentElement.length) {
-                compData.fullDescriptionHtml = contentElement.html() || '';
+            const contentElement = root.querySelector('.content, .description, .entry-content');
+            if (contentElement) {
+                compData.fullDescriptionHtml = contentElement.innerHTML || '';
             }
 
             // Find background image URL
-            const pageHeaderDiv = $('.page-header').first();
-            if (pageHeaderDiv.length) {
-                const style = pageHeaderDiv.attr('style') || '';
-                const urlMatch = style.match(/url\\(['"]?([^'")]+)['"]?\\)/);
+            const pageHeaderDiv = root.querySelector('.page-header');
+            if (pageHeaderDiv) {
+                const style = pageHeaderDiv.getAttribute('style') || '';
+                const urlMatch = style.match(/url\(['"]?([^'")]+)['"]?\)/);
                 if (urlMatch && urlMatch[1]) {
                     compData.imageUrl = urlMatch[1];
                 }

@@ -4,7 +4,9 @@
 
 import { createClient } from "@supabase/supabase-js";
 import { BoulderBot, RunMode } from './BoulderBot.ts';
-import * as cheerio from 'cheerio';
+import { parse } from 'node-html-parser';
+
+
 
 export const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -56,9 +58,10 @@ Deno.serve(async (req: Request) => {
         }
 
         // Create and run the bot
-        // const runner = new BoulderBot(RunMode.STANDALONE, apiKey, outputDir);
-        // await runner.run();
-       // const x = cheerio.load('<h1>hiM</h1>'); // dummy usage to avoid unused import error
+        const runner = new BoulderBot(RunMode.STANDALONE, apiKey, outputDir);
+        await runner.run();
+        const root = parse('<ul id="list"><li>Hello World</li></ul>');
+        console.log(root.querySelector('#list')?.outerHTML);
         return new Response(JSON.stringify({ ok: true }), {
             headers: { ...corsHeaders, "Content-Type": "application/json" },
             status: 200,

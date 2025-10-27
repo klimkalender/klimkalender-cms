@@ -1,5 +1,5 @@
 import winston from 'winston';
-import * as cheerio from 'cheerio';
+import { parse } from 'node-html-parser';
 import axios from 'axios';
 import { Bot } from '../Bot.ts';
 import { CompData, Classification, EventCategory } from '../CompData.ts';
@@ -80,23 +80,22 @@ export class CmbelBot implements Bot {
 
         try {
             const response = await axios.get(eventsPageUrl);
-            const $ = cheerio.load(response.data);
+            const root = parse(response.data);
             const urlInfo = new URL(eventsPageUrl);
             const baseUrl = `${urlInfo.protocol}//${urlInfo.host}`;
 
-            const eventRows = $('#main table tbody tr');
+            const eventRows = root.querySelectorAll('#main table tbody tr');
 
             for (const eventRow of eventRows) {
                 try {
-                    const $row = $(eventRow);
-                    const cells = $row.find('td');
+                    const cells = eventRow.querySelectorAll('td');
 
                     if (cells.length < 4) continue;
 
-                    const name = $(cells[0]).text().trim();
-                    const date = $(cells[1]).text().trim();
-                    const venueLocation = $(cells[2]).text().trim();
-                    const category = $(cells[3]).text().toLowerCase().trim();
+                    const name = cells[0].text.trim();
+                    const date = cells[1].text.trim();
+                    const venueLocation = cells[2].text.trim();
+                    const category = cells[3].text.toLowerCase().trim();
 
                     let venue = venueLocation;
                     let location = '';
@@ -133,13 +132,13 @@ export class CmbelBot implements Bot {
                         eventData.eventCategory = EventCategory.OTHER;
                     }
 
-                    const linkElement = $(cells[0]).find('a').first();
-                    if (!linkElement.length) {
-                        this.logger.error(`Failed to find href in ${$row.text()}`);
+                    const linkElement = cells[0].querySelector('a');
+                    if (!linkElement) {
+                        this.logger.error(`Failed to find href in ${cells[0].text}`);
                         continue;
                     }
 
-                    const href = linkElement.attr('href');
+                    const href = linkElement.getAttribute('href');
                     if (!href) {
                         this.logger.error('No href found in link element');
                         continue;
@@ -173,29 +172,36 @@ export class CmbelBot implements Bot {
 
         try {
             const response = await axios.get(eventData.eventUrl);
-            const $ = cheerio.load(response.data);
+            const root = parse(response.data);
 
-            const titleElement = $('h3').first();
-            if (titleElement.length) {
-                const [title, date, location] = this.parseEventTitle(titleElement.text());
+            const titleElement = root.querySelector('h3');
+            if (titleElement) {
+                const [title, date, location] = this.parseEventTitle(titleElement.text);
                 eventData.eventName = title;
                 eventData.eventDate = date;
                 eventData.hall.name = location;
             }
 
-            const fullDescription = $('.content div div').first();
-            if (fullDescription.length) {
+            const fullDescription = root.querySelector('.content div div');
+            if (fullDescription) {
                 // Clean up full description
-                fullDescription.find('h3').remove();
-                fullDescription.removeAttr('class');
+                const h3Elements = fullDescription.querySelectorAll('h3');
+                h3Elements.forEach(h3 => h3.remove());
+                fullDescription.removeAttribute('class');
 
                 // Remove hr elements and all elements after hr (these are the competition results)
-                fullDescription.find('hr').each((_, hr) => {
-                    $(hr).nextAll().remove();
-                    $(hr).remove();
+                const hrElements = fullDescription.querySelectorAll('hr');
+                hrElements.forEach(hr => {
+                    let nextSibling = hr.nextElementSibling;
+                    while (nextSibling) {
+                        const toRemove = nextSibling;
+                        nextSibling = nextSibling.nextElementSibling;
+                        toRemove.remove();
+                    }
+                    hr.remove();
                 });
 
-                eventData.fullDescriptionHtml = fullDescription.html() || '';
+                eventData.fullDescriptionHtml = fullDescription.innerHTML || '';
             }
 
             // Check description if title is not conclusive
