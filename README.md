@@ -15,3 +15,6 @@ cd /workspace/klimkalender-cms/scripts/import && ts-node import.ts
 
 ```
 supabase functions deploy kk-publisher --project-ref zrshjxlfodmuulctapbw 
+
+
+supabase functions deploy boulder-bot --project-ref zrshjxlfodmuulctapbw

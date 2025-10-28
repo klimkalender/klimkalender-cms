@@ -1,6 +1,5 @@
 import winston from 'winston';
 import { parse } from 'node-html-parser';
-import axios from 'axios';
 import { Bot } from '../Bot.ts';
 import { CompData, Classification } from '../CompData.ts';
 import { Hall } from '../Hall.ts';
@@ -29,12 +28,41 @@ export class GripBot implements Bot {
         return 'grip';
     }
 
+    // axios is timing out on Grip when done from supabase... fetch does work???
+    async fetchUrlToText(url: string): Promise<string> {
+        const resp = await fetch("https://gripnijmegen.nl/boulderhal/actueel/events/", {
+            "headers": {
+                "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+                "accept-language": "en-US,en-GB;q=0.9,en;q=0.8,nl;q=0.7",
+                "cache-control": "no-cache",
+                "pragma": "no-cache",
+                "priority": "u=0, i",
+                "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+                "sec-ch-ua-mobile": "?0",
+                "sec-ch-ua-platform": "\"macOS\"",
+                "sec-fetch-dest": "document",
+                "sec-fetch-mode": "navigate",
+                "sec-fetch-site": "none",
+                "sec-fetch-user": "?1",
+                "upgrade-insecure-requests": "1"
+            },
+            "body": null,
+            "method": "GET",
+            "mode": "cors",
+            "credentials": "include",
+            signal: AbortSignal.timeout(1000)
+        });
+        return await resp.text();
+    }
+
     async run(): Promise<CompData[]> {
         const eventsFound: CompData[] = [];
 
         try {
-            const response = await axios.get(this.eventsUrl);
-            const root = parse(response.data);
+            this.logger.info(`Fetching events from ${this.eventsUrl}`);
+
+            const root = parse(await this.fetchUrlToText(this.eventsUrl));
+            this.logger.info(`Fetched events page successfully`);
 
             // Find all <a> tags containing the divs with the class "news card"
             const eventLinks: string[] = [];
@@ -67,6 +95,7 @@ export class GripBot implements Bot {
         const compData = new CompData();
         compData.eventUrl = url;
         compData.hall = this.gripHall;
+        this.logger.info(`Processing event page: ${url}`);
 
         // Assume slug of event is unique id
         const urlParts = url.replace(/\/$/, '').split('/');
@@ -74,8 +103,7 @@ export class GripBot implements Bot {
         compData.uniqueRemoteId = `${this.identifier()}:${id}`;
 
         try {
-            const response = await axios.get(url);
-            const root = parse(response.data);
+            const root = parse(await this.fetchUrlToText(url));
 
             // Find the h1 tag for the title
             const titleElement = root.querySelector('h1');

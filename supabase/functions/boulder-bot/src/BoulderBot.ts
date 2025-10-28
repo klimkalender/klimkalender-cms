@@ -190,7 +190,7 @@ export class BoulderBot {
         // });
         const data = JSON.stringify(events, null, 2);
         // TODO store file
-        console.log(data);
+        console.log(`Exported ${events.length} events to JSON (simulated) ${data.length} bytes.`);
     }
 
 }
