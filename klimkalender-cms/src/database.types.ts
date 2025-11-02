@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      action_logs: {
+        Row: {
+          action_id: number
+          action_type: string
+          data: string
+          datetime: string
+          id: number
+          level: string
+        }
+        Insert: {
+          action_id: number
+          action_type: string
+          data: string
+          datetime?: string
+          id?: number
+          level?: string
+        }
+        Update: {
+          action_id?: number
+          action_type?: string
+          data?: string
+          datetime?: string
+          id?: number
+          level?: string
+        }
+        Relationships: []
+      }
+      actions: {
+        Row: {
+          details: string | null
+          end: string | null
+          id: number
+          result_ok: boolean | null
+          start: string
+          type: Database["public"]["Enums"]["action_type"]
+          user_email: string
+        }
+        Insert: {
+          details?: string | null
+          end?: string | null
+          id?: number
+          result_ok?: boolean | null
+          start?: string
+          type: Database["public"]["Enums"]["action_type"]
+          user_email: string
+        }
+        Update: {
+          details?: string | null
+          end?: string | null
+          id?: number
+          result_ok?: boolean | null
+          start?: string
+          type?: Database["public"]["Enums"]["action_type"]
+          user_email?: string
+        }
+        Relationships: []
+      }
       event_tags: {
         Row: {
           event_id: number
@@ -208,6 +265,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      action_type: "PUBLISH" | "BOULDERBOT"
       EventStatus: "DRAFT" | "PUBLISHED" | "ARCHIVED"
     }
     CompositeTypes: {
@@ -336,6 +394,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      action_type: ["PUBLISH", "BOULDERBOT"],
       EventStatus: ["DRAFT", "PUBLISHED", "ARCHIVED"],
     },
   },

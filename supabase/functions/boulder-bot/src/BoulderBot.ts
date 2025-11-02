@@ -1,5 +1,5 @@
 import winston from 'winston';
-import * as path from "jsr:@std/path";
+import Transport from 'winston-transport';
 import { EventsClassifier } from './EventsClassifier.ts';
 import { ChatGPTService } from './ChatGPTService.ts';
 import { CompData, Classification } from './CompData.ts';
@@ -16,101 +16,71 @@ export enum RunMode {
     EMBEDDED = 'EMBEDDED'
 }
 
+export class BoulderBotHookBase implements BoulderBotHook {
+    async onBeforeRun(): Promise<void> {
+        // no-op
+    }
+    async onLog(message: string, level: string): Promise<void> {
+        // no-op
+    }
+    async onAfterRun(success: boolean, details?: string): Promise<void> {
+        // no-op
+    }
+    async storeResult(data: CompData[]): Promise<void> {
+        // no-op
+    }    
+}
+
+export interface BoulderBotHook {
+    onBeforeRun: () => Promise<void>;
+    // onLog is used by BoulderBotLogger winston transport
+    onLog: (message: string, level: string) => Promise<void>;
+    storeResult(data: CompData[]): Promise<void>;
+    onAfterRun: (success: boolean, details?: string) => Promise<void>;
+}
+
+class BoulderBotLogger extends Transport {
+  private boulderBotHook: BoulderBotHook;
+  constructor(opts) {
+    const {boulderBotHook, ...rest} = opts || {};
+    super(rest);
+    this.boulderBotHook = boulderBotHook;
+    if(!this.boulderBotHook) {
+        throw new Error('BoulderBotHook is required for SupabaseBufferLogger');
+    }
+  }
+
+  log(info, callback) {
+    this.boulderBotHook.onLog(info.message, info.level);
+    callback();
+  }
+};
+
 /**
  * Main BoulderBot orchestration class
  */
 export class BoulderBot {
     private logger: winston.Logger;
-    private mode: RunMode;
-    private outputDir: string;
     private chatGPTSecret: string;
+    private boulderBotHook: BoulderBotHook;
     private static readonly BOT_RUN_MAX_MINUTES = 5;
 
-    constructor(mode: RunMode = RunMode.STANDALONE, chatGPTSecret?: string, outputDir?: string) {
+    constructor(chatGPTSecret?: string, boulderBotHook: BoulderBotHook = new BoulderBotHookBase()) {
         this.chatGPTSecret = chatGPTSecret || '';
-        this.outputDir = outputDir || '../output';
-        this.mode = mode;
-        this.logger = this.createDefaultLogger(); // Will be replaced by setupLogger
-    }
-
-    /**
-     * Get the version of the bot
-     */
-    version(): string {
-        const tag = 'XX-VERSION-XX';
-        if (!tag.includes('VERSION')) {
-            return tag;
-        }
-
-        // In a real implementation, you might want to read from package.json
-        // or use a git command to get the version
-        return '1.0.0';
-    }
-
-    /**
-     * Get lock file path
-     */
-    private lockFile(): string {
-        return path.join(this.outputDir, 'boulderbot.lock');
-    }
-
-    /**
-     * Create lock file to prevent multiple instances
-     */
-    private async createLockFile(): Promise<{ result: boolean; message: string }> {
-        if (this.mode === RunMode.STANDALONE) {
-            return {
-                result: true,
-                message: 'Running in standalone mode. skip lock file.'
-            };
-        }
-
-        // setup lock file
-        return ({ result: true, message: 'Lock file created (simulated).' });
-    }
-
-    /**
-     * Release the lock file
-     */
-    private async releaseLockFile(): Promise<void> {
-        // todo: remove lock file
+        this.boulderBotHook = boulderBotHook;
+        this.logger = this.createDefaultLogger(); 
     }
 
     /**
      * Create a default logger for initialization
      */
     private createDefaultLogger(): winston.Logger {
+        console.dir(this.boulderBotHook);
+        const transport = new BoulderBotLogger({boulderBotHook: this.boulderBotHook});
         return winston.createLogger({
             level: 'info',
             format: winston.format.simple(),
-            transports: [new winston.transports.Console()]
-        });
-    }
-
-    /**
-     * Setup logger with proper configuration
-     */
-    private async setupLogger(skipRotate: boolean = false): Promise<void> {
-        const logFormat = winston.format.combine(
-            winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-            winston.format.errors({ stack: true }),
-            winston.format.printf(({ timestamp, level, message, stack }) => {
-                return `${timestamp} [${level.toUpperCase()}]: ${stack || message}`;
-            })
-        );
-
-        const transports: winston.transport[] = [];
-
-        transports.push(new winston.transports.Console({
-            format: winston.format.combine(
-                winston.format.simple(),
-                logFormat
-            )
-        }));
-
-        this.logger = winston.createLogger({
-            level: 'info',
-            transports
+            transports: [new winston.transports.Console(), transport],
         });
     }
 
@@ -119,20 +89,9 @@ export class BoulderBot {
      * Main run method
      */
     async run(): Promise<void> {
-        let lockCreated = false;
-
         try {
-            const lockResult = await this.createLockFile();
-            if (!lockResult.result) {
-                await this.setupLogger(true);
-                this.logger.error(lockResult.message);
-                process.exit(1);
-            }
-            lockCreated = true;
-
-            await this.setupLogger(false);
-            this.logger.info(lockResult.message);
-            this.logger.info(`Running BoulderBot!!! Version: ${this.version()}`);
+            await this.boulderBotHook.onBeforeRun();
+            this.logger.info(`Running BoulderBot!!!`);
 
             // Create ChatGPT service
             const chatGPTService = new ChatGPTService(this.logger, this.chatGPTSecret);
@@ -165,16 +124,15 @@ export class BoulderBot {
             events = await eventsClassifier.classifyEvents();
 
             // Export results
-            await this.exportToJson(events, this.outputDir);
+            await this.boulderBotHook.storeResult(events);
+
+            this.logger.info(`BoulderBot run completed, found ${events.length} events.`);
 
         } catch (error: any) {
             this.logger.error(`BoulderBot error: ${error.message}`);
             throw error;
         } finally {
-            if (lockCreated && this.mode === RunMode.EMBEDDED) {
-                this.logger.info('Removing lock file');
-                await this.releaseLockFile();
-            }
+            await this.boulderBotHook.onAfterRun(true, 'Completed');
             this.logger.info('Boulderbot is done 🧗');
         }
     }

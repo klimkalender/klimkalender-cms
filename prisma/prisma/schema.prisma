@@ -74,19 +74,49 @@ model Organizer {
 }
 
 model Venue {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
-  imageRef    String?  @map("image_ref")
-  lat         Float?
-  long        Float?
-  address     String?  @map("address")
-  postalCode  String?  @map("postal_code")
-  city        String?
-  country     String?
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  imageRef   String?  @map("image_ref")
+  lat        Float?
+  long       Float?
+  address    String?  @map("address")
+  postalCode String?  @map("postal_code")
+  city       String?
+  country    String?
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   events Event[]
 
   @@map("venues")
+}
+
+enum ActionType {
+  PUBLISH
+  BOULDERBOT
+
+  @@map("action_type")
+}
+
+model Action {
+  id        Int        @id @default(autoincrement())
+  type      ActionType @map("type")
+  userEmail String     @map("user_email")
+  start     DateTime   @default(now()) @db.Timestamptz(3)
+  end       DateTime?  @db.Timestamptz(3)
+  resultOk  Boolean?   @map("result_ok")
+  details   String?
+
+  @@map("actions")
+}
+
+model ActionLog {
+  id         Int      @id @default(autoincrement())
+  actionId   Int      @map("action_id")
+  level      String   @default("info") @map("level")
+  actionType String   @map("action_type")
+  datetime   DateTime @default(now()) @db.Timestamptz(3)
+  data       String
+
+  @@map("action_logs")
 }
