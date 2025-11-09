@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Action, Event, Organizer, Tag, Venue } from '@/types';
-import { Drawer, Button, Group, Tabs } from '@mantine/core';
+import { Drawer, Group, Tabs } from '@mantine/core';
 import {
   MantineReactTable,
   useMantineReactTable,
@@ -118,11 +118,6 @@ export function WasmachineTable({ events, venues, tagsPerEvent: defaultTagsPerEv
   const handleCancel = () => {
     close();
     setSelectedEvent(null);
-  };
-
-  const handleRunBoulderBot = () => {
-    setSelectedEvent(null);
-    open();
   };
 
   const handleEventDelete = (eventId: number) => {

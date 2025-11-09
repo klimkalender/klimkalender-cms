@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Upload, Loader2, SquarePlay } from 'lucide-react'
+import { Loader2, SquarePlay } from 'lucide-react'
 import { Button, Notification } from '@mantine/core'
 import { readLastBoulderBotAction, supabase } from '@/data/supabase'
 import type { Database } from '@/database.types'

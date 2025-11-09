@@ -1,6 +1,6 @@
 import { getActionLog, readLastBoulderBotAction } from "@/data/supabase";
 import type { Action, ActionLog } from "@/types";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export type BoulderbotLogProps = { action: Action | null | undefined
    setAction?: React.Dispatch<React.SetStateAction<Action | null | undefined>>  ;
