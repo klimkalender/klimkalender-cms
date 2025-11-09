@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthWasmachineRouteImport } from './routes/_auth.wasmachine'
 import { Route as AuthVenuesRouteImport } from './routes/_auth.venues'
 import { Route as AuthTagsRouteImport } from './routes/_auth.tags'
 import { Route as AuthOrganizersRouteImport } from './routes/_auth.organizers'
@@ -30,6 +31,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthWasmachineRoute = AuthWasmachineRouteImport.update({
+  id: '/wasmachine',
+  path: '/wasmachine',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AuthVenuesRoute = AuthVenuesRouteImport.update({
   id: '/venues',
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/organizers': typeof AuthOrganizersRoute
   '/tags': typeof AuthTagsRoute
   '/venues': typeof AuthVenuesRoute
+  '/wasmachine': typeof AuthWasmachineRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/organizers': typeof AuthOrganizersRoute
   '/tags': typeof AuthTagsRoute
   '/venues': typeof AuthVenuesRoute
+  '/wasmachine': typeof AuthWasmachineRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,12 +85,27 @@ export interface FileRoutesById {
   '/_auth/organizers': typeof AuthOrganizersRoute
   '/_auth/tags': typeof AuthTagsRoute
   '/_auth/venues': typeof AuthVenuesRoute
+  '/_auth/wasmachine': typeof AuthWasmachineRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/events' | '/organizers' | '/tags' | '/venues'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/events'
+    | '/organizers'
+    | '/tags'
+    | '/venues'
+    | '/wasmachine'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/events' | '/organizers' | '/tags' | '/venues'
+  to:
+    | '/'
+    | '/login'
+    | '/events'
+    | '/organizers'
+    | '/tags'
+    | '/venues'
+    | '/wasmachine'
   id:
     | '__root__'
     | '/'
@@ -92,6 +115,7 @@ export interface FileRouteTypes {
     | '/_auth/organizers'
     | '/_auth/tags'
     | '/_auth/venues'
+    | '/_auth/wasmachine'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -122,6 +146,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_auth/wasmachine': {
+      id: '/_auth/wasmachine'
+      path: '/wasmachine'
+      fullPath: '/wasmachine'
+      preLoaderRoute: typeof AuthWasmachineRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/_auth/venues': {
       id: '/_auth/venues'
@@ -159,6 +190,7 @@ interface AuthRouteChildren {
   AuthOrganizersRoute: typeof AuthOrganizersRoute
   AuthTagsRoute: typeof AuthTagsRoute
   AuthVenuesRoute: typeof AuthVenuesRoute
+  AuthWasmachineRoute: typeof AuthWasmachineRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
@@ -166,6 +198,7 @@ const AuthRouteChildren: AuthRouteChildren = {
   AuthOrganizersRoute: AuthOrganizersRoute,
   AuthTagsRoute: AuthTagsRoute,
   AuthVenuesRoute: AuthVenuesRoute,
+  AuthWasmachineRoute: AuthWasmachineRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)

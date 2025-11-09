@@ -51,6 +51,14 @@ function AuthLayout() {
             Tags
           </Link>
         </li>
+                <li>
+          <Link
+            to="/wasmachine"
+            className="hover:underline data-[status='active']:font-semibold"
+          >
+            Wasmachine
+          </Link>
+        </li>
       </ul>
       <Outlet />
     </div>

@@ -1,7 +1,7 @@
 import { Link, useRouter, useNavigate } from '@tanstack/react-router'
 
 import { useState } from 'react'
-import { Menu, X, CalendarHeart, MapPinHouse, Landmark, Tag } from 'lucide-react'
+import { Menu, X, CalendarHeart, MapPinHouse, Landmark, Tag, WashingMachine } from 'lucide-react'
 import { Modal, Button, Text, Group, Stack } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { useAuth } from '@/auth'
@@ -95,7 +95,7 @@ export default function Header() {
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
             activeProps={{
               className:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
+                'flex items-center gap-3 p-3 rounded-lg bg-blue-500 hover:bg-cyan-700 transition-colors mb-2',
             }}
           >
             <CalendarHeart size={20} />
@@ -107,7 +107,7 @@ export default function Header() {
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
             activeProps={{
               className:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
+                'flex items-center gap-3 p-3 rounded-lg bg-blue-500 hover:bg-cyan-700 transition-colors mb-2',
             }}
           >
             <MapPinHouse size={20} />
@@ -119,7 +119,7 @@ export default function Header() {
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
             activeProps={{
               className:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
+                'flex items-center gap-3 p-3 rounded-lg bg-blue-500 hover:bg-cyan-700 transition-colors mb-2',
             }}
           >
             <Landmark size={20} />
@@ -131,11 +131,23 @@ export default function Header() {
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
             activeProps={{
               className:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
+                'flex items-center gap-3 p-3 rounded-lg bg-blue-500 hover:bg-cyan-700 transition-colors mb-2',
             }}
           >
             <Tag size={20} />
             <span className="font-medium">Tags</span>
+          </Link>
+          <Link
+            to="/wasmachine"
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
+            activeProps={{
+              className:
+                'flex items-center gap-3 p-3 rounded-lg bg-blue-500 hover:bg-cyan-700 transition-colors mb-2',
+            }}
+          >
+            <WashingMachine size={20} />
+            <span className="font-medium">Wasmachine</span>
           </Link>
         </nav>
       </aside>

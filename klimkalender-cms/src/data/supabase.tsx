@@ -102,3 +102,35 @@ export function getImageTag(imageRef: string | null, bucket: string) {
   if (!url) return '-';
   return <img src={url} alt="Venue Image" style={{ maxWidth: '20px', maxHeight: '20px' }} />;
 }
+
+export async function readLastBoulderBotAction(setAction: React.Dispatch<React.SetStateAction<Database["public"]["Tables"]["actions"]["Row"] | null | undefined>>) {
+  const { data, error } = await supabase
+    .from('actions')
+    .select('*')
+    .eq('type', 'BOULDERBOT')
+    .order('id', { ascending: false })
+    .limit(1)
+    .single();
+  if (error) {
+    console.error('Error fetching last BoulderBot action:', error);
+    return null;
+  }
+  setAction(data);
+};
+
+export async function getActionLog(setLogs: React.Dispatch<React.SetStateAction<Database["public"]["Tables"]["action_logs"]["Row"][] | null>>, actionId: number) {
+  const { data, error } = await supabase
+    .from('action_logs')
+    .select('*')
+    .eq('action_id', actionId)
+    .order('datetime', { ascending: false });
+  if (error) {
+    console.error('Error fetching action logs:', error);
+    return null;
+  }
+  setLogs(data);
+  if (error) {
+    console.error('Error fetching action logs:', error);
+    return null;
+  }
+}

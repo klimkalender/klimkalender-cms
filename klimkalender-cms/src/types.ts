@@ -21,4 +21,6 @@ export type Event = Database['public']['Tables']['events']['Row'];
 export type Venue = Database['public']['Tables']['venues']['Row'];
 export type Organizer = Database['public']['Tables']['organizers']['Row'];
 export type Tag = Database['public']['Tables']['tags']['Row'];
+export type Action = Database['public']['Tables']['actions']['Row'];
+export type ActionLog = Database['public']['Tables']['action_logs']['Row'];
 
