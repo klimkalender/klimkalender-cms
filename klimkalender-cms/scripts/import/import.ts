@@ -80,11 +80,14 @@ async function importData() {
       console.error('Error importing event:', error);
     }
 
+
+    const [address, postal_code, city, country] = event.venueAddress?.split(', ')||[];
+    const cleanVenueName = event.venueName.split(',')[0];
     // upsert venue
     const { data: venueResp, error: venueError } = await supabase
       .from('venues')
       // remove city from venue name
-      .upsert({ name: event.venueName.split(',')[0], full_address: event.venueAddress }, { onConflict: 'name' })
+      .upsert({ name: cleanVenueName, address, postal_code, city, country }, { onConflict: 'name' })
       .select('id, image_ref')
       .single();
 
@@ -127,11 +130,15 @@ async function importData() {
         } else {
           console.log('Uploading venue image for venue:', event.venueName);
           const imagePath = await uploadRemoteImageToSupabase(event.venueImage, 'venue-images');
+          console.log('Uploaded venue image path:', imagePath);
           if (imagePath) {
-            await supabase
+              const { error: venueImageError }= await supabase
               .from('venues')
               .update({ image_ref: imagePath })
-              .eq('name', event.venueName);
+              .eq('name', cleanVenueName);
+              if (venueImageError) {
+                console.error('Error updating venue with image ref:', venueImageError);
+              }
           }
         }
       } else {

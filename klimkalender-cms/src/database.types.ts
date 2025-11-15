@@ -257,6 +257,101 @@ export type Database = {
         }
         Relationships: []
       }
+      wasm_events: {
+        Row: {
+          accepted_classification: Database["public"]["Enums"]["wasm_event_classification"]
+          accepted_date: string | null
+          accepted_event_category: Database["public"]["Enums"]["wasm_event_category"]
+          accepted_event_url: string | null
+          accepted_full_description_html: string | null
+          accepted_hall_name: string | null
+          accepted_image_url: string | null
+          accepted_name: string | null
+          accepted_short_description: string | null
+          action: Database["public"]["Enums"]["wasm_action"]
+          classification: Database["public"]["Enums"]["wasm_event_classification"]
+          date: string
+          event_category: Database["public"]["Enums"]["wasm_event_category"]
+          event_id: string | null
+          event_url: string | null
+          external_id: string
+          full_description_html: string | null
+          hall_name: string | null
+          id: number
+          image_url: string | null
+          name: string
+          processed_at: string | null
+          record_end_at: string | null
+          record_start_at: string
+          short_description: string | null
+          status: Database["public"]["Enums"]["wasm_event_status"]
+        }
+        Insert: {
+          accepted_classification: Database["public"]["Enums"]["wasm_event_classification"]
+          accepted_date?: string | null
+          accepted_event_category: Database["public"]["Enums"]["wasm_event_category"]
+          accepted_event_url?: string | null
+          accepted_full_description_html?: string | null
+          accepted_hall_name?: string | null
+          accepted_image_url?: string | null
+          accepted_name?: string | null
+          accepted_short_description?: string | null
+          action: Database["public"]["Enums"]["wasm_action"]
+          classification: Database["public"]["Enums"]["wasm_event_classification"]
+          date: string
+          event_category: Database["public"]["Enums"]["wasm_event_category"]
+          event_id?: string | null
+          event_url?: string | null
+          external_id: string
+          full_description_html?: string | null
+          hall_name?: string | null
+          id?: number
+          image_url?: string | null
+          name: string
+          processed_at?: string | null
+          record_end_at?: string | null
+          record_start_at?: string
+          short_description?: string | null
+          status: Database["public"]["Enums"]["wasm_event_status"]
+        }
+        Update: {
+          accepted_classification?: Database["public"]["Enums"]["wasm_event_classification"]
+          accepted_date?: string | null
+          accepted_event_category?: Database["public"]["Enums"]["wasm_event_category"]
+          accepted_event_url?: string | null
+          accepted_full_description_html?: string | null
+          accepted_hall_name?: string | null
+          accepted_image_url?: string | null
+          accepted_name?: string | null
+          accepted_short_description?: string | null
+          action?: Database["public"]["Enums"]["wasm_action"]
+          classification?: Database["public"]["Enums"]["wasm_event_classification"]
+          date?: string
+          event_category?: Database["public"]["Enums"]["wasm_event_category"]
+          event_id?: string | null
+          event_url?: string | null
+          external_id?: string
+          full_description_html?: string | null
+          hall_name?: string | null
+          id?: number
+          image_url?: string | null
+          name?: string
+          processed_at?: string | null
+          record_end_at?: string | null
+          record_start_at?: string
+          short_description?: string | null
+          status?: Database["public"]["Enums"]["wasm_event_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wasm_events_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["external_id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -267,6 +362,16 @@ export type Database = {
     Enums: {
       action_type: "PUBLISH" | "BOULDERBOT"
       EventStatus: "DRAFT" | "PUBLISHED" | "ARCHIVED"
+      wasm_action: "IGNORE" | "MANUAL_IMPORT" | "AUTO_IMPORT"
+      wasm_event_category: "OTHER" | "BOULDER" | "LEAD"
+      wasm_event_classification: "UNKNOWN" | "COMPETITION" | "NOCOMPETITION"
+      wasm_event_status:
+        | "NEW"
+        | "IGNORED"
+        | "UP_TO_DATE"
+        | "CHANGED"
+        | "REMOVED"
+        | "EVENT_PASSED"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -396,6 +501,17 @@ export const Constants = {
     Enums: {
       action_type: ["PUBLISH", "BOULDERBOT"],
       EventStatus: ["DRAFT", "PUBLISHED", "ARCHIVED"],
+      wasm_action: ["IGNORE", "MANUAL_IMPORT", "AUTO_IMPORT"],
+      wasm_event_category: ["OTHER", "BOULDER", "LEAD"],
+      wasm_event_classification: ["UNKNOWN", "COMPETITION", "NOCOMPETITION"],
+      wasm_event_status: [
+        "NEW",
+        "IGNORED",
+        "UP_TO_DATE",
+        "CHANGED",
+        "REMOVED",
+        "EVENT_PASSED",
+      ],
     },
   },
 } as const

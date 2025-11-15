@@ -34,10 +34,10 @@ model Event {
   createdAt        DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt        DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
 
-  venue         Venue?         @relation(fields: [venueId], references: [id])
-  organizer     Organizer?     @relation(fields: [organizerId], references: [id])
-  tags          EventTag[]
-  WasmEventLink WasmEventLink?
+  venue     Venue?     @relation(fields: [venueId], references: [id])
+  organizer Organizer? @relation(fields: [organizerId], references: [id])
+  tags      EventTag[]
+  WasmEvent WasmEvent?
 
   @@map("events")
 }
@@ -126,6 +126,7 @@ enum WasmEventClassification {
   UNKNOWN
   COMPETITION
   NOCOMPETITION
+
   @@map("wasm_event_classification")
 }
 
@@ -133,6 +134,7 @@ enum WasmEventCategory {
   OTHER
   BOULDER
   LEAD
+
   @@map("wasm_event_category")
 }
 
@@ -151,37 +153,23 @@ enum WasmEventStatus {
   CHANGED
   REMOVED
   EVENT_PASSED
+
   @@map("wasm_event_status")
 }
 
 model WasmEvent {
-  id                  Int                     @id @default(autoincrement())
-  externalId          String                  @unique @map("external_id")
-  hallName            String?                 @map("hall_name")
-  name                String                  @map("name")
-  date                DateTime                @map("date") @db.Timestamptz(3)
-  imageUrl            String?                 @map("image_url")
-  shortDescription    String?                 @map("short_description")
-  fullDescriptionHtml String?                 @map("full_description_html")
-  eventUrl            String?                 @map("event_url")
-  classification      WasmEventClassification @map("classification")
-  eventCategory       WasmEventCategory       @map("event_category")
-  wasmEventLinks      WasmEventLink[]
-  createdAt           DateTime                @default(now()) @map("record_start_at") @db.Timestamptz(3)
-  updatedAt           DateTime?               @map("record_end_at") @db.Timestamptz(3)
-
-  @@map("wasm_events")
-}
-
-model WasmEventLink {
   id                          Int                     @id @default(autoincrement())
-  eventId                     String                  @unique @map("event_id")
-  event                       Event                   @relation(fields: [eventId], references: [externalId])
-  wasmEventId                 Int                     @unique @map("wasm_event_id")
-  wasmEvent                   WasmEvent               @relation(fields: [wasmEventId], references: [id])
-  externalId                  String                  @map("external_id")
-  action                      WasmAction              @map("action")
-  processedAt                 DateTime?               @map("processed_at") @db.Timestamptz(3)
+  externalId                  String                  @unique @map("external_id")
+  hallName                    String?                 @map("hall_name")
+  name                        String                  @map("name")
+  date                        DateTime                @map("date") @db.Timestamptz(3)
+  imageUrl                    String?                 @map("image_url")
+  shortDescription            String?                 @map("short_description")
+  fullDescriptionHtml         String?                 @map("full_description_html")
+  eventUrl                    String?                 @map("event_url")
+  classification              WasmEventClassification @map("classification")
+  eventCategory               WasmEventCategory       @map("event_category")
+  acceptedHallName            String?                 @map("accepted_hall_name")
   acceptedName                String?                 @map("accepted_name")
   acceptedDate                DateTime?               @map("accepted_date") @db.Timestamptz(3)
   acceptedImageUrl            String?                 @map("accepted_image_url")
@@ -189,11 +177,14 @@ model WasmEventLink {
   acceptedFullDescriptionHtml String?                 @map("accepted_full_description_html")
   acceptedEventUrl            String?                 @map("accepted_event_url")
   acceptedClassification      WasmEventClassification @map("accepted_classification")
-  status                      WasmEventStatus         @map("status")
-  acceptedHallName            String?                 @map("accepted_hall_name")
   acceptedEventCategory       WasmEventCategory       @map("accepted_event_category")
+  eventId                     String?                 @unique @map("event_id")
+  event                       Event?                  @relation(fields: [eventId], references: [externalId], onDelete: SetNull)
+  processedAt                 DateTime?               @map("processed_at") @db.Timestamptz(3)
+  status                      WasmEventStatus         @map("status")
+  action                      WasmAction              @map("action")
   createdAt                   DateTime                @default(now()) @map("record_start_at") @db.Timestamptz(3)
   updatedAt                   DateTime?               @map("record_end_at") @db.Timestamptz(3)
 
-  @@map("wasm_event_links")
+  @@map("wasm_events")
 }
