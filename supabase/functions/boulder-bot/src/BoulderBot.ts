@@ -8,14 +8,6 @@ import { WasBot } from './bots/WasBot.ts';
 import { GripBot } from './bots/GripBot.ts';
 import { CmbelBot } from './bots/CmbelBot.ts';
 
-/**
- * Run mode enum
- */
-export enum RunMode {
-    STANDALONE = 'STANDALONE',
-    EMBEDDED = 'EMBEDDED'
-}
-
 export class BoulderBotHookBase implements BoulderBotHook {
     async onBeforeRun(): Promise<void> {
         // no-op

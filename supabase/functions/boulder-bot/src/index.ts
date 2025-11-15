@@ -3,7 +3,7 @@
 // This enables autocomplete, go to definition, etc.
 
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import { BoulderBot, BoulderBotHookBase, RunMode } from './BoulderBot.ts';
+import { BoulderBot, BoulderBotHookBase } from './BoulderBot.ts';
 import { CompData } from "./CompData.ts";
 
 const BOT_RUN_MAX_MINUTES = 5;
