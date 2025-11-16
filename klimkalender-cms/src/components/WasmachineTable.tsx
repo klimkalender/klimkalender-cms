@@ -153,12 +153,7 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
       mantineTableBodyRowProps: ({ row }) => ({
       onClick: () => {
         handleRowClick(row.original);
-      },
-      // sx: {
-      //   cursor: 'pointer', //you might want to change the cursor too when adding an onClick
-      //   fontWeight: row.original.featured ? 'bold' : undefined,
-      //   color: row.original.featured ? 'darkblue' : undefined,
-      // },
+      }
     }),
   });
 
@@ -173,6 +168,7 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
           <Tabs.Tab value="CHANGED">Changed</Tabs.Tab>
           <Tabs.Tab value="UP_TO_DATE">Up to Date</Tabs.Tab>
           <Tabs.Tab value="REMOVED">Removed</Tabs.Tab>
+          <Tabs.Tab value="IGNORED">Ignored</Tabs.Tab>
           <Tabs.Tab value="EVENT_PASSED">Event Passed</Tabs.Tab>
           <Tabs.Tab icon={<Logs />} value="BOULDERBOT">Boulderbot Logs</Tabs.Tab>
         </Tabs.List>

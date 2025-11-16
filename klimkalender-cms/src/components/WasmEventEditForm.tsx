@@ -1,18 +1,12 @@
 import { useState } from 'react';
 import {
   Button,
-  TextInput,
-  Textarea,
-  Select,
-  Switch,
   Group,
   Stack,
   Image,
   Text,
-  Modal,
   Notification,
   Radio,
-  MultiSelect,
   Anchor,
   Table
 } from '@mantine/core';
@@ -20,8 +14,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import type { Event, Venue, Organizer, Tag, WasmEvent, WasmEventAction } from '@/types';
 import { supabase } from '@/data/supabase';
-import { DateTime } from 'luxon';
-import { BookCheck, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 
 interface WasmEventEditFormProps {
   wasmEvent?: WasmEvent | null;
@@ -64,7 +57,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, allTags, currentTa
   const [deleteModalOpened, { open: openDeleteModal, close: closeDeleteModal }] = useDisclosure(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
-  // Validation
+  // Validation - not much to validate here yet
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
@@ -138,23 +131,6 @@ export function WasmEventEditForm({ wasmEvent, event, venues, allTags, currentTa
       setLoading(false);
     }
   };
-
-
-  // Convert venues and organizers to select data
-  const venueSelectData = venues.map(venue => ({
-    value: venue.id.toString(),
-    label: venue.name
-  }));
-
-  const organizerSelectData = organizers.map(organizer => ({
-    value: organizer.id.toString(),
-    label: organizer.name
-  }));
-
-  const tagsSelectData = allTags.map(tag => ({
-    value: tag.id.toString(),
-    label: tag.name
-  }));
 
   return (
     <>
@@ -237,8 +213,8 @@ export function WasmEventEditForm({ wasmEvent, event, venues, allTags, currentTa
                 onChange={(e) => setWasmEventAction(e as WasmEventAction)}
               >
                 <Stack spacing="xs">
-                  <Radio value="MANUAL" label="Manual Import" />
-                  <Radio value="AUTO" label="Auto Import" />
+                  <Radio value="MANUAL_IMPORT" label="Manual Import" />
+                  <Radio value="AUTO_IMPORT" label="Auto Import" />
                 </Stack>
               </Radio.Group>
             </Stack>
@@ -278,7 +254,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, allTags, currentTa
               </tr>
               <tr>
                 <td><strong>Date</strong></td>
-                <td>{wasmEvent?.date ? new Date(wasmEvent.date).toLocaleString() : '-'}</td>
+                <td>{wasmEvent?.date ? new Date(wasmEvent.date).toLocaleDateString() : '-'}</td>
                 <td>{event?.start_date_time ? new Date(event.start_date_time).toLocaleString() : '-'}</td>
               </tr>
               <tr>

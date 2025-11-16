@@ -374,7 +374,7 @@ export type Database = {
     Enums: {
       action_type: "PUBLISH" | "BOULDERBOT"
       EventStatus: "DRAFT" | "PUBLISHED" | "ARCHIVED"
-      wasm_action: "IGNORE" | "MANUAL_IMPORT" | "AUTO_IMPORT"
+      wasm_action: "MANUAL_IMPORT" | "AUTO_IMPORT"
       wasm_event_category: "OTHER" | "BOULDER" | "LEAD"
       wasm_event_classification: "UNKNOWN" | "COMPETITION" | "NOCOMPETITION"
       wasm_event_status:
@@ -513,7 +513,7 @@ export const Constants = {
     Enums: {
       action_type: ["PUBLISH", "BOULDERBOT"],
       EventStatus: ["DRAFT", "PUBLISHED", "ARCHIVED"],
-      wasm_action: ["IGNORE", "MANUAL_IMPORT", "AUTO_IMPORT"],
+      wasm_action: ["MANUAL_IMPORT", "AUTO_IMPORT"],
       wasm_event_category: ["OTHER", "BOULDER", "LEAD"],
       wasm_event_classification: ["UNKNOWN", "COMPETITION", "NOCOMPETITION"],
       wasm_event_status: [
