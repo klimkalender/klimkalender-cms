@@ -24,4 +24,5 @@ export type Organizer = Database['public']['Tables']['organizers']['Row'];
 export type Tag = Database['public']['Tables']['tags']['Row'];
 export type Action = Database['public']['Tables']['actions']['Row'];
 export type ActionLog = Database['public']['Tables']['action_logs']['Row'];
-
+export type WasmEventAction = Database['public']['Enums']['wasm_action'];
+export type WasmEventStatus = Database['public']['Enums']['wasm_event_status'];

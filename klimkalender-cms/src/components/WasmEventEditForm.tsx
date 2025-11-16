@@ -18,7 +18,7 @@ import {
 } from '@mantine/core';
 
 import { useDisclosure } from '@mantine/hooks';
-import type { Event, Venue, Organizer, Tag, WasmEvent } from '@/types';
+import type { Event, Venue, Organizer, Tag, WasmEvent, WasmEventAction } from '@/types';
 import { supabase } from '@/data/supabase';
 import { DateTime } from 'luxon';
 import { BookCheck, ExternalLink } from 'lucide-react';
@@ -35,35 +35,29 @@ interface WasmEventEditFormProps {
   onDelete?: (eventId: number) => void;
 }
 
-function formatDateInputTime(tzDate: Date) {
-  if (!tzDate) return undefined;
-  const pad = (n: number) => n.toString().padStart(2, '0');
-  return `${tzDate.getFullYear()}-${pad(tzDate.getMonth() + 1)}-${pad(tzDate.getDate())}T${pad(tzDate.getHours())}:${pad(tzDate.getMinutes())}`;
-}
+export type FormAction = 'PUBLISH_AS_DRAFT' | 'PUBLISH_AS_PUBLISHED' | 'UPDATE_EVENT' | 'IGNORE_ONCE' | 'IGNORE_FOREVER' | 'CHANGE_IMPORT_TYPE';
 
 export function WasmEventEditForm({ wasmEvent, event, venues, allTags, currentTags, organizers, onSave, onCancel, onDelete }: WasmEventEditFormProps) {
   const [loading, setLoading] = useState(false);
-  const [title, setTitle] = useState(wasmEvent?.name || '');
 
-  const [startDateTime, setStartDateTime] = useState(() => {
-    if (wasmEvent?.date) {
-      // hardcoded default timezone for wasm events
-      const tz = 'Europe/Amsterdam';
-      return DateTime.fromISO(wasmEvent.date).setZone(tz).toJSDate();
-    }
-    return null;
-  });
-  const [status, setStatus] = useState(wasmEvent?.status || 'DRAFT');
-  const [link, setLink] = useState(wasmEvent?.event_url || '');
+  let defaultAction: FormAction = 'IGNORE_FOREVER';
+  switch (wasmEvent?.status) {
+    case 'NEW':
+      if (wasmEvent?.classification === 'COMPETITION') {
+        defaultAction = 'PUBLISH_AS_PUBLISHED';
+      }
+      break;
+    case 'CHANGED':
+      defaultAction = 'UPDATE_EVENT';
+      break;
+    case 'UP_TO_DATE':
+      defaultAction = 'CHANGE_IMPORT_TYPE';
+      break;
+  }
 
-  // Tags handling
-  const [selectedTagIds, setSelectedTagIds] = useState<string[]>(
-    currentTags.map(tag => tag.id.toString())
-  );
+  const [formAction, setFormAction] = useState<FormAction>(defaultAction);
+  const [wasmEventAction, setWasmEventAction] = useState<WasmEventAction>(wasmEvent?.action || 'MANUAL_IMPORT');
 
-  // Image handling
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   // UI state
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -93,7 +87,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, allTags, currentTa
 
 
       const eventData = {
-        title: title.trim(),
+      //  title: title.trim(),
         // toher fields here
       };
 
@@ -146,35 +140,6 @@ export function WasmEventEditForm({ wasmEvent, event, venues, allTags, currentTa
   };
 
 
-  // Handle event deletion confirmation
-  const handleDeleteClick = () => {
-    openDeleteModal();
-  };
-
-  // Execute event deletion
-  const confirmDelete = async () => {
-    if (!wasmEvent?.id || !onDelete) return;
-
-    closeDeleteModal();
-    setLoading(true);
-
-    try {
-      // Delete the event image from storage if it exists
-
-
-      onDelete(wasmEvent.id);
-
-    } catch (error: any) {
-      console.error('Error deleting event:', error);
-      setNotification({
-        type: 'error',
-        message: `Failed to delete event: ${error.message}`
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // Convert venues and organizers to select data
   const venueSelectData = venues.map(venue => ({
     value: venue.id.toString(),
@@ -200,9 +165,8 @@ export function WasmEventEditForm({ wasmEvent, event, venues, allTags, currentTa
           </Text>
           <Group position="apart" align="flex-start">
             <Stack spacing="xs">
-
               <Group spacing={4} align="center">
-                <Text size="sm" color="dimmed" style={{ minWidth: '80px' }}>
+                <Text size="sm" color="dimmed" style={{ minWidth: '100px' }}>
                   External ID:
                 </Text>
                 <Text size="sm" weight={500}>
@@ -219,7 +183,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, allTags, currentTa
               </Group>
 
               <Group spacing={4} align="center">
-                <Text size="sm" color="dimmed" style={{ minWidth: '80px' }}>
+                <Text size="sm" color="dimmed" style={{ minWidth: '100px' }}>
                   Event ID:
                 </Text>
                 <Text size="sm" weight={500}>
@@ -236,15 +200,15 @@ export function WasmEventEditForm({ wasmEvent, event, venues, allTags, currentTa
               </Group>
 
               <Group spacing={4} align="center">
-                <Text size="sm" color="dimmed" style={{ minWidth: '80px' }}>
+                <Text size="sm" color="dimmed" style={{ minWidth: '100px' }}>
                   Status:
                 </Text>
-                <Text size="sm" weight={500} color={status === 'PUBLISHED' ? 'green' : status === 'DRAFT' ? 'orange' : 'gray'}>
-                  {status}
+                <Text size="sm" weight={500} >
+                  {wasmEvent?.status || '-'}
                 </Text>
               </Group>
               <Group spacing={4} align="center">
-                <Text size="sm" color="dimmed" style={{ minWidth: '80px' }}>
+                <Text size="sm" color="dimmed" style={{ minWidth: '100px' }}>
                   Processed at:
                 </Text>
                 <Text size="sm">
@@ -256,19 +220,21 @@ export function WasmEventEditForm({ wasmEvent, event, venues, allTags, currentTa
             <Stack spacing="xs" style={{ minWidth: '500px' }}>
               <Text size="sm" weight={800}>Action</Text>
               <Radio.Group
-                value={status}
-                onChange={setStatus}
+                value={formAction}
+                // hacky cast
+                onChange={(e) => setFormAction(e as FormAction)}
               >
                 <Stack spacing="xs">
                   <Radio value="PUBLISH_AS_DRAFT" label="Copy event as draft" />
                   <Radio value="PUBLISH_AS_PUBLISHED" label="Copy event as published" />
-                  <Radio value="IGNORE" label="Ignore this event forever" />
+                  <Radio value="IGNORE_ONCE" label="Ignore this event once" />
+                  <Radio value="IGNORE_FOREVER" label="Ignore this event forever" />
                 </Stack>
               </Radio.Group>
               <Text size="sm" weight={800}>Select import type</Text>
               <Radio.Group
-                value={status}
-                onChange={setStatus}
+                value={wasmEventAction}
+                onChange={(e) => setWasmEventAction(e as WasmEventAction)}
               >
                 <Stack spacing="xs">
                   <Radio value="MANUAL" label="Manual Import" />
@@ -389,53 +355,8 @@ export function WasmEventEditForm({ wasmEvent, event, venues, allTags, currentTa
               </tr>
             </tbody>
           </Table>
-
-          <Group position="apart" mt="md">
-            <div>
-              {/* {event?.id && onDelete && (
-                <Button
-                  variant="outline"
-                  color="red"
-                  onClick={handleDeleteClick}
-                  disabled={loading}
-                >
-                  Delete Event
-                </Button>
-              )} */}
-            </div>
-
-
-          </Group>
-
-
         </Stack>
       </form>
-
-      {/* Delete Confirmation Modal */}
-      <Modal
-        opened={deleteModalOpened}
-        onClose={closeDeleteModal}
-        title="Confirm Deletion"
-        size="sm"
-      >
-        <Stack spacing="md">
-          <Text>
-            Are you sure you want to delete "<strong>{wasmEvent?.name}</strong>"?
-          </Text>
-          <Text size="sm" color="dimmed">
-            This action cannot be undone.
-          </Text>
-
-          <Group position="right" spacing="sm">
-            <Button variant="light" onClick={closeDeleteModal}>
-              Cancel
-            </Button>
-            <Button color="red" onClick={confirmDelete}>
-              Delete Event
-            </Button>
-          </Group>
-        </Stack>
-      </Modal>
 
       {/* Notification */}
       {notification && (
