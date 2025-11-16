@@ -25,6 +25,7 @@ import { BookCheck, ExternalLink } from 'lucide-react';
 
 interface WasmEventEditFormProps {
   wasmEvent?: WasmEvent | null;
+  event?: Event | null;
   venues: Venue[];
   allTags: Tag[];
   currentTags: Tag[];
@@ -40,20 +41,20 @@ function formatDateInputTime(tzDate: Date) {
   return `${tzDate.getFullYear()}-${pad(tzDate.getMonth() + 1)}-${pad(tzDate.getDate())}T${pad(tzDate.getHours())}:${pad(tzDate.getMinutes())}`;
 }
 
-export function WasmEventEditForm({ wasmEvent: event, venues, allTags, currentTags, organizers, onSave, onCancel, onDelete }: WasmEventEditFormProps) {
+export function WasmEventEditForm({ wasmEvent, event, venues, allTags, currentTags, organizers, onSave, onCancel, onDelete }: WasmEventEditFormProps) {
   const [loading, setLoading] = useState(false);
-  const [title, setTitle] = useState(event?.name || '');
+  const [title, setTitle] = useState(wasmEvent?.name || '');
 
   const [startDateTime, setStartDateTime] = useState(() => {
-    if (event?.date) {
+    if (wasmEvent?.date) {
       // hardcoded default timezone for wasm events
       const tz = 'Europe/Amsterdam';
-      return DateTime.fromISO(event.date).setZone(tz).toJSDate();
+      return DateTime.fromISO(wasmEvent.date).setZone(tz).toJSDate();
     }
     return null;
   });
-  const [status, setStatus] = useState(event?.status || 'DRAFT');
-  const [link, setLink] = useState(event?.event_url || '');
+  const [status, setStatus] = useState(wasmEvent?.status || 'DRAFT');
+  const [link, setLink] = useState(wasmEvent?.event_url || '');
 
   // Tags handling
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>(
@@ -126,7 +127,7 @@ export function WasmEventEditForm({ wasmEvent: event, venues, allTags, currentTa
 
       setNotification({
         type: 'success',
-        message: `Event ${event?.id ? 'updated' : 'created'} successfully!`
+        message: `Event ${wasmEvent?.id ? 'updated' : 'created'} successfully!`
       });
 
       // if (onSave && result.data) {
@@ -137,7 +138,7 @@ export function WasmEventEditForm({ wasmEvent: event, venues, allTags, currentTa
       console.error('Error saving event:', error);
       setNotification({
         type: 'error',
-        message: `Failed to ${event?.id ? 'update' : 'create'} event: ${error.message}`
+        message: `Failed to ${wasmEvent?.id ? 'update' : 'create'} event: ${error.message}`
       });
     } finally {
       setLoading(false);
@@ -152,7 +153,7 @@ export function WasmEventEditForm({ wasmEvent: event, venues, allTags, currentTa
 
   // Execute event deletion
   const confirmDelete = async () => {
-    if (!event?.id || !onDelete) return;
+    if (!wasmEvent?.id || !onDelete) return;
 
     closeDeleteModal();
     setLoading(true);
@@ -161,7 +162,7 @@ export function WasmEventEditForm({ wasmEvent: event, venues, allTags, currentTa
       // Delete the event image from storage if it exists
 
 
-      onDelete(event.id);
+      onDelete(wasmEvent.id);
 
     } catch (error: any) {
       console.error('Error deleting event:', error);
@@ -195,7 +196,7 @@ export function WasmEventEditForm({ wasmEvent: event, venues, allTags, currentTa
       <form onSubmit={handleSubmit}>
         <Stack spacing="md">
           <Text size="lg" weight={500}>
-            Bolder Bot Event: {event?.name}
+            Bolder Bot Event: {wasmEvent?.name}
           </Text>
           <Group position="apart" align="flex-start">
             <Stack spacing="xs">
@@ -205,10 +206,10 @@ export function WasmEventEditForm({ wasmEvent: event, venues, allTags, currentTa
                   External ID:
                 </Text>
                 <Text size="sm" weight={500}>
-                  {event?.external_id}
+                  {wasmEvent?.external_id}
                 </Text>
                 <Anchor
-                  href={event?.event_url}
+                  href={wasmEvent?.event_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   size="sm"
@@ -222,11 +223,11 @@ export function WasmEventEditForm({ wasmEvent: event, venues, allTags, currentTa
                   Event ID:
                 </Text>
                 <Text size="sm" weight={500}>
-                  {event?.event_id ? event.event_id : '-'}
+                  {wasmEvent?.event_id ? wasmEvent.event_id : '-'}
                 </Text>
-                {event?.event_id && (
+                {wasmEvent?.event_id && (
                   <Anchor
-                    href={`/events/${event.event_id}`}
+                    href={`/events/${wasmEvent.event_id}`}
                     size="sm"
                   >
                     <ExternalLink size={14} />
@@ -247,13 +248,13 @@ export function WasmEventEditForm({ wasmEvent: event, venues, allTags, currentTa
                   Processed at:
                 </Text>
                 <Text size="sm">
-                  {event?.processed_at ? new Date(event.processed_at).toLocaleString() : 'N/A'}
+                  {wasmEvent?.processed_at ? new Date(wasmEvent.processed_at).toLocaleString() : 'N/A'}
                 </Text>
               </Group>
             </Stack>
 
             <Stack spacing="xs" style={{ minWidth: '500px' }}>
-              <Text size="sm" weight={500}>Action</Text>
+              <Text size="sm" weight={800}>Action</Text>
               <Radio.Group
                 value={status}
                 onChange={setStatus}
@@ -264,7 +265,7 @@ export function WasmEventEditForm({ wasmEvent: event, venues, allTags, currentTa
                   <Radio value="IGNORE" label="Ignore this event forever" />
                 </Stack>
               </Radio.Group>
-                            <Text size="sm" weight={500}>Select import type</Text>
+              <Text size="sm" weight={800}>Select import type</Text>
               <Radio.Group
                 value={status}
                 onChange={setStatus}
@@ -275,7 +276,7 @@ export function WasmEventEditForm({ wasmEvent: event, venues, allTags, currentTa
                 </Stack>
               </Radio.Group>
             </Stack>
-            
+
           </Group>
           <Group position="right" >
             {onCancel && (
@@ -294,34 +295,35 @@ export function WasmEventEditForm({ wasmEvent: event, venues, allTags, currentTa
               <tr>
                 <th style={{ width: '20%' }}>Field</th>
                 <th style={{ width: '40%' }}>Current Value</th>
-                <th style={{ width: '40%' }}>Accepted Value</th>
+                <th style={{ width: '40%' }}>Event Value</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td><strong>Name</strong></td>
-                <td>{event?.name || '-'}</td>
-                <td>{event?.accepted_name || '-'}</td>
+                <td>{wasmEvent?.name || '-'}</td>
+                <td>{event?.title || '-'}</td>
               </tr>
               <tr>
                 <td><strong>Hall Name</strong></td>
-                <td>{event?.hall_name || '-'}</td>
-                <td>{event?.accepted_hall_name || '-'}</td>
+                <td>{wasmEvent?.hall_name || '-'}</td>
+                {/* todo: map to venue name */}
+                <td>{event?.venue_id || '-'}</td>
               </tr>
               <tr>
                 <td><strong>Date</strong></td>
-                <td>{event?.date ? new Date(event.date).toLocaleString() : '-'}</td>
-                <td>{event?.accepted_date ? new Date(event.accepted_date).toLocaleString() : '-'}</td>
+                <td>{wasmEvent?.date ? new Date(wasmEvent.date).toLocaleString() : '-'}</td>
+                <td>{event?.start_date_time ? new Date(event.start_date_time).toLocaleString() : '-'}</td>
               </tr>
               <tr>
                 <td><strong>Image URL</strong></td>
                 <td>
-                  {event?.image_url ? (
-                    <Anchor href={event.image_url} target="_blank" rel="noopener noreferrer" size="sm">
+                  {wasmEvent?.image_url ? (
+                    <Anchor href={wasmEvent.image_url} target="_blank" rel="noopener noreferrer" size="sm">
                       <Group spacing={4}>
                         <Group spacing={4} align="center">
                           <Image
-                            src={event.image_url}
+                            src={wasmEvent.image_url}
                             alt="Event image preview"
                             width={40}
                             height={40}
@@ -336,8 +338,9 @@ export function WasmEventEditForm({ wasmEvent: event, venues, allTags, currentTa
                   ) : '-'}
                 </td>
                 <td>
-                  {event?.accepted_image_url ? (
-                    <Anchor href={event.accepted_image_url} target="_blank" rel="noopener noreferrer" size="sm">
+                  {event?.featured_image_ref ? (
+                    // fix: request image from supabase storage
+                    <Anchor href={event.featured_image_ref} target="_blank" rel="noopener noreferrer" size="sm">
                       <Group spacing={4}>
                         <span>View Image</span>
                         <ExternalLink size={12} />
@@ -348,26 +351,26 @@ export function WasmEventEditForm({ wasmEvent: event, venues, allTags, currentTa
               </tr>
               <tr>
                 <td><strong>Short Description</strong></td>
-                <td style={{ maxWidth: '300px', wordWrap: 'break-word' }}>{event?.short_description || '-'}</td>
-                <td style={{ maxWidth: '300px', wordWrap: 'break-word' }}>{event?.accepted_short_description || '-'}</td>
+                <td style={{ maxWidth: '300px', wordWrap: 'break-word' }}>{wasmEvent?.short_description || '-'}</td>
+                <td style={{ maxWidth: '300px', wordWrap: 'break-word' }}>{event?.featured_text || '-'}</td>
               </tr>
               <tr>
                 <td><strong>Event URL</strong></td>
                 <td>
-                  {event?.event_url ? (
-                    <Anchor href={event.event_url} target="_blank" rel="noopener noreferrer" size="sm">
+                  {wasmEvent?.event_url ? (
+                    <Anchor href={wasmEvent.event_url} target="_blank" rel="noopener noreferrer" size="sm">
                       <Group spacing={4}>
-                        <span>{event?.event_url}</span>
+                        <span>{wasmEvent?.event_url}</span>
                         <ExternalLink size={12} />
                       </Group>
                     </Anchor>
                   ) : '-'}
                 </td>
                 <td>
-                  {event?.accepted_event_url ? (
-                    <Anchor href={event.accepted_event_url} target="_blank" rel="noopener noreferrer" size="sm">
+                  {event?.link ? (
+                    <Anchor href={event.link} target="_blank" rel="noopener noreferrer" size="sm">
                       <Group spacing={4}>
-                        <span>{event?.accepted_event_url}</span>
+                        <span>{event?.link}</span>
                         <ExternalLink size={12} />
                       </Group>
                     </Anchor>
@@ -375,14 +378,14 @@ export function WasmEventEditForm({ wasmEvent: event, venues, allTags, currentTa
                 </td>
               </tr>
               <tr>
-                <td><strong>Classification</strong></td>
-                <td>{event?.classification || '-'}</td>
-                <td>{event?.accepted_classification || '-'}</td>
+                <td><strong>Event Category</strong></td>
+                <td>{wasmEvent?.event_category || '-'}</td>
+                <td>{currentTags.map((t) => <>{t.name}</>)}</td>
               </tr>
               <tr>
-                <td><strong>Event Category</strong></td>
-                <td>{event?.event_category || '-'}</td>
-                <td>{event?.accepted_event_category || '-'}</td>
+                <td><strong>Classification</strong></td>
+                <td>{wasmEvent?.classification || '-'}</td>
+                <td>{'-'}</td>
               </tr>
             </tbody>
           </Table>
@@ -417,7 +420,7 @@ export function WasmEventEditForm({ wasmEvent: event, venues, allTags, currentTa
       >
         <Stack spacing="md">
           <Text>
-            Are you sure you want to delete "<strong>{event?.name}</strong>"?
+            Are you sure you want to delete "<strong>{wasmEvent?.name}</strong>"?
           </Text>
           <Text size="sm" color="dimmed">
             This action cannot be undone.

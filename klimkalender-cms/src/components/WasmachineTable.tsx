@@ -188,6 +188,7 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
       <Drawer position="right" size="80%" opened={opened} onClose={close}>
          <WasmEventEditForm
           wasmEvent={selectedWasmEvent}
+          event={selectedWasmEvent?.event_id ? events.find(e => e.id === selectedWasmEvent.event_id) || null : null}
           venues={venues}
           organizers={organizers}
           currentTags={tagsPerEvent[selectedEvent?.id || 0] || []}

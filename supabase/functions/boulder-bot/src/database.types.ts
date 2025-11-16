@@ -277,7 +277,7 @@ export type Database = {
           created_at: string
           date: string
           event_category: Database["public"]["Enums"]["wasm_event_category"]
-          event_id: string | null
+          event_id: number | null
           event_url: string | null
           external_id: string
           full_description_html: string | null
@@ -309,7 +309,7 @@ export type Database = {
           created_at?: string
           date: string
           event_category: Database["public"]["Enums"]["wasm_event_category"]
-          event_id?: string | null
+          event_id?: number | null
           event_url?: string | null
           external_id: string
           full_description_html?: string | null
@@ -341,7 +341,7 @@ export type Database = {
           created_at?: string
           date?: string
           event_category?: Database["public"]["Enums"]["wasm_event_category"]
-          event_id?: string | null
+          event_id?: number | null
           event_url?: string | null
           external_id?: string
           full_description_html?: string | null
@@ -360,7 +360,7 @@ export type Database = {
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "events"
-            referencedColumns: ["external_id"]
+            referencedColumns: ["id"]
           },
         ]
       }
