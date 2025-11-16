@@ -1,8 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, useEffect } from 'react';
-import { readLastBoulderBotAction, readEvents, readOrganizers, readTags, readTagsMap, readVenues, } from '@/data/supabase';
-
-import type { Organizer, Tag, Venue, Event, Action} from '@/types';
+import { readLastBoulderBotAction, readEvents, readWasmEvents, readOrganizers, readTags, readTagsMap, readVenues, } from '@/data/supabase';
+import type { Organizer, Tag, Venue, Action, WasmEvent, Event} from '@/types';
 import { WasmachineTable } from '@/components/WasmachineTable';
 
 export const Route = createFileRoute('/_auth/wasmachine')({
@@ -11,6 +10,7 @@ export const Route = createFileRoute('/_auth/wasmachine')({
 
 
 function WasmachineRoute() {
+  const [wasmEvents, setWasmEvents] = useState<WasmEvent[]|null>(null);
   const [events, setEvents] = useState<Event[]|null>(null);
   const [venues, setVenues] = useState<Venue[]|null>(null);
   const [tagsPerEvent, setTagsPerEvent] = useState<{ [id: number]: Tag[] }|null>(null);
@@ -19,6 +19,7 @@ function WasmachineRoute() {
   const [lastBoulderBotAction, setLastBoulderBotAction] = useState<Action | null | undefined>(null);
 
   useEffect(() => {
+    readWasmEvents(setWasmEvents);
     readEvents(setEvents);
     readVenues(setVenues);
     readTagsMap(setTagsPerEvent);
@@ -31,8 +32,8 @@ function WasmachineRoute() {
 
   return (
     <div className="p-2 grid gap-2">
-         <div>{venues && events && tagsPerEvent && organizers && allTags && lastBoulderBotAction &&
-           <WasmachineTable events={events} venues={venues} tagsPerEvent={tagsPerEvent}  allTags={allTags} organizers={organizers} action={lastBoulderBotAction} />
+         <div>{venues && wasmEvents &&events && tagsPerEvent && organizers && allTags && lastBoulderBotAction &&
+           <WasmachineTable wasmEvents={wasmEvents} events={events} venues={venues} tagsPerEvent={tagsPerEvent}  allTags={allTags} organizers={organizers} action={lastBoulderBotAction} />
          }</div>
     </div>
   )

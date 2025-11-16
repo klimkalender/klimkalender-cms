@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { Action, Event, Organizer, Tag, Venue } from '@/types';
+import type { Action, Event, Organizer, Tag, Venue, WasmEvent } from '@/types';
 import { Drawer, Group, Tabs } from '@mantine/core';
 import {
   MantineReactTable,
@@ -15,6 +15,7 @@ import RunBoulderbotButton from './BoulderbotButton';
 import type { Database } from '@/database.types';
 
 type EventsTableProps = {
+  wasmEvents: WasmEvent[];
   events: Event[];
   venues: Venue[];
   tagsPerEvent: { [id: number]: Tag[] };
@@ -23,34 +24,32 @@ type EventsTableProps = {
   action: Action | null | undefined;
 };
 
-export function WasmachineTable({ events, venues, tagsPerEvent: defaultTagsPerEvent, allTags, organizers, action }: EventsTableProps) {
+export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPerEvent: defaultTagsPerEvent, allTags, organizers, action }: EventsTableProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  const [eventsList, setEventsList] = useState<Event[]>(events);
-  const [activeTab, setActiveTab] = useState<string>('PUBLISHED');
+  const [selectedWasmEvent, setSelectedWasmEvent] = useState<WasmEvent | null>(null);
+  const [wasmEventsList, setWasmEventsList] = useState<WasmEvent[]>(wasmEvents);
+  const [activeTab, setActiveTab] = useState<string>('NEW');
   const [showBoulderbotLogs, setShowBoulderbotLogs] = useState<boolean>(false);
   const [tagsPerEvent, setTagsPerEvent] = useState<{ [id: number]: Tag[] }>(defaultTagsPerEvent);
   const [lastAction, setLastAction] = useState<Database["public"]["Tables"]["actions"]["Row"] | null | undefined>(action);
-  const columns = useMemo<MRT_ColumnDef<Event>[]>(
+  const columns = useMemo<MRT_ColumnDef<WasmEvent>[]>(
     () => [
       {
         header: 'Date',
-        sortingFn: (a, b) => sortByDate(a.original.start_date_time, b.original.start_date_time),
+        sortingFn: (a, b) => sortByDate(a.original.date, b.original.date),
         accessorFn: (originalRow) => {
-          if (!originalRow.is_full_day) {
-            return `${new Date(originalRow.start_date_time).toLocaleDateString()} ${new Date(originalRow.start_date_time).toLocaleTimeString().substring(0, 5)}`;
-          }
-          return new Date(originalRow.start_date_time).toLocaleDateString();
+          return new Date(originalRow.date).toLocaleDateString();
         },
         id: 'start_date',
       },
       {
         // accessorKey: 'name', //simple recommended way to define a column
         header: 'Title',
-        sortingFn: (a, b) => a.original.title.localeCompare(b.original.title),
+        sortingFn: (a, b) => a.original.name.localeCompare(b.original.name),
         mantineTableHeadCellProps: { sx: { color: 'green' } }, //custom props
-        accessorKey: 'title',
-        id: 'title', //id required if you use accessorFn instead of accessorKey
+        accessorKey: 'name',
+        id: 'name', //id required if you use accessorFn instead of accessorKey
       },
       {
         header: 'Status',
@@ -60,48 +59,46 @@ export function WasmachineTable({ events, venues, tagsPerEvent: defaultTagsPerEv
       },
       {
         header: 'Venue',
-        accessorFn: (originalRow) => {
-          const venue = venues.find(v => v.id === originalRow.venue_id);
-          return venue ? venue.name : 'N/A';
-        },
+        accessorKey: 'hall_name',
         id: 'venue',
       },
       {
-        header: 'Tags',
+        header: 'Classification',
+        id: 'classification',
+        accessorKey: 'classification',
+      },
+      {
+        header: 'Category',
+        id: 'event_category',
+        accessorKey: 'event_category',
+      },
+      {
+        header: 'Processed At',
         accessorFn: (originalRow) => {
-          return tagsPerEvent[originalRow.id]?.map(tag => tag.name).join(', ') || '-';
+          if (!originalRow.processed_at) {
+            return 'N/A';
+          }
+          const date = new Date(originalRow.processed_at);
+          return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
         },
-        id: 'tags',
-      }
-      ,
-      {
-        header: 'Featured',
-        accessorFn: (originalRow) => originalRow.featured ? 'Yes' : 'No',
-        id: 'featured',
-      }
-      ,
-      {
-        header: 'Organizer',
-        id: 'organizer',
-        accessorFn: (originalRow) => organizers.find(o => o.id === originalRow.organizer_id)?.name || '-',
-        accessorKey: 'organizer',
+        id: 'processed_at',
       }
     ],
     [tagsPerEvent],
   );
 
-  const handleRowClick = (event: Event) => {
-    setSelectedEvent(event);
+  const handleRowClick = (event: WasmEvent) => {
+    setSelectedWasmEvent(event);
     open();
   };
 
-  const handleEventSave = (savedEvent: Event, tags: Tag[]) => {
+  const handleEventSave = (savedEvent: WasmEvent, tags: Tag[]) => {
     setTagsPerEvent(prev => ({
       ...prev,
       [savedEvent.id]: tags,
     }));
 
-    setEventsList(prev => {
+    setWasmEventsList(prev => {
       const existingIndex = prev.findIndex(e => e.id === savedEvent.id);
       if (existingIndex >= 0) {
         // Update existing event
@@ -112,18 +109,18 @@ export function WasmachineTable({ events, venues, tagsPerEvent: defaultTagsPerEv
       }
     });
     close();
-    setSelectedEvent(null);
+    setSelectedWasmEvent(null);
   };
 
   const handleCancel = () => {
     close();
-    setSelectedEvent(null);
+    setSelectedWasmEvent(null);
   };
 
   const handleEventDelete = (eventId: number) => {
-    setEventsList(prev => prev.filter(e => e.id !== eventId));
+    setWasmEventsList(prev => prev.filter(e => e.id !== eventId));
     close();
-    setSelectedEvent(null);
+    setSelectedWasmEvent(null);
   };
 
   useEffect(() => {
@@ -137,11 +134,11 @@ export function WasmachineTable({ events, venues, tagsPerEvent: defaultTagsPerEv
         { id: 'status', value: activeTab }
       ]);
     }
-  }, [activeTab, events]);
+  }, [activeTab, wasmEvents]);
 
   const table = useMantineReactTable({
     columns,
-    data: eventsList,
+    data: wasmEventsList,
     enableGlobalFilter: true,
     enableFilters: true,
     positionGlobalFilter: 'left',
@@ -151,30 +148,20 @@ export function WasmachineTable({ events, venues, tagsPerEvent: defaultTagsPerEv
     enableFullScreenToggle: false,
     initialState: { density: 'xs', pagination: { pageSize: 10, pageIndex: 0 }, showGlobalFilter: true, columnVisibility: { status: false } },
     sortDescFirst: true,
-    mantineTableBodyRowProps: ({ row }) => ({
-      onClick: () => {
-        handleRowClick(row.original);
-      },
-      sx: {
-        cursor: 'pointer', //you might want to change the cursor too when adding an onClick
-        fontWeight: row.original.featured ? 'bold' : undefined,
-        color: row.original.featured ? 'darkblue' : undefined,
-      },
-    }),
   });
 
-  //note: you can also pass table options as props directly to <MantineReactTable /> instead of using useMantineReactTable
-  //but that is not recommended and will likely be deprecated in the future
   return (
     <>
       <Group position="right" mb="md">
         <RunBoulderbotButton onComplete={setLastAction} />
       </Group>
-      <Tabs value={activeTab} onTabChange={(a) => setActiveTab(a || 'DRAFT')}>
+      <Tabs value={activeTab} onTabChange={(a) => setActiveTab(a || 'NEW')}>
         <Tabs.List>
-          <Tabs.Tab value="DRAFT">Draft</Tabs.Tab>
-          <Tabs.Tab value="PUBLISHED">Published</Tabs.Tab>
-          <Tabs.Tab value="ARCHIVED">Archived</Tabs.Tab>
+          <Tabs.Tab value="NEW">New</Tabs.Tab>
+          <Tabs.Tab value="CHANGED">Changed</Tabs.Tab>
+          <Tabs.Tab value="UP_TO_DATE">Up to Date</Tabs.Tab>
+          <Tabs.Tab value="REMOVED">Removed</Tabs.Tab>
+          <Tabs.Tab value="EVENT_PASSED">Event Passed</Tabs.Tab>
           <Tabs.Tab icon={<Logs />} value="BOULDERBOT">Boulderbot Logs</Tabs.Tab>
         </Tabs.List>
       </Tabs>
@@ -187,7 +174,7 @@ export function WasmachineTable({ events, venues, tagsPerEvent: defaultTagsPerEv
       )}
 
       <Drawer position="right" size="xl" opened={opened} onClose={close}>
-        <EventEditForm
+        {/* <EventEditForm
           event={selectedEvent}
           venues={venues}
           organizers={organizers}
@@ -196,7 +183,7 @@ export function WasmachineTable({ events, venues, tagsPerEvent: defaultTagsPerEv
           onSave={handleEventSave}
           onCancel={handleCancel}
           onDelete={handleEventDelete}
-        />
+        /> */}
       </Drawer>
     </>
   );

@@ -1,5 +1,5 @@
 import type { Database } from "@/database.types";
-import type { Tag } from "@/types";
+import type { Tag, WasmEvent } from "@/types";
 import { createClient } from "@supabase/supabase-js";
 
 export const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
@@ -27,6 +27,16 @@ export async function readEvents(setEvents: React.Dispatch<React.SetStateAction<
   const { data, error } = await supabase.from("events").select().order("start_date_time", { ascending: true });
   if (data) setEvents(data);
   if (error) console.error("Error fetching events:", error);
+}
+
+
+export async function readWasmEvents(setWasmEvents: React.Dispatch<React.SetStateAction<WasmEvent[] | null>>
+) {
+  const twoMonthsAgo = new Date();
+  twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+  const { data, error } = await supabase.from("wasm_events").select().gte("date", twoMonthsAgo.toISOString()).order("date", { ascending: true });
+  if (data) setWasmEvents(data);
+  if (error) console.error("Error fetching wasm_events:", error);
 }
 
 
