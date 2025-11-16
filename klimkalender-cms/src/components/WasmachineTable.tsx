@@ -13,6 +13,7 @@ import { Logs } from 'lucide-react';
 import { BoulderbotLogs } from './BoulderbotLogs';
 import RunBoulderbotButton from './BoulderbotButton';
 import type { Database } from '@/database.types';
+import { WasmEventEditForm } from './WasmEventEditForm';
 
 type EventsTableProps = {
   wasmEvents: WasmEvent[];
@@ -26,7 +27,7 @@ type EventsTableProps = {
 
 export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPerEvent: defaultTagsPerEvent, allTags, organizers, action }: EventsTableProps) {
   const [opened, { open, close }] = useDisclosure(false);
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<WasmEvent | null>(null);
   const [selectedWasmEvent, setSelectedWasmEvent] = useState<WasmEvent | null>(null);
   const [wasmEventsList, setWasmEventsList] = useState<WasmEvent[]>(wasmEvents);
   const [activeTab, setActiveTab] = useState<string>('NEW');
@@ -88,6 +89,7 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
   );
 
   const handleRowClick = (event: WasmEvent) => {
+    console.log('Row clicked:', event); 
     setSelectedWasmEvent(event);
     open();
   };
@@ -148,6 +150,16 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
     enableFullScreenToggle: false,
     initialState: { density: 'xs', pagination: { pageSize: 10, pageIndex: 0 }, showGlobalFilter: true, columnVisibility: { status: false } },
     sortDescFirst: true,
+      mantineTableBodyRowProps: ({ row }) => ({
+      onClick: () => {
+        handleRowClick(row.original);
+      },
+      // sx: {
+      //   cursor: 'pointer', //you might want to change the cursor too when adding an onClick
+      //   fontWeight: row.original.featured ? 'bold' : undefined,
+      //   color: row.original.featured ? 'darkblue' : undefined,
+      // },
+    }),
   });
 
   return (
@@ -173,9 +185,9 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
        <BoulderbotLogs action={lastAction} setAction={setLastAction} />
       )}
 
-      <Drawer position="right" size="xl" opened={opened} onClose={close}>
-        {/* <EventEditForm
-          event={selectedEvent}
+      <Drawer position="right" size="80%" opened={opened} onClose={close}>
+         <WasmEventEditForm
+          wasmEvent={selectedWasmEvent}
           venues={venues}
           organizers={organizers}
           currentTags={tagsPerEvent[selectedEvent?.id || 0] || []}
@@ -183,7 +195,7 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
           onSave={handleEventSave}
           onCancel={handleCancel}
           onDelete={handleEventDelete}
-        /> */}
+        />
       </Drawer>
     </>
   );
