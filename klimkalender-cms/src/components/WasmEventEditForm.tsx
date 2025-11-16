@@ -12,14 +12,16 @@ import {
   Modal,
   Notification,
   Radio,
-  MultiSelect
+  MultiSelect,
+  Anchor,
+  Table
 } from '@mantine/core';
 
 import { useDisclosure } from '@mantine/hooks';
 import type { Event, Venue, Organizer, Tag, WasmEvent } from '@/types';
 import { supabase } from '@/data/supabase';
 import { DateTime } from 'luxon';
-import { BookCheck } from 'lucide-react';
+import { BookCheck, ExternalLink } from 'lucide-react';
 
 interface WasmEventEditFormProps {
   wasmEvent?: WasmEvent | null;
@@ -45,14 +47,14 @@ export function WasmEventEditForm({ wasmEvent: event, venues, allTags, currentTa
   const [startDateTime, setStartDateTime] = useState(() => {
     if (event?.date) {
       // hardcoded default timezone for wasm events
-      const tz =  'Europe/Amsterdam';
+      const tz = 'Europe/Amsterdam';
       return DateTime.fromISO(event.date).setZone(tz).toJSDate();
     }
     return null;
   });
   const [status, setStatus] = useState(event?.status || 'DRAFT');
   const [link, setLink] = useState(event?.event_url || '');
-  
+
   // Tags handling
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>(
     currentTags.map(tag => tag.id.toString())
@@ -71,7 +73,7 @@ export function WasmEventEditForm({ wasmEvent: event, venues, allTags, currentTa
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
-     setErrors(newErrors);
+    setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
@@ -157,7 +159,7 @@ export function WasmEventEditForm({ wasmEvent: event, venues, allTags, currentTa
 
     try {
       // Delete the event image from storage if it exists
-    
+
 
       onDelete(event.id);
 
@@ -192,36 +194,202 @@ export function WasmEventEditForm({ wasmEvent: event, venues, allTags, currentTa
     <>
       <form onSubmit={handleSubmit}>
         <Stack spacing="md">
-          <Group position="apart" align="center">
-            <Text size="lg" weight={500}>
-              Bolder Bot Event: {event?.name}
-            </Text>
+          <Text size="lg" weight={500}>
+            Bolder Bot Event: {event?.name}
+          </Text>
+          <Group position="apart" align="flex-start">
+            <Stack spacing="xs">
 
-            {/* Publish Button - show for existing events in draft status OR new events */}
-            {((event?.id && status === 'DRAFT') || !event?.id) && (
-              <Button
-                color="green"
-                // onClick={event?.id ? handlePublish : handlePublishNew}
-                loading={loading}
-                leftIcon={<BookCheck />}
+              <Group spacing={4} align="center">
+                <Text size="sm" color="dimmed" style={{ minWidth: '80px' }}>
+                  External ID:
+                </Text>
+                <Text size="sm" weight={500}>
+                  {event?.external_id}
+                </Text>
+                <Anchor
+                  href={event?.event_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="sm"
+                >
+                  <ExternalLink size={14} />
+                </Anchor>
+              </Group>
+
+              <Group spacing={4} align="center">
+                <Text size="sm" color="dimmed" style={{ minWidth: '80px' }}>
+                  Event ID:
+                </Text>
+                <Text size="sm" weight={500}>
+                  {event?.event_id ? event.event_id : '-'}
+                </Text>
+                {event?.event_id && (
+                  <Anchor
+                    href={`/events/${event.event_id}`}
+                    size="sm"
+                  >
+                    <ExternalLink size={14} />
+                  </Anchor>
+                )}
+              </Group>
+
+              <Group spacing={4} align="center">
+                <Text size="sm" color="dimmed" style={{ minWidth: '80px' }}>
+                  Status:
+                </Text>
+                <Text size="sm" weight={500} color={status === 'PUBLISHED' ? 'green' : status === 'DRAFT' ? 'orange' : 'gray'}>
+                  {status}
+                </Text>
+              </Group>
+              <Group spacing={4} align="center">
+                <Text size="sm" color="dimmed" style={{ minWidth: '80px' }}>
+                  Processed at:
+                </Text>
+                <Text size="sm">
+                  {event?.processed_at ? new Date(event.processed_at).toLocaleString() : 'N/A'}
+                </Text>
+              </Group>
+            </Stack>
+
+            <Stack spacing="xs" style={{ minWidth: '500px' }}>
+              <Text size="sm" weight={500}>Action</Text>
+              <Radio.Group
+                value={status}
+                onChange={setStatus}
               >
-                Publish Event
+                <Stack spacing="xs">
+                  <Radio value="PUBLISH_AS_DRAFT" label="Copy event as draft" />
+                  <Radio value="PUBLISH_AS_PUBLISHED" label="Copy event as published" />
+                  <Radio value="IGNORE" label="Ignore this event forever" />
+                </Stack>
+              </Radio.Group>
+                            <Text size="sm" weight={500}>Select import type</Text>
+              <Radio.Group
+                value={status}
+                onChange={setStatus}
+              >
+                <Stack spacing="xs">
+                  <Radio value="MANUAL" label="Manual Import" />
+                  <Radio value="AUTO" label="Auto Import" />
+                </Stack>
+              </Radio.Group>
+            </Stack>
+            
+          </Group>
+          <Group position="right" >
+            {onCancel && (
+              <Button variant="light" onClick={onCancel} disabled={loading}>
+                Cancel
               </Button>
             )}
+            <Button type="submit" loading={loading}>
+              Apply Changes
+            </Button>
           </Group>
 
-          <TextInput
-            label="Title"
-            placeholder="Enter event title"
-            required
-            value={title}
-            onChange={(event) => setTitle(event.currentTarget.value)}
-            error={errors.title}
-          />
+          {/* Comparison Table */}
+          <Table withColumnBorders={false} withBorder={false} mt="md">
+            <thead>
+              <tr>
+                <th style={{ width: '20%' }}>Field</th>
+                <th style={{ width: '40%' }}>Current Value</th>
+                <th style={{ width: '40%' }}>Accepted Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Name</strong></td>
+                <td>{event?.name || '-'}</td>
+                <td>{event?.accepted_name || '-'}</td>
+              </tr>
+              <tr>
+                <td><strong>Hall Name</strong></td>
+                <td>{event?.hall_name || '-'}</td>
+                <td>{event?.accepted_hall_name || '-'}</td>
+              </tr>
+              <tr>
+                <td><strong>Date</strong></td>
+                <td>{event?.date ? new Date(event.date).toLocaleString() : '-'}</td>
+                <td>{event?.accepted_date ? new Date(event.accepted_date).toLocaleString() : '-'}</td>
+              </tr>
+              <tr>
+                <td><strong>Image URL</strong></td>
+                <td>
+                  {event?.image_url ? (
+                    <Anchor href={event.image_url} target="_blank" rel="noopener noreferrer" size="sm">
+                      <Group spacing={4}>
+                        <Group spacing={4} align="center">
+                          <Image
+                            src={event.image_url}
+                            alt="Event image preview"
+                            width={40}
+                            height={40}
+                            fit="cover"
+                            radius="xs"
+                          />
+                          <span>View Image</span>
+                        </Group>
+                        <ExternalLink size={12} />
+                      </Group>
+                    </Anchor>
+                  ) : '-'}
+                </td>
+                <td>
+                  {event?.accepted_image_url ? (
+                    <Anchor href={event.accepted_image_url} target="_blank" rel="noopener noreferrer" size="sm">
+                      <Group spacing={4}>
+                        <span>View Image</span>
+                        <ExternalLink size={12} />
+                      </Group>
+                    </Anchor>
+                  ) : '-'}
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Short Description</strong></td>
+                <td style={{ maxWidth: '300px', wordWrap: 'break-word' }}>{event?.short_description || '-'}</td>
+                <td style={{ maxWidth: '300px', wordWrap: 'break-word' }}>{event?.accepted_short_description || '-'}</td>
+              </tr>
+              <tr>
+                <td><strong>Event URL</strong></td>
+                <td>
+                  {event?.event_url ? (
+                    <Anchor href={event.event_url} target="_blank" rel="noopener noreferrer" size="sm">
+                      <Group spacing={4}>
+                        <span>{event?.event_url}</span>
+                        <ExternalLink size={12} />
+                      </Group>
+                    </Anchor>
+                  ) : '-'}
+                </td>
+                <td>
+                  {event?.accepted_event_url ? (
+                    <Anchor href={event.accepted_event_url} target="_blank" rel="noopener noreferrer" size="sm">
+                      <Group spacing={4}>
+                        <span>{event?.accepted_event_url}</span>
+                        <ExternalLink size={12} />
+                      </Group>
+                    </Anchor>
+                  ) : '-'}
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Classification</strong></td>
+                <td>{event?.classification || '-'}</td>
+                <td>{event?.accepted_classification || '-'}</td>
+              </tr>
+              <tr>
+                <td><strong>Event Category</strong></td>
+                <td>{event?.event_category || '-'}</td>
+                <td>{event?.accepted_event_category || '-'}</td>
+              </tr>
+            </tbody>
+          </Table>
 
           <Group position="apart" mt="md">
             <div>
-              {event?.id && onDelete && (
+              {/* {event?.id && onDelete && (
                 <Button
                   variant="outline"
                   color="red"
@@ -230,20 +398,13 @@ export function WasmEventEditForm({ wasmEvent: event, venues, allTags, currentTa
                 >
                   Delete Event
                 </Button>
-              )}
+              )} */}
             </div>
 
-            <Group position="right">
-              {onCancel && (
-                <Button variant="light" onClick={onCancel} disabled={loading}>
-                  Cancel
-                </Button>
-              )}
-              <Button type="submit" loading={loading}>
-                {event?.id ? 'Update Event' : 'Save as Draft'}
-              </Button>
-            </Group>
+
           </Group>
+
+
         </Stack>
       </form>
 
