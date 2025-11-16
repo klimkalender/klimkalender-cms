@@ -3,7 +3,7 @@
 ## generating types
 
 cd /workspace/klimkalender-cms && supabase gen types typescript --project-id  zrshjxlfodmuulctapbw  > ./src/database.types.ts
-cd /workspace/klimkalender-cms && supabase gen types typescript --project-id  zrshjxlfodmuulctapbw  > ../supabase/functions/boulder-bot/src/types.ts
+cd /workspace/klimkalender-cms && supabase gen types typescript --project-id  zrshjxlfodmuulctapbw  > ../supabase/functions/boulder-bot/src/database.types.ts
 
 ## import data
 
