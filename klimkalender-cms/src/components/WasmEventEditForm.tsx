@@ -13,8 +13,9 @@ import {
 } from '@mantine/core';
 
 import type { Event, Venue, Organizer, Tag, WasmEvent, WasmEventAction, WasmEventStatus } from '@/types';
-import { createEvent, updateWasmEvent, } from '@/data/supabase';
+import { createEvent, supabase, updateWasmEvent, } from '@/data/supabase';
 import { ExternalLink } from 'lucide-react';
+import { uploadEventImage } from '@/utils/upload-image';
 
 interface WasmEventEditFormProps {
   wasmEvent?: WasmEvent | null;
@@ -108,12 +109,11 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
             await updateWasmEvent(updatedWasmEvent);
             if (wasmEvent.image_url) {
               console.log(`Uploading image ${wasmEvent.image_url} to supabase storage...`);
-              // do this via a edge function to avoid cros origin issues
-              // const imageRef = await uploadRemoteImageToSupabase(wasmEvent.image_url, 'event-images');
-              // const { error } = await supabase.from('events').update({ featured_image_ref: imageRef }).eq('id', newEvent?.id);
-              // if (error) {
-              //   console.error('Error updating event with image reference:', error);
-              // }
+              const imageRef = await uploadEventImage(wasmEvent.image_url);
+              const { error } = await supabase.from('events').update({ featured_image_ref: imageRef }).eq('id', newEvent?.id);
+              if (error) {
+                console.error('Error updating event with image reference:', error);
+              }
             }
             // todo: set tags
             // update local state

@@ -19,3 +19,5 @@ supabase functions deploy kk-publisher --project-ref zrshjxlfodmuulctapbw
 
 
 supabase functions deploy boulder-bot --project-ref zrshjxlfodmuulctapbw
+
+supabase functions deploy image-grabber --project-ref zrshjxlfodmuulctapbw
