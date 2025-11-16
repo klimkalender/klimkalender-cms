@@ -27,7 +27,6 @@ class SupabaseBoulderBotHook extends BoulderBotHookBase {
         this.userEmail = user || null;
     }
     async storeResult(data: CompData[]): Promise<void> {
-        console.log('Storing result locally:', data);
         const jsonString = JSON.stringify(data, null, 2);
         this.supabaseClient.storage.from('boulderbot').upload(`botresult.json`, jsonString, {
             contentType: 'application/json',
