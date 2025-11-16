@@ -139,7 +139,6 @@ enum WasmEventCategory {
 }
 
 enum WasmAction {
-  IGNORE
   MANUAL_IMPORT
   AUTO_IMPORT
 

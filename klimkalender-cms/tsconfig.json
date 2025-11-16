@@ -18,8 +18,8 @@
     "skipLibCheck": true,
     "strict": true,
     // temporarily disable unused checks
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "baseUrl": ".",

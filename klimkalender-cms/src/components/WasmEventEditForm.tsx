@@ -8,12 +8,12 @@ import {
   Notification,
   Radio,
   Anchor,
-  Table
+  Table,
+  Select
 } from '@mantine/core';
 
-import { useDisclosure } from '@mantine/hooks';
-import type { Event, Venue, Organizer, Tag, WasmEvent, WasmEventAction } from '@/types';
-import { supabase } from '@/data/supabase';
+import type { Event, Venue, Organizer, Tag, WasmEvent, WasmEventAction, WasmEventStatus } from '@/types';
+import { createEvent, updateWasmEvent, } from '@/data/supabase';
 import { ExternalLink } from 'lucide-react';
 
 interface WasmEventEditFormProps {
@@ -30,7 +30,7 @@ interface WasmEventEditFormProps {
 
 export type FormAction = 'PUBLISH_AS_DRAFT' | 'PUBLISH_AS_PUBLISHED' | 'UPDATE_EVENT' | 'IGNORE_ONCE' | 'IGNORE_FOREVER' | 'CHANGE_IMPORT_TYPE';
 
-export function WasmEventEditForm({ wasmEvent, event, venues, allTags, currentTags, organizers, onSave, onCancel, onDelete }: WasmEventEditFormProps) {
+export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCancel }: WasmEventEditFormProps) {
   const [loading, setLoading] = useState(false);
 
   let defaultAction: FormAction = 'IGNORE_FOREVER';
@@ -48,18 +48,23 @@ export function WasmEventEditForm({ wasmEvent, event, venues, allTags, currentTa
       break;
   }
 
+  // best guess of the venue id based on hall name
+  const defaultVenueId = wasmEvent?.hall_name ? venues.find(venue => venue.name.toLocaleLowerCase().includes(wasmEvent?.hall_name?.toLocaleLowerCase() || ''))?.id.toString() || null : null;
   const [formAction, setFormAction] = useState<FormAction>(defaultAction);
+  const [selectedVenueId, setSelectedVenueId] = useState<string | null>(defaultVenueId);
   const [wasmEventAction, setWasmEventAction] = useState<WasmEventAction>(wasmEvent?.action || 'MANUAL_IMPORT');
-
 
   // UI state
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [deleteModalOpened, { open: openDeleteModal, close: closeDeleteModal }] = useDisclosure(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
   // Validation - not much to validate here yet
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
+
+    if (selectedVenueId === null) {
+      newErrors['venue'] = 'Venue is required for importing the event.';
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -78,13 +83,70 @@ export function WasmEventEditForm({ wasmEvent, event, venues, allTags, currentTa
 
     try {
 
+      switch (formAction) {
+        case 'PUBLISH_AS_DRAFT':
+          //create a new event
+          try {
+            if (!wasmEvent) throw new Error('WasmEvent is undefined');
+            const newEvent = await createEvent(wasmEvent!, selectedVenueId ? parseInt(selectedVenueId) : 0, 'DRAFT');
+            console.dir(newEvent);
+            const updatedWasmEvent = {
+              ...wasmEvent,
+              event_id: newEvent?.id || 0,
+              status: 'UP_TO_DATE' as WasmEventStatus,
+              action: wasmEventAction,
+              accepted_classification: wasmEvent.classification,
+              accepted_date: wasmEvent.date,
+              accepted_hall_name: wasmEvent.hall_name,
+              accepted_short_description: wasmEvent.short_description,
+              accepted_full_description_html: wasmEvent.full_description_html,
+              accepted_event_url: wasmEvent.event_url,
+              accepted_image_url: wasmEvent.image_url,
+              accepted_event_category: wasmEvent.event_category,
+            };
 
-      const eventData = {
-      //  title: title.trim(),
-        // toher fields here
-      };
+            await updateWasmEvent(updatedWasmEvent);
+            if (wasmEvent.image_url) {
+              console.log(`Uploading image ${wasmEvent.image_url} to supabase storage...`);
+              // do this via a edge function to avoid cros origin issues
+              // const imageRef = await uploadRemoteImageToSupabase(wasmEvent.image_url, 'event-images');
+              // const { error } = await supabase.from('events').update({ featured_image_ref: imageRef }).eq('id', newEvent?.id);
+              // if (error) {
+              //   console.error('Error updating event with image reference:', error);
+              // }
+            }
+            // todo: set tags
+            // update local state
+            // if (onSave && updatedWasmEvent) {
+            //   onSave(updatedWasmEvent, allTags.filter(tag => currentTags.map(t => t.id).includes(tag.id)));
+            // }
+            setNotification({
+              type: 'success',
+              message: 'Event published as draft successfully.'
+            });
 
-      let result;
+          } catch (error) {
+            console.error('Error creating event:', error);
+            setNotification({
+              type: 'error',
+              message: `Publish as draft failed: ${(error as Error).message}.`
+            });
+          }
+          break;
+        default:
+          setNotification({
+            type: 'error',
+            message: `Action ${formAction} not implemented yet.`
+          });
+          break;
+      }
+
+      // const eventData = {
+      //   //  title: title.trim(),
+      //   // toher fields here
+      // };
+
+      // let result;
 
       // if (event?.id) {
       //   // Update existing event
@@ -112,10 +174,10 @@ export function WasmEventEditForm({ wasmEvent, event, venues, allTags, currentTa
       //   await manageEventTags(result.data.id, selectedTagIds);
       // }
 
-      setNotification({
-        type: 'success',
-        message: `Event ${wasmEvent?.id ? 'updated' : 'created'} successfully!`
-      });
+      // setNotification({
+      //   type: 'success',
+      //   message: `Event ${wasmEvent?.id ? 'updated' : 'created'} successfully!`
+      // });
 
       // if (onSave && result.data) {
       //   onSave(result.data, allTags.filter(tag => selectedTagIds.includes(tag.id.toString())));
@@ -194,6 +256,22 @@ export function WasmEventEditForm({ wasmEvent, event, venues, allTags, currentTa
             </Stack>
 
             <Stack spacing="xs" style={{ minWidth: '500px' }}>
+              {!wasmEvent?.event_id && (
+                <>
+                  <Text size="sm" weight={800}>Select Venue</Text>
+                  <Select
+                    error={errors.venue}
+                    onChange={setSelectedVenueId}
+                    placeholder="Choose a venue"
+                    value={selectedVenueId}
+                    data={venues.map(venue => ({
+                      value: venue.id.toString(),
+                      label: venue.name
+                    }))}
+                    searchable
+                  />
+                </>
+              )}
               <Text size="sm" weight={800}>Action</Text>
               <Radio.Group
                 value={formAction}
@@ -353,3 +431,4 @@ export function WasmEventEditForm({ wasmEvent, event, venues, allTags, currentTa
     </>
   );
 }
+

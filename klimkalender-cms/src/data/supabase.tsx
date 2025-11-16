@@ -1,5 +1,5 @@
 import type { Database } from "@/database.types";
-import type { Tag, WasmEvent } from "@/types";
+import type { Tag, WasmEvent, Event } from "@/types";
 import { createClient } from "@supabase/supabase-js";
 
 export const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
@@ -143,4 +143,96 @@ export async function getActionLog(setLogs: React.Dispatch<React.SetStateAction<
     console.error('Error fetching action logs:', error);
     return null;
   }
+}
+
+export async function createEvent(wasmEvent: WasmEvent, venueId: number, status: 'PUBLISHED' | 'DRAFT') :Promise<Event| null>{
+  // Calculate end of day in European timezone (CET/CEST)
+  // hmm... is this correct?
+  const eventDate = new Date(wasmEvent.date);
+  const endOfDay = new Date(eventDate);
+  endOfDay.setHours(23, 59, 59, 999);
+  const endDateTime = endOfDay.toISOString();
+  const { data, error } = await supabase
+    .from('events')
+    .insert([{ 
+      title: wasmEvent.name,
+      start_date_time: wasmEvent.date,
+      end_date_time: endDateTime,
+      external_id: wasmEvent.external_id,
+      link: wasmEvent.event_url,
+      organizer_id: null,
+      venue_id: venueId,
+      featured_text: wasmEvent.short_description || null,
+      is_full_day: true,
+      status: status,
+    }])
+    .select()
+    .single();
+  if (error) {
+    console.error('Error creating new Wasm Event:', error);
+    return null;
+  }
+  console.dir(data);
+  return data;
+}
+
+export async function updateWasmEvent(wasmEvent: WasmEvent) {
+  const { data, error } = await supabase
+    .from('wasm_events')
+    .update({ 
+      accepted_name: wasmEvent.accepted_name,
+      accepted_classification: wasmEvent.accepted_classification,
+      accepted_date: wasmEvent.accepted_date,
+      accepted_hall_name: wasmEvent.accepted_hall_name,
+      accepted_short_description: wasmEvent.accepted_short_description,
+      accepted_full_description_html: wasmEvent.accepted_full_description_html,
+      accepted_event_url: wasmEvent.accepted_event_url,
+      accepted_image_url: wasmEvent.accepted_image_url,
+      accepted_event_category: wasmEvent.accepted_event_category,
+      event_id: wasmEvent.event_id,
+      status: wasmEvent.status,
+      action: wasmEvent.action,
+    })
+    .eq('id', wasmEvent.id)
+    .select()
+    .single();
+  if (error) {
+    console.error('Error updating Wasm Event:', error);
+    return null;
+  }
+  return data;
+} 
+
+
+export async function uploadRemoteImageToSupabase(imageUrl: string, bucket: string, prefix?: string): Promise<string | undefined> {
+  const extension = imageUrl.split('.').pop() || '';
+  const imageName = imageUrl.split('/').pop();
+  const imagePrefix = prefix ? `${prefix}` : Math.random().toString(36).substring(2, 6);
+  console.log(imageUrl);
+  const response = await fetch(imageUrl);
+  if (!response.ok) {
+    console.error('Failed to fetch image:', response.statusText);
+    return;
+  }
+  // map extension to content type
+  const contentTypeMap: { [key: string]: string } = {
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    png: 'image/png',
+    gif: 'image/gif',
+  };
+  console.log('Uploading image:', imageName, extension, contentTypeMap[extension]);
+
+  const imageBuffer = await response.arrayBuffer();
+  const { error: uploadError } = await supabase.storage
+    .from(bucket)
+    .upload(`${imagePrefix}-${imageName}`, new Blob([imageBuffer], { type: contentTypeMap[extension] }), {
+      upsert: true,
+    });
+
+  if (uploadError) {
+    console.error('Error uploading image:', uploadError);
+    return undefined
+  }
+  return `${imagePrefix}-${imageName}`;
 }

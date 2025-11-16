@@ -8,7 +8,6 @@ import {
 } from 'mantine-react-table';
 import { useDisclosure } from '@mantine/hooks';
 import { sortByDate } from '@/utils/sort-by-date';
-import { EventEditForm } from './EventEditForm';
 import { Logs } from 'lucide-react';
 import { BoulderbotLogs } from './BoulderbotLogs';
 import RunBoulderbotButton from './BoulderbotButton';
@@ -27,7 +26,7 @@ type EventsTableProps = {
 
 export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPerEvent: defaultTagsPerEvent, allTags, organizers, action }: EventsTableProps) {
   const [opened, { open, close }] = useDisclosure(false);
-  const [selectedEvent, setSelectedEvent] = useState<WasmEvent | null>(null);
+  const [selectedEvent] = useState<WasmEvent | null>(null);
   const [selectedWasmEvent, setSelectedWasmEvent] = useState<WasmEvent | null>(null);
   const [wasmEventsList, setWasmEventsList] = useState<WasmEvent[]>(wasmEvents);
   const [activeTab, setActiveTab] = useState<string>('NEW');
@@ -89,7 +88,6 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
   );
 
   const handleRowClick = (event: WasmEvent) => {
-    console.log('Row clicked:', event); 
     setSelectedWasmEvent(event);
     open();
   };
