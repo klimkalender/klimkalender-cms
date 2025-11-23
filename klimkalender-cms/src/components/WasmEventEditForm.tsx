@@ -219,7 +219,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                 if (error) {
                   console.error('Error updating event with image reference:', error);
                 }
-              }else {
+              } else {
                 console.log('Image reference unchanged, no update needed.');
               }
             } else {
@@ -242,7 +242,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
           };
           await updateWasmEvent(updatedWasmEventForUpdate);
           if (onSave) {
-            onSave(wasmEvent, currentTags, updatedEventRecord.data || null);
+            onSave(updatedWasmEventForUpdate, currentTags, updatedEventRecord.data || null);
           }
           setNotification({
             type: 'success',
@@ -250,7 +250,52 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
           });
           break;
         case 'IGNORE_ONCE':
+          console.log('Updating existing event...');
+          if (!wasmEvent) throw new Error('WasmEvent is undefined');
+          if (!event) throw new Error('Event is undefined');
+          // we set all fields to accepted_
+          // but do NOT update the event
+          const updatedWasmEventForIgnoreOnce = {
+            ...wasmEvent,
+            action: wasmEventAction,
+            status: 'UP_TO_DATE' as WasmEventStatus,
+            accepted_name: wasmEvent.name,
+            accepted_classification: wasmEvent.classification,
+            accepted_date: wasmEvent.date,
+            accepted_hall_name: wasmEvent.hall_name,
+            accepted_short_description: wasmEvent.short_description,
+            accepted_full_description_html: wasmEvent.full_description_html,
+            accepted_event_url: wasmEvent.event_url,
+            accepted_image_url: wasmEvent.image_url,
+            accepted_event_category: wasmEvent.event_category,
+          };
+          await updateWasmEvent(updatedWasmEventForIgnoreOnce);
+          if (onSave) {
+            onSave(updatedWasmEventForIgnoreOnce, currentTags, event || null);
+          }
+          setNotification({
+            type: 'success',
+            message: 'Event Ignored once successfully.'
+          });
+          break;
         case 'IGNORE_FOREVER':
+          // set wasm event status to IGNORED
+          console.log('Ignoring event forever...');
+          if (!wasmEvent) throw new Error('WasmEvent is undefined');
+          const updatedWasmEventForIgnoreForever = {
+            ...wasmEvent,
+            action: wasmEventAction,
+            status: 'IGNORED' as WasmEventStatus,
+          };
+          await updateWasmEvent(updatedWasmEventForIgnoreForever);
+          if (onSave) {
+            onSave(updatedWasmEventForIgnoreForever, currentTags, event || null);
+          }
+          setNotification({
+            type: 'success',
+            message: 'Event Ignored forever successfully.'
+          });
+          break;
         default:
           setNotification({
             type: 'error',
