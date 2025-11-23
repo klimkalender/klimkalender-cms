@@ -34,6 +34,9 @@ export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent,
       } else {
         const event = events.find(e => e.id.toString() === initialEventId);
         setSelectedEvent(event || null);
+        if(event){
+          setActiveTab(event.status);
+        }
       }
     } else {
       setSelectedEvent(null);

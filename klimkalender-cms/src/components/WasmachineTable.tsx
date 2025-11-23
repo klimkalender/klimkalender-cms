@@ -40,6 +40,9 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
     if (initialWasmEventId) {
       const wasmEvent = wasmEvents.find(e => e.id.toString() === initialWasmEventId);
       setSelectedWasmEvent(wasmEvent || null);
+      if(wasmEvent){
+        setActiveTab(wasmEvent.status);
+      }
     } else {
       setSelectedWasmEvent(null);
     }

@@ -318,7 +318,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
 
   const venue = event ? venues.find(v => v.id === event.venue_id || 0) : null;
 
-  function getStatusDisplayName(status: string | undefined): string {
+  function getStatusDisplayName(status: WasmEventStatus | undefined): string {
     switch (status) {
       case 'NEW':
         return 'New';
@@ -328,6 +328,10 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
         return 'Up to date';
       case 'IGNORED':
         return 'Ignored';
+      case 'REMOVED':
+        return 'Removed';
+      case 'EVENT_PASSED':
+        return 'Event passed';
       default:
         return 'Unknown';
     }
