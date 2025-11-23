@@ -27,6 +27,7 @@ type EventsTableProps = {
 export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPerEvent: defaultTagsPerEvent, allTags, organizers, action }: EventsTableProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const [selectedWasmEvent, setSelectedWasmEvent] = useState<WasmEvent | null>(null);
+  const [eventsList, setEventsList] = useState<Event[]>(events);
   const [wasmEventsList, setWasmEventsList] = useState<WasmEvent[]>(wasmEvents);
   const [activeTab, setActiveTab] = useState<string>('NEW');
   const [showBoulderbotLogs, setShowBoulderbotLogs] = useState<boolean>(false);
@@ -83,7 +84,7 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
         id: 'processed_at',
       }
     ],
-    [tagsPerEvent],
+    [tagsPerEvent,eventsList],
   );
 
   const handleRowClick = (event: WasmEvent) => {
@@ -91,12 +92,11 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
     open();
   };
 
-  const handleEventSave = (savedEvent: WasmEvent, tags: Tag[]) => {
+  const handleEventSave = (savedEvent: WasmEvent, tags: Tag[], event: Event | null) => {
     setTagsPerEvent(prev => ({
       ...prev,
-      [savedEvent.id]: tags,
+      [event?.id || 0]: tags,
     }));
-
     setWasmEventsList(prev => {
       const existingIndex = prev.findIndex(e => e.id === savedEvent.id);
       if (existingIndex >= 0) {
@@ -107,8 +107,21 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
         return [...prev, savedEvent];
       }
     });
-    close();
-    setSelectedWasmEvent(null);
+    setEventsList(prev => {
+      if (event) {
+        const existingIndex = prev.findIndex(e => e.id === event.id);
+        if (existingIndex >= 0) {
+          // Update existing event
+          return prev.map(e => e.id === event.id ? event : e);
+        } else {
+          // Add new event
+          return [...prev, event];
+        }
+      }
+      return prev;
+    });
+    // close();
+    setSelectedWasmEvent(savedEvent);
   };
 
   const handleCancel = () => {
@@ -181,7 +194,7 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
       <Drawer position="right" size="80%" opened={opened} onClose={close}>
          <WasmEventEditForm
           wasmEvent={selectedWasmEvent}
-          event={selectedWasmEvent?.event_id ? events.find(e => e.id === selectedWasmEvent.event_id) || null : null}
+          event={selectedWasmEvent?.event_id ? eventsList.find(e => e.id === selectedWasmEvent.event_id) || null : null}
           venues={venues}
           organizers={organizers}
           currentTags={tagsPerEvent[selectedWasmEvent?.event_id || 0] || []}

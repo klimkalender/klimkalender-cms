@@ -24,14 +24,14 @@ interface WasmEventEditFormProps {
   allTags: Tag[];
   currentTags: Tag[];
   organizers: Organizer[];
-  onSave?: (event: WasmEvent, tags: Tag[]) => void;
+  onSave?: (wasmEvent: WasmEvent, tags: Tag[], event: Event | null) => void;
   onCancel?: () => void;
   onDelete?: (eventId: number) => void;
 }
 
 export type FormAction = 'PUBLISH_AS_DRAFT' | 'PUBLISH_AS_PUBLISHED' | 'UPDATE_EVENT' | 'IGNORE_ONCE' | 'IGNORE_FOREVER' | 'CHANGE_IMPORT_TYPE';
 
-export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCancel }: WasmEventEditFormProps) {
+export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCancel, onSave }: WasmEventEditFormProps) {
   const [loading, setLoading] = useState(false);
 
   let defaultAction: FormAction = 'IGNORE_FOREVER';
@@ -115,12 +115,16 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                 if (error) {
                   console.error('Error updating event with image reference:', error);
                 }
+                if (newEvent) {
+                  newEvent.featured_image_ref = imageRef;
+                }
               } else {
                 console.error('Image upload failed, no image reference returned.');
               }
             }
             // todo: set tags
             const tags: string[] = [];
+            const dbTags: Tag[] = [];
             if (wasmEvent.event_category) {
               tags.push(wasmEvent.event_category);
             }
@@ -131,6 +135,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
               const tagRecord = await supabase.from('tags').select('*').eq('name', tag).single();
               if (tagRecord.data) {
                 console.log(`Tag ${tag} found with id ${tagRecord.data.id}`);
+                dbTags.push(tagRecord.data);
                 const { error } = await supabase.from('event_tags').insert({ event_id: newEvent?.id, tag_id: tagRecord.data.id });
                 if (error) {
                   console.error('Error adding tag to event:', error);
@@ -141,13 +146,13 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
               }
             }
             // set organizer if NKBV image found
-            if(wasmEvent.image_url?.toUpperCase().includes('NKBV')){
+            if (wasmEvent.image_url?.toUpperCase().includes('NKBV')) {
               console.log('NKBV image detected, setting organizer to NKBV');
               // find NKBV organizer
               const orgRecord = await supabase.from('organizers').select('*').eq('name', 'NKBV').single();
               if (orgRecord.data) {
                 console.log(`NKBV organizer found with id ${orgRecord.data.id}`);
-                  const { error: linkError } = await supabase.from('events').update({ organizer_id: orgRecord.data.id }).eq('id', newEvent?.id);
+                const { error: linkError } = await supabase.from('events').update({ organizer_id: orgRecord.data.id }).eq('id', newEvent?.id);
                 if (linkError) {
                   console.error('Error linking NKBV organizer to event:', linkError);
                 }
@@ -156,9 +161,9 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
               }
             }
             // update local state
-            // if (onSave && updatedWasmEvent) {
-            //   onSave(updatedWasmEvent, allTags.filter(tag => currentTags.map(t => t.id).includes(tag.id)));
-            // }
+            if (onSave && updatedWasmEvent) {
+              onSave(updatedWasmEvent, dbTags, newEvent || null);
+            }
             setNotification({
               type: 'success',
               message: 'Event published as draft successfully.'
