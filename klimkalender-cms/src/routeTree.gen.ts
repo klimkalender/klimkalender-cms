@@ -16,10 +16,7 @@ import { Route as AuthWasmachineRouteImport } from './routes/_auth.wasmachine'
 import { Route as AuthVenuesRouteImport } from './routes/_auth.venues'
 import { Route as AuthTagsRouteImport } from './routes/_auth.tags'
 import { Route as AuthOrganizersRouteImport } from './routes/_auth.organizers'
-import { Route as AuthInvoicesRouteImport } from './routes/_auth.invoices'
 import { Route as AuthEventsRouteImport } from './routes/_auth.events'
-import { Route as AuthInvoicesIndexRouteImport } from './routes/_auth.invoices.index'
-import { Route as AuthInvoicesInvoiceIdRouteImport } from './routes/_auth.invoices.$invoiceId'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -55,38 +52,20 @@ const AuthOrganizersRoute = AuthOrganizersRouteImport.update({
   path: '/organizers',
   getParentRoute: () => AuthRoute,
 } as any)
-const AuthInvoicesRoute = AuthInvoicesRouteImport.update({
-  id: '/invoices',
-  path: '/invoices',
-  getParentRoute: () => AuthRoute,
-} as any)
 const AuthEventsRoute = AuthEventsRouteImport.update({
   id: '/events',
   path: '/events',
   getParentRoute: () => AuthRoute,
-} as any)
-const AuthInvoicesIndexRoute = AuthInvoicesIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthInvoicesRoute,
-} as any)
-const AuthInvoicesInvoiceIdRoute = AuthInvoicesInvoiceIdRouteImport.update({
-  id: '/$invoiceId',
-  path: '/$invoiceId',
-  getParentRoute: () => AuthInvoicesRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/events': typeof AuthEventsRoute
-  '/invoices': typeof AuthInvoicesRouteWithChildren
   '/organizers': typeof AuthOrganizersRoute
   '/tags': typeof AuthTagsRoute
   '/venues': typeof AuthVenuesRoute
   '/wasmachine': typeof AuthWasmachineRoute
-  '/invoices/$invoiceId': typeof AuthInvoicesInvoiceIdRoute
-  '/invoices/': typeof AuthInvoicesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -96,8 +75,6 @@ export interface FileRoutesByTo {
   '/tags': typeof AuthTagsRoute
   '/venues': typeof AuthVenuesRoute
   '/wasmachine': typeof AuthWasmachineRoute
-  '/invoices/$invoiceId': typeof AuthInvoicesInvoiceIdRoute
-  '/invoices': typeof AuthInvoicesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -105,13 +82,10 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteWithChildren
   '/login': typeof LoginRoute
   '/_auth/events': typeof AuthEventsRoute
-  '/_auth/invoices': typeof AuthInvoicesRouteWithChildren
   '/_auth/organizers': typeof AuthOrganizersRoute
   '/_auth/tags': typeof AuthTagsRoute
   '/_auth/venues': typeof AuthVenuesRoute
   '/_auth/wasmachine': typeof AuthWasmachineRoute
-  '/_auth/invoices/$invoiceId': typeof AuthInvoicesInvoiceIdRoute
-  '/_auth/invoices/': typeof AuthInvoicesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -119,13 +93,10 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/events'
-    | '/invoices'
     | '/organizers'
     | '/tags'
     | '/venues'
     | '/wasmachine'
-    | '/invoices/$invoiceId'
-    | '/invoices/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -135,21 +106,16 @@ export interface FileRouteTypes {
     | '/tags'
     | '/venues'
     | '/wasmachine'
-    | '/invoices/$invoiceId'
-    | '/invoices'
   id:
     | '__root__'
     | '/'
     | '/_auth'
     | '/login'
     | '/_auth/events'
-    | '/_auth/invoices'
     | '/_auth/organizers'
     | '/_auth/tags'
     | '/_auth/venues'
     | '/_auth/wasmachine'
-    | '/_auth/invoices/$invoiceId'
-    | '/_auth/invoices/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -209,13 +175,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthOrganizersRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_auth/invoices': {
-      id: '/_auth/invoices'
-      path: '/invoices'
-      fullPath: '/invoices'
-      preLoaderRoute: typeof AuthInvoicesRouteImport
-      parentRoute: typeof AuthRoute
-    }
     '/_auth/events': {
       id: '/_auth/events'
       path: '/events'
@@ -223,40 +182,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthEventsRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_auth/invoices/': {
-      id: '/_auth/invoices/'
-      path: '/'
-      fullPath: '/invoices/'
-      preLoaderRoute: typeof AuthInvoicesIndexRouteImport
-      parentRoute: typeof AuthInvoicesRoute
-    }
-    '/_auth/invoices/$invoiceId': {
-      id: '/_auth/invoices/$invoiceId'
-      path: '/$invoiceId'
-      fullPath: '/invoices/$invoiceId'
-      preLoaderRoute: typeof AuthInvoicesInvoiceIdRouteImport
-      parentRoute: typeof AuthInvoicesRoute
-    }
   }
 }
 
-interface AuthInvoicesRouteChildren {
-  AuthInvoicesInvoiceIdRoute: typeof AuthInvoicesInvoiceIdRoute
-  AuthInvoicesIndexRoute: typeof AuthInvoicesIndexRoute
-}
-
-const AuthInvoicesRouteChildren: AuthInvoicesRouteChildren = {
-  AuthInvoicesInvoiceIdRoute: AuthInvoicesInvoiceIdRoute,
-  AuthInvoicesIndexRoute: AuthInvoicesIndexRoute,
-}
-
-const AuthInvoicesRouteWithChildren = AuthInvoicesRoute._addFileChildren(
-  AuthInvoicesRouteChildren,
-)
-
 interface AuthRouteChildren {
   AuthEventsRoute: typeof AuthEventsRoute
-  AuthInvoicesRoute: typeof AuthInvoicesRouteWithChildren
   AuthOrganizersRoute: typeof AuthOrganizersRoute
   AuthTagsRoute: typeof AuthTagsRoute
   AuthVenuesRoute: typeof AuthVenuesRoute
@@ -265,7 +195,6 @@ interface AuthRouteChildren {
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthEventsRoute: AuthEventsRoute,
-  AuthInvoicesRoute: AuthInvoicesRouteWithChildren,
   AuthOrganizersRoute: AuthOrganizersRoute,
   AuthTagsRoute: AuthTagsRoute,
   AuthVenuesRoute: AuthVenuesRoute,
