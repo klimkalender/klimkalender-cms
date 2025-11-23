@@ -16,6 +16,7 @@ import type { Event, Venue, Organizer, Tag, WasmEvent, WasmEventAction, WasmEven
 import { createEvent, supabase, updateWasmEvent, } from '@/data/supabase';
 import { ExternalLink } from 'lucide-react';
 import { uploadEventImage } from '@/utils/upload-image';
+import { Link } from '@tanstack/react-router';
 
 interface WasmEventEditFormProps {
   wasmEvent?: WasmEvent | null;
@@ -365,13 +366,11 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                 <Text size="sm" weight={500}>
                   {wasmEvent?.event_id ? wasmEvent.event_id : '-'}
                 </Text>
+
                 {wasmEvent?.event_id && (
-                  <Anchor
-                    href={`/events/${wasmEvent.event_id}`}
-                    size="sm"
-                  >
+                  <Link to='/events' search={event?.id ? { eventId: event.id.toString() } : {}} target="_blank">
                     <ExternalLink size={14} />
-                  </Anchor>
+                  </Link>
                 )}
               </Group>
 
