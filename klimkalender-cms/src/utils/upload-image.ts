@@ -17,5 +17,6 @@ export async function uploadEventImage(imageUrl: string) {
     const respJson = await response.json()
     return respJson.imageRef;
   }
-  throw new Error(`Image upload failed: ${await response.text()}`);
+  console.error('Image upload error:', response);
+  return null;
 }

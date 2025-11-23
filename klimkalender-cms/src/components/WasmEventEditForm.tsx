@@ -110,12 +110,51 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
             if (wasmEvent.image_url) {
               console.log(`Uploading image ${wasmEvent.image_url} to supabase storage...`);
               const imageRef = await uploadEventImage(wasmEvent.image_url);
-              const { error } = await supabase.from('events').update({ featured_image_ref: imageRef }).eq('id', newEvent?.id);
-              if (error) {
-                console.error('Error updating event with image reference:', error);
+              if (imageRef) {
+                const { error } = await supabase.from('events').update({ featured_image_ref: imageRef }).eq('id', newEvent?.id);
+                if (error) {
+                  console.error('Error updating event with image reference:', error);
+                }
+              } else {
+                console.error('Image upload failed, no image reference returned.');
               }
             }
             // todo: set tags
+            const tags: string[] = [];
+            if (wasmEvent.event_category) {
+              tags.push(wasmEvent.event_category);
+            }
+            console.log('Assigning tags to event:', tags);
+            for (const tag of tags) {
+              // find tag  id
+              console.log(`Finding tag id for tag: ${tag}`);
+              const tagRecord = await supabase.from('tags').select('*').eq('name', tag).single();
+              if (tagRecord.data) {
+                console.log(`Tag ${tag} found with id ${tagRecord.data.id}`);
+                const { error } = await supabase.from('event_tags').insert({ event_id: newEvent?.id, tag_id: tagRecord.data.id });
+                if (error) {
+                  console.error('Error adding tag to event:', error);
+                }
+              }
+              else {
+                console.warn(`Tag ${tag} not found in database.`);
+              }
+            }
+            // set organizer if NKBV image found
+            if(wasmEvent.image_url?.toUpperCase().includes('NKBV')){
+              console.log('NKBV image detected, setting organizer to NKBV');
+              // find NKBV organizer
+              const orgRecord = await supabase.from('organizers').select('*').eq('name', 'NKBV').single();
+              if (orgRecord.data) {
+                console.log(`NKBV organizer found with id ${orgRecord.data.id}`);
+                  const { error: linkError } = await supabase.from('events').update({ organizer_id: orgRecord.data.id }).eq('id', newEvent?.id);
+                if (linkError) {
+                  console.error('Error linking NKBV organizer to event:', linkError);
+                }
+              } else {
+                console.warn('NKBV organizer not found in database.');
+              }
+            }
             // update local state
             // if (onSave && updatedWasmEvent) {
             //   onSave(updatedWasmEvent, allTags.filter(tag => currentTags.map(t => t.id).includes(tag.id)));
@@ -141,48 +180,6 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
           break;
       }
 
-      // const eventData = {
-      //   //  title: title.trim(),
-      //   // toher fields here
-      // };
-
-      // let result;
-
-      // if (event?.id) {
-      //   // Update existing event
-      //   result = await supabase
-      //     .from('events')
-      //     .update(eventData)
-      //     .eq('id', event.id)
-      //     .select()
-      //     .single();
-      // } else {
-      //   // Create new event
-      //   result = await supabase
-      //     .from('events')
-      //     .insert(eventData)
-      //     .select()
-      //     .single();
-      // }
-
-      // if (result.error) {
-      //   throw result.error;
-      // }
-
-      // Manage event tags
-      // if (result.data?.id) {
-      //   await manageEventTags(result.data.id, selectedTagIds);
-      // }
-
-      // setNotification({
-      //   type: 'success',
-      //   message: `Event ${wasmEvent?.id ? 'updated' : 'created'} successfully!`
-      // });
-
-      // if (onSave && result.data) {
-      //   onSave(result.data, allTags.filter(tag => selectedTagIds.includes(tag.id.toString())));
-      // }
-
     } catch (error: any) {
       console.error('Error saving event:', error);
       setNotification({
@@ -193,6 +190,8 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
       setLoading(false);
     }
   };
+
+  const venue = event ? venues.find(v => v.id === event.venue_id || 0) : null;
 
   return (
     <>
@@ -327,8 +326,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
               <tr>
                 <td><strong>Hall Name</strong></td>
                 <td>{wasmEvent?.hall_name || '-'}</td>
-                {/* todo: map to venue name */}
-                <td>{event?.venue_id || '-'}</td>
+                <td>{venue?.name || '-'}</td>
               </tr>
               <tr>
                 <td><strong>Date</strong></td>
@@ -362,7 +360,17 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                     // fix: request image from supabase storage
                     <Anchor href={event.featured_image_ref} target="_blank" rel="noopener noreferrer" size="sm">
                       <Group spacing={4}>
-                        <span>View Image</span>
+                        <Group spacing={4} align="center">
+                          <Image
+                            src={supabase.storage.from('event-images').getPublicUrl(event.featured_image_ref).data.publicUrl}
+                            alt="Event image preview"
+                            width={40}
+                            height={40}
+                            fit="cover"
+                            radius="xs"
+                          />
+                          <span>View Image</span>
+                        </Group>
                         <ExternalLink size={12} />
                       </Group>
                     </Anchor>
@@ -400,12 +408,17 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
               <tr>
                 <td><strong>Event Category</strong></td>
                 <td>{wasmEvent?.event_category || '-'}</td>
-                <td>{currentTags.map((t) => <>{t.name}</>)}</td>
+                <td>{'-'}</td>
               </tr>
               <tr>
                 <td><strong>Classification</strong></td>
                 <td>{wasmEvent?.classification || '-'}</td>
                 <td>{'-'}</td>
+              </tr>
+              <tr>
+                <td><strong>Tags</strong></td>
+                <td>{'-'}</td>
+                <td>{currentTags.map((t) => <>{t.name}</>)}</td>
               </tr>
             </tbody>
           </Table>
