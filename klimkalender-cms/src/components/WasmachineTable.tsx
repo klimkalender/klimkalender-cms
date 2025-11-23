@@ -185,7 +185,7 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
           event={selectedWasmEvent?.event_id ? events.find(e => e.id === selectedWasmEvent.event_id) || null : null}
           venues={venues}
           organizers={organizers}
-          currentTags={tagsPerEvent[selectedEvent?.id || 0] || []}
+          currentTags={tagsPerEvent[selectedWasmEvent?.event_id || 0] || []}
           allTags={allTags}
           onSave={handleEventSave}
           onCancel={handleCancel}
