@@ -29,7 +29,7 @@ interface WasmEventEditFormProps {
   onDelete?: (eventId: number) => void;
 }
 
-export type FormAction = 'PUBLISH_AS_DRAFT' | 'PUBLISH_AS_PUBLISHED' | 'UPDATE_EVENT' | 'IGNORE_ONCE' | 'IGNORE_FOREVER' | 'CHANGE_IMPORT_TYPE';
+export type FormAction = 'PUBLISH_AS_DRAFT' | 'PUBLISH_AS_PUBLISHED' | 'UPDATE_EVENT' | 'CHANGE_IMPORT_TYPE' | 'IGNORE_ONCE' | 'IGNORE_FOREVER';
 
 export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCancel, onSave }: WasmEventEditFormProps) {
   const [loading, setLoading] = useState(false);
@@ -60,23 +60,26 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
   const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
   // Validation - not much to validate here yet
-  const validateForm = () => {
+  const validateForm = (action: FormAction) => {
     const newErrors: { [key: string]: string } = {};
 
-    if (selectedVenueId === null) {
-      newErrors['venue'] = 'Venue is required for importing the event.';
+    if (action === 'PUBLISH_AS_DRAFT' || action === 'PUBLISH_AS_PUBLISHED') {
+      if (selectedVenueId === null) {
+        newErrors['venue'] = 'Venue is required for importing the event.';
+      }
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-
   // Handle form submission
   const handleSubmit = async (formEvent: React.FormEvent) => {
     formEvent.preventDefault();
+    console.log('Form submitted with action:', formAction);
 
-    if (!validateForm()) {
+    if (!validateForm(formAction)) {
+      console.log('Form validation failed:', errors);
       return;
     }
 
@@ -85,6 +88,23 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
     try {
 
       switch (formAction) {
+        case 'CHANGE_IMPORT_TYPE':
+          console.log('Updating import type only...');
+          // update import type only
+          if (!wasmEvent) throw new Error('WasmEvent is undefined');
+          const updatedWasmEvent = {
+            ...wasmEvent,
+            action: wasmEventAction,
+          };
+          await updateWasmEvent(updatedWasmEvent);
+          if (onSave) {
+            onSave(updatedWasmEvent, currentTags, event || null);
+          }
+          setNotification({
+            type: 'success',
+            message: 'Import type updated successfully.'
+          });
+          break;
         case 'PUBLISH_AS_PUBLISHED':
         case 'PUBLISH_AS_DRAFT':
           //create a new event
@@ -178,6 +198,59 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
             });
           }
           break;
+        case 'UPDATE_EVENT':
+          console.log('Updating existing event...');
+          if (!wasmEvent) throw new Error('WasmEvent is undefined');
+          if (!event) throw new Error('Event is undefined');
+          const updatedEventRecord = await supabase.from('events').update({
+            title: wasmEvent.name,
+            start_date_time: wasmEvent.date,
+            link: wasmEvent.event_url,
+            featured_text: wasmEvent.short_description || null,
+          }).eq('id', event.id).select().single();
+          if (wasmEvent.image_url) {
+            // Check current image size before updating
+            const currentRef = event.featured_image_ref || undefined;
+            console.log(`Uploading updated image ${wasmEvent.image_url} to supabase storage...`);
+            const imageRef = await uploadEventImage(wasmEvent.image_url, currentRef);
+            if (imageRef) {
+              if (imageRef !== currentRef) {
+                const { error } = await supabase.from('events').update({ featured_image_ref: imageRef }).eq('id', event.id);
+                if (error) {
+                  console.error('Error updating event with image reference:', error);
+                }
+              }else {
+                console.log('Image reference unchanged, no update needed.');
+              }
+            } else {
+              console.error('Upload failed.  no image reference returned.');
+            }
+          }
+          const updatedWasmEventForUpdate = {
+            ...wasmEvent,
+            action: wasmEventAction,
+            status: 'UP_TO_DATE' as WasmEventStatus,
+            accepted_name: wasmEvent.name,
+            accepted_classification: wasmEvent.classification,
+            accepted_date: wasmEvent.date,
+            accepted_hall_name: wasmEvent.hall_name,
+            accepted_short_description: wasmEvent.short_description,
+            accepted_full_description_html: wasmEvent.full_description_html,
+            accepted_event_url: wasmEvent.event_url,
+            accepted_image_url: wasmEvent.image_url,
+            accepted_event_category: wasmEvent.event_category,
+          };
+          await updateWasmEvent(updatedWasmEventForUpdate);
+          if (onSave) {
+            onSave(wasmEvent, currentTags, updatedEventRecord.data || null);
+          }
+          setNotification({
+            type: 'success',
+            message: 'Event updated successfully.'
+          });
+          break;
+        case 'IGNORE_ONCE':
+        case 'IGNORE_FOREVER':
         default:
           setNotification({
             type: 'error',
@@ -198,6 +271,21 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
   };
 
   const venue = event ? venues.find(v => v.id === event.venue_id || 0) : null;
+
+  function getStatusDisplayName(status: string | undefined): string {
+    switch (status) {
+      case 'NEW':
+        return 'New';
+      case 'CHANGED':
+        return 'Changed';
+      case 'UP_TO_DATE':
+        return 'Up to date';
+      case 'IGNORED':
+        return 'Ignored';
+      default:
+        return 'Unknown';
+    }
+  }
 
   return (
     <>
@@ -247,7 +335,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                   Status:
                 </Text>
                 <Text size="sm" weight={500} >
-                  {wasmEvent?.status || '-'}
+                  {getStatusDisplayName(wasmEvent?.status) || '-'}
                 </Text>
               </Group>
               <Group spacing={4} align="center">
@@ -284,8 +372,18 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                 onChange={(e) => setFormAction(e as FormAction)}
               >
                 <Stack spacing="xs">
-                  <Radio value="PUBLISH_AS_DRAFT" label="Copy event as draft" />
-                  <Radio value="PUBLISH_AS_PUBLISHED" label="Copy event as published" />
+                  {!event && (
+                    <>
+                      <Radio value="PUBLISH_AS_DRAFT" label="Copy event as draft" />
+                      <Radio value="PUBLISH_AS_PUBLISHED" label="Copy event as published" />
+                    </>
+                  )}
+                  {event && (
+                    <>
+                      <Radio value="UPDATE_EVENT" label="Update existing event" />
+                      <Radio value="CHANGE_IMPORT_TYPE" label="Update import type only" />
+                    </>
+                  )}
                   <Radio value="IGNORE_ONCE" label="Ignore this event once" />
                   <Radio value="IGNORE_FOREVER" label="Ignore this event forever" />
                 </Stack>

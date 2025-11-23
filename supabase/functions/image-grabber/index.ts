@@ -46,6 +46,13 @@ export async function uploadRemoteImageToSupabase(supabase: SupabaseClient, imag
 }
 
 
+async function getFileSize(imageUrl: string): Promise<number> {
+  const response = await fetch(imageUrl, { method: 'HEAD' });
+  const contentLength = response.headers.get('content-length');
+  const currentImageSize = contentLength ? parseInt(contentLength) : 0;
+  return currentImageSize;
+}
+
 Deno.serve(async (req: Request) => {
   // This is needed if you're planning to invoke your function from a browser.
   if (req.method === "OPTIONS") {
@@ -77,9 +84,29 @@ Deno.serve(async (req: Request) => {
     } = await supabaseClient.auth.getUser(token);
 
     const params = await req.json();
+    console.dir(params);
     const imageUrl = params?.imageUrl;
     if (!imageUrl) {
       throw new Error("No imageUrl provided");
+    }
+    const currentImageRef = params?.currentImageRef;
+    if (currentImageRef) {
+      try {
+        const currentImageSize = await getFileSize(imageUrl);
+        console.log(`Current image size from REF: ${currentImageRef}}`);
+        const existingImage = await supabaseClient.storage.from(params?.bucket || "event-images").info(currentImageRef);
+        const existingImageSize = existingImage.data?.size || 0;
+        console.log(`Existing image size: ${existingImageSize}, Current image size: ${currentImageSize}`);
+        if (existingImageSize === currentImageSize) {
+          console.log('Image already exists with same size, skipping upload.');
+          return new Response(JSON.stringify({ imageRef: currentImageRef }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+            status: 200,
+          });
+        }
+      } catch (error) {
+        console.warn('Could not determine current image size:', error);
+      }
     }
     const bucket = params?.bucket || "event-images";
 
@@ -88,6 +115,16 @@ Deno.serve(async (req: Request) => {
     const imageRef = await uploadRemoteImageToSupabase(supabaseClient, imageUrl, bucket);
     if (!imageRef) {
       throw new Error("Failed to upload image");
+    }
+
+    if (currentImageRef && currentImageRef !== imageRef) {
+      console.log(`Deleting old image reference ${currentImageRef}`);
+      const { error: deleteError } = await supabaseClient.storage.from(bucket).remove([currentImageRef]);
+      if (deleteError) {
+        console.error('Error deleting old image:', deleteError);
+      } else {
+        console.log('Old image deleted successfully.');
+      }
     }
 
     return new Response(JSON.stringify({ imageRef }), {
