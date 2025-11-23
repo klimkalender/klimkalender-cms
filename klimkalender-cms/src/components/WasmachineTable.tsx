@@ -26,7 +26,6 @@ type EventsTableProps = {
 
 export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPerEvent: defaultTagsPerEvent, allTags, organizers, action }: EventsTableProps) {
   const [opened, { open, close }] = useDisclosure(false);
-  const [selectedEvent] = useState<WasmEvent | null>(null);
   const [selectedWasmEvent, setSelectedWasmEvent] = useState<WasmEvent | null>(null);
   const [wasmEventsList, setWasmEventsList] = useState<WasmEvent[]>(wasmEvents);
   const [activeTab, setActiveTab] = useState<string>('NEW');
