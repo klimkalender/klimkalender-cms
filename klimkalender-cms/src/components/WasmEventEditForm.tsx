@@ -85,11 +85,12 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
     try {
 
       switch (formAction) {
+        case 'PUBLISH_AS_PUBLISHED':
         case 'PUBLISH_AS_DRAFT':
           //create a new event
           try {
             if (!wasmEvent) throw new Error('WasmEvent is undefined');
-            const newEvent = await createEvent(wasmEvent!, selectedVenueId ? parseInt(selectedVenueId) : 0, 'DRAFT');
+            const newEvent = await createEvent(wasmEvent!, selectedVenueId ? parseInt(selectedVenueId) : 0, formAction === 'PUBLISH_AS_PUBLISHED' ? 'PUBLISHED' : 'DRAFT');
             console.dir(newEvent);
             const updatedWasmEvent = {
               ...wasmEvent,
