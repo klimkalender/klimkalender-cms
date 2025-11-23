@@ -20,7 +20,7 @@ async function signInWithEmail(username: string, password: string) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-const fallback = '/dashboard' as const
+const fallback = '/events' as const
 
 export const Route = createFileRoute('/login')({
   validateSearch: z.object({

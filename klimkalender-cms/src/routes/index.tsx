@@ -16,14 +16,14 @@ export const Route = createFileRoute('/')({
     if (!context.auth.isAuthenticated) {
       throw redirect({
         to: '/login',
-        search: {
+        params: {
           redirect: location.href,
         },
       })
     }else{
        throw redirect({
         to: '/events',
-        search: {
+        params: {
           redirect: location.href,
         },
       })
