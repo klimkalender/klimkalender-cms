@@ -6,11 +6,11 @@ import {
   useMantineReactTable,
   type MRT_ColumnDef, //if using TypeScript (optional, but recommended)
 } from 'mantine-react-table';
-import { useDisclosure } from '@mantine/hooks';
+import { useNavigate } from '@tanstack/react-router';
 
-export function TagsTable({ tags }: { tags: Tag[] }) {
-
-  const [opened, { open, close }] = useDisclosure(false);
+export function TagsTable({ tags, initialTagId }: { tags: Tag[], initialTagId?: string }) {
+  const navigate = useNavigate();
+  const opened = !!initialTagId;
   const columns = useMemo<MRT_ColumnDef<Tag>[]>(
     () => [
       {
@@ -35,9 +35,8 @@ export function TagsTable({ tags }: { tags: Tag[] }) {
     initialState: { density: 'xs', pagination: { pageSize: 10, pageIndex: 0 } , showGlobalFilter: true,},
     sortDescFirst: true,
     mantineTableBodyRowProps: ({ row }) => ({
-      onClick: (event) => {
-        open();
-        console.info(event, row.id);
+      onClick: () => {
+        navigate({ to: '/tags', search: { tagId: row.original.id.toString() } });
       },
       sx: {
         cursor: 'pointer', //you might want to change the cursor too when adding an onClick
@@ -48,7 +47,7 @@ export function TagsTable({ tags }: { tags: Tag[] }) {
   //note: you can also pass table options as props directly to <MantineReactTable /> instead of using useMantineReactTable
   //but that is not recommended and will likely be deprecated in the future
   return <><MantineReactTable table={table} />
-    <Drawer position="right" size="xl" opened={opened} onClose={close}>
+    <Drawer position="right" size="xl" opened={opened} onClose={() => navigate({ to: '/tags' })}>
       {/* Drawer content */}
     </Drawer>
   </>;

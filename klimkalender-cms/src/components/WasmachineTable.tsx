@@ -6,13 +6,13 @@ import {
   useMantineReactTable,
   type MRT_ColumnDef, //if using TypeScript (optional, but recommended)
 } from 'mantine-react-table';
-import { useDisclosure } from '@mantine/hooks';
 import { sortByDate } from '@/utils/sort-by-date';
 import { Logs } from 'lucide-react';
 import { BoulderbotLogs } from './BoulderbotLogs';
 import RunBoulderbotButton from './BoulderbotButton';
 import type { Database } from '@/database.types';
 import { WasmEventEditForm } from './WasmEventEditForm';
+import { useNavigate } from '@tanstack/react-router';
 
 type EventsTableProps = {
   wasmEvents: WasmEvent[];
@@ -22,10 +22,11 @@ type EventsTableProps = {
   allTags: Tag[]
   organizers: Organizer[];
   action: Action | null | undefined;
+  initialWasmEventId?: string;
 };
 
-export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPerEvent: defaultTagsPerEvent, allTags, organizers, action }: EventsTableProps) {
-  const [opened, { open, close }] = useDisclosure(false);
+export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPerEvent: defaultTagsPerEvent, allTags, organizers, action, initialWasmEventId }: EventsTableProps) {
+  const navigate = useNavigate();
   const [selectedWasmEvent, setSelectedWasmEvent] = useState<WasmEvent | null>(null);
   const [eventsList, setEventsList] = useState<Event[]>(events);
   const [wasmEventsList, setWasmEventsList] = useState<WasmEvent[]>(wasmEvents);
@@ -33,6 +34,16 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
   const [showBoulderbotLogs, setShowBoulderbotLogs] = useState<boolean>(false);
   const [tagsPerEvent, setTagsPerEvent] = useState<{ [id: number]: Tag[] }>(defaultTagsPerEvent);
   const [lastAction, setLastAction] = useState<Database["public"]["Tables"]["actions"]["Row"] | null | undefined>(action);
+  const opened = !!initialWasmEventId;
+
+  useEffect(() => {
+    if (initialWasmEventId) {
+      const wasmEvent = wasmEvents.find(e => e.id.toString() === initialWasmEventId);
+      setSelectedWasmEvent(wasmEvent || null);
+    } else {
+      setSelectedWasmEvent(null);
+    }
+  }, [initialWasmEventId, wasmEvents]);
   const columns = useMemo<MRT_ColumnDef<WasmEvent>[]>(
     () => [
       {
@@ -88,8 +99,7 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
   );
 
   const handleRowClick = (event: WasmEvent) => {
-    setSelectedWasmEvent(event);
-    open();
+    navigate({ to: '/wasmachine', search: { wasmEventId: event.id.toString() } });
   };
 
   const handleEventSave = (savedEvent: WasmEvent, tags: Tag[], event: Event | null) => {
@@ -120,19 +130,16 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
       }
       return prev;
     });
-    // close();
     setSelectedWasmEvent(savedEvent);
   };
 
   const handleCancel = () => {
-    close();
-    setSelectedWasmEvent(null);
+    navigate({ to: '/wasmachine' });
   };
 
   const handleEventDelete = (eventId: number) => {
     setWasmEventsList(prev => prev.filter(e => e.id !== eventId));
-    close();
-    setSelectedWasmEvent(null);
+    navigate({ to: '/wasmachine' });
   };
 
   useEffect(() => {
@@ -191,7 +198,7 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
        <BoulderbotLogs action={lastAction} setAction={setLastAction} />
       )}
 
-      <Drawer position="right" size="80%" opened={opened} onClose={close}>
+      <Drawer position="right" size="80%" opened={opened} onClose={() => navigate({ to: '/wasmachine' })}>
          <WasmEventEditForm
           wasmEvent={selectedWasmEvent}
           event={selectedWasmEvent?.event_id ? eventsList.find(e => e.id === selectedWasmEvent.event_id) || null : null}

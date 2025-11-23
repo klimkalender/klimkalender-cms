@@ -6,9 +6,9 @@ import {
   useMantineReactTable,
   type MRT_ColumnDef, //if using TypeScript (optional, but recommended)
 } from 'mantine-react-table';
-import { useDisclosure } from '@mantine/hooks';
 import { sortByDate } from '@/utils/sort-by-date';
 import { EventEditForm } from './EventEditForm';
+import { useNavigate } from '@tanstack/react-router';
 
 type EventsTableProps = {
   events: Event[];
@@ -16,14 +16,29 @@ type EventsTableProps = {
   tagsPerEvent: { [id: number]: Tag[] };
   allTags: Tag[]
   organizers: Organizer[];
+  initialEventId?: string;
 };
 
-export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent, allTags, organizers }: EventsTableProps) {
-  const [opened, { open, close }] = useDisclosure(false);
+export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent, allTags, organizers, initialEventId }: EventsTableProps) {
+  const navigate = useNavigate();
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [eventsList, setEventsList] = useState<Event[]>(events);
   const [activeTab, setActiveTab] = useState<string>('PUBLISHED');
   const [tagsPerEvent, setTagsPerEvent] = useState<{ [id: number]: Tag[] }>(defaultTagsPerEvent);
+  const opened = !!initialEventId;
+
+  useEffect(() => {
+    if (initialEventId) {
+      if (initialEventId === 'new') {
+        setSelectedEvent(null);
+      } else {
+        const event = events.find(e => e.id.toString() === initialEventId);
+        setSelectedEvent(event || null);
+      }
+    } else {
+      setSelectedEvent(null);
+    }
+  }, [initialEventId, events]);
   const columns = useMemo<MRT_ColumnDef<Event>[]>(
     () => [
       {
@@ -84,8 +99,7 @@ export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent,
   );
 
   const handleRowClick = (event: Event) => {
-    setSelectedEvent(event);
-    open();
+    navigate({ to: '/events', search: { eventId: event.id.toString() } });
   };
 
   const handleEventSave = (savedEvent: Event, tags: Tag[]) => {
@@ -104,24 +118,20 @@ export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent,
         return [...prev, savedEvent];
       }
     });
-    close();
-    setSelectedEvent(null);
+    navigate({ to: '/events' });
   };
 
   const handleCancel = () => {
-    close();
-    setSelectedEvent(null);
+    navigate({ to: '/events' });
   };
 
   const handleCreateNew = () => {
-    setSelectedEvent(null);
-    open();
+    navigate({ to: '/events', search: { eventId: 'new' } });
   };
 
   const handleEventDelete = (eventId: number) => {
     setEventsList(prev => prev.filter(e => e.id !== eventId));
-    close();
-    setSelectedEvent(null);
+    navigate({ to: '/events' });
   };
 
   useEffect(() => {
@@ -174,7 +184,7 @@ export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent,
 
       <MantineReactTable table={table} />
 
-      <Drawer position="right" size="xl" opened={opened} onClose={close}>
+      <Drawer position="right" size="xl" opened={opened} onClose={() => navigate({ to: '/events' })}>
         <EventEditForm
           event={selectedEvent}
           venues={venues}

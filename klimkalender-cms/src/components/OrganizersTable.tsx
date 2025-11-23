@@ -6,12 +6,12 @@ import {
   useMantineReactTable,
   type MRT_ColumnDef, //if using TypeScript (optional, but recommended)
 } from 'mantine-react-table';
-import { useDisclosure } from '@mantine/hooks';
 import { getImageTag } from '@/data/supabase';
+import { useNavigate } from '@tanstack/react-router';
 
-export function OrganizersTable({ organizers }: { organizers: Organizer[] }) {
-
-  const [opened, { open, close }] = useDisclosure(false);
+export function OrganizersTable({ organizers, initialOrganizerId }: { organizers: Organizer[], initialOrganizerId?: string }) {
+  const navigate = useNavigate();
+  const opened = !!initialOrganizerId;
   const columns = useMemo<MRT_ColumnDef<Organizer>[]>(
     () => [
       {
@@ -41,9 +41,8 @@ export function OrganizersTable({ organizers }: { organizers: Organizer[] }) {
     initialState: { density: 'xs', pagination: { pageSize: 10, pageIndex: 0 }, showGlobalFilter: true, },
     sortDescFirst: true,
     mantineTableBodyRowProps: ({ row }) => ({
-      onClick: (event) => {
-        open();
-        console.info(event, row.id);
+      onClick: () => {
+        navigate({ to: '/organizers', search: { organizerId: row.original.id.toString() } });
       },
       sx: {
         cursor: 'pointer', //you might want to change the cursor too when adding an onClick
@@ -54,7 +53,7 @@ export function OrganizersTable({ organizers }: { organizers: Organizer[] }) {
   //note: you can also pass table options as props directly to <MantineReactTable /> instead of using useMantineReactTable
   //but that is not recommended and will likely be deprecated in the future
   return <><MantineReactTable table={table} />
-    <Drawer position="right" size="xl" opened={opened} onClose={close}>
+    <Drawer position="right" size="xl" opened={opened} onClose={() => navigate({ to: '/organizers' })}>
       {/* Drawer content */}
     </Drawer>
   </>;
