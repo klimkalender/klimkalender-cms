@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import type { Venue } from '@/types';
 import { Drawer, Button, Group } from '@mantine/core';
 import {
@@ -6,14 +6,28 @@ import {
   useMantineReactTable,
   type MRT_ColumnDef, //if using TypeScript (optional, but recommended)
 } from 'mantine-react-table';
-import { useDisclosure } from '@mantine/hooks';
 import { getImageTag } from '@/data/supabase';
 import { VenueEditForm } from './VenueEditForm';
+import { useNavigate } from '@tanstack/react-router';
 
-export function VenuesTable({ venues }: { venues: Venue[] }) {
-  const [opened, { open, close }] = useDisclosure(false);
+export function VenuesTable({ venues, initialVenueId }: { venues: Venue[], initialVenueId?: string }) {
+  const navigate = useNavigate();
   const [selectedVenue, setSelectedVenue] = useState<Venue | null>(null);
   const [venuesList, setVenuesList] = useState<Venue[]>(venues);
+  const opened = !!initialVenueId;
+
+  useEffect(() => {
+    if (initialVenueId) {
+      if (initialVenueId === 'new') {
+        setSelectedVenue(null);
+      } else {
+        const venue = venues.find(v => v.id.toString() === initialVenueId);
+        setSelectedVenue(venue || null);
+      }
+    } else {
+      setSelectedVenue(null);
+    }
+  }, [initialVenueId, venues]);
   const columns = useMemo<MRT_ColumnDef<Venue>[]>(
     () => [
       {
@@ -60,8 +74,7 @@ export function VenuesTable({ venues }: { venues: Venue[] }) {
 
 
   const handleRowClick = (venue: Venue) => {
-    setSelectedVenue(venue);
-    open();
+    navigate({ to: '/venues', search: { venueId: venue.id.toString() } });
   };
 
   const handleVenueSave = (savedVenue: Venue) => {
@@ -75,24 +88,20 @@ export function VenuesTable({ venues }: { venues: Venue[] }) {
         return [...prev, savedVenue].sort((a, b) => a.name.localeCompare(b.name));
       }
     });
-    close();
-    setSelectedVenue(null);
+    navigate({ to: '/venues' });
   };
 
   const handleCancel = () => {
-    close();
-    setSelectedVenue(null);
+    navigate({ to: '/venues' });
   };
 
   const handleCreateNew = () => {
-    setSelectedVenue(null);
-    open();
+    navigate({ to: '/venues', search: { venueId: 'new' } });
   };
 
   const handleVenueDelete = (venueId: number) => {
     setVenuesList(prev => prev.filter(v => v.id !== venueId));
-    close();
-    setSelectedVenue(null);
+    navigate({ to: '/venues' });
   };
 
   const table = useMantineReactTable({
@@ -128,7 +137,7 @@ export function VenuesTable({ venues }: { venues: Venue[] }) {
       
       <MantineReactTable table={table} />
       
-      <Drawer position="right" size="xl" opened={opened} onClose={close}>
+      <Drawer position="right" size="xl" opened={opened} onClose={() => navigate({ to: '/venues' })}>
         <VenueEditForm 
           venue={selectedVenue}
           onSave={handleVenueSave}
