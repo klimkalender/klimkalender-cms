@@ -25,11 +25,13 @@ export class ChatGPTService {
     private apiKey: string;
     private logger: winston.Logger;
     private options: Record<string, any>;
+    private cache: Map<string, string>;
 
     constructor(logger: winston.Logger, apiKey: string, options: Record<string, any> = {}) {
         this.logger = logger;
         this.apiKey = apiKey;
         this.options = options;
+        this.cache = new Map<string, string>();
     }
 
     /**
@@ -38,6 +40,13 @@ export class ChatGPTService {
      * @returns The ChatGPT response
      */
     private async queryChatGPTGeneric(prompt: string): Promise<string> {
+        // Check cache first
+        const cachedResponse = this.cache.get(prompt);
+        if (cachedResponse) {
+            this.logger.debug('Returning cached ChatGPT response');
+            return cachedResponse;
+        }
+
         const data = {
             model: 'gpt-4o-mini',
             messages: [
@@ -64,7 +73,12 @@ export class ChatGPTService {
                 throw new Error(`Failed to query ChatGPT: HTTP code ${response.status}`);
             }
 
-            return response.data.choices?.[0]?.message?.content || 'No response';
+            const result = response.data.choices?.[0]?.message?.content || 'No response';
+            
+            // Cache the response
+            this.cache.set(prompt, result);
+            
+            return result;
         } catch (error: any) {
             if (error.response) {
                 // The request was made and the server responded with a status code
