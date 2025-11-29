@@ -9,7 +9,7 @@ import {
   Radio,
   Anchor,
   Table,
-  Select
+  Select,
 } from '@mantine/core';
 
 import type { Event, Venue, Organizer, Tag, WasmEvent, WasmEventAction, WasmEventStatus } from '@/types';
@@ -17,6 +17,7 @@ import { createEvent, supabase, updateWasmEvent, } from '@/data/supabase';
 import { ExternalLink } from 'lucide-react';
 import { uploadEventImage } from '@/utils/upload-image';
 import { Link } from '@tanstack/react-router';
+import { FieldChangePopover } from './FieldChangePopover';
 
 interface WasmEventEditFormProps {
   wasmEvent?: WasmEvent | null;
@@ -472,22 +473,65 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
             </thead>
             <tbody>
               <tr>
-                <td><strong>Name</strong></td>
+                <td>
+                <strong>
+                  <Group spacing={4} align="center">
+                    Name
+                    <FieldChangePopover
+                      currentValue={wasmEvent?.name}
+                      previousValue={wasmEvent?.accepted_name}
+                      hasChanged={wasmEvent?.name !== wasmEvent?.accepted_name}
+                    />
+                  </Group>
+                </strong></td>
                 <td>{wasmEvent?.name || '-'}</td>
                 <td>{event?.title || '-'}</td>
               </tr>
               <tr>
-                <td><strong>Hall Name</strong></td>
+                <td>
+                  <strong>
+                    <Group spacing={4} align="center">
+                      Hall Name
+                      <FieldChangePopover
+                        currentValue={wasmEvent?.hall_name}
+                        previousValue={wasmEvent?.accepted_hall_name}
+                        hasChanged={wasmEvent?.hall_name !== wasmEvent?.accepted_hall_name}
+                      />
+                    </Group>
+                  </strong>
+                </td>
                 <td>{wasmEvent?.hall_name || '-'}</td>
                 <td>{venue?.name || '-'}</td>
               </tr>
               <tr>
-                <td><strong>Date</strong></td>
+                <td>
+                  <strong>
+                    <Group spacing={4} align="center">
+                      Date
+                      <FieldChangePopover
+                        currentValue={wasmEvent?.date}
+                        previousValue={wasmEvent?.accepted_date}
+                        hasChanged={wasmEvent?.date !== wasmEvent?.accepted_date}
+                      />
+                    </Group>
+                  </strong>
+                </td>
                 <td>{wasmEvent?.date ? new Date(wasmEvent.date).toLocaleDateString() : '-'}</td>
                 <td>{event?.start_date_time ? new Date(event.start_date_time).toLocaleString() : '-'}</td>
               </tr>
               <tr>
-                <td><strong>Image URL</strong></td>
+                <td>
+                  <strong>
+                    <Group spacing={4} align="center">
+                      Image URL
+                      <FieldChangePopover
+                        currentValue={wasmEvent?.image_url}
+                        previousValue={wasmEvent?.accepted_image_url}
+                        hasChanged={wasmEvent?.image_url !== wasmEvent?.accepted_image_url}
+                      />
+                    </Group>
+                  </strong>
+                </td>
                 <td>
                   {wasmEvent?.image_url ? (
                     <Anchor href={wasmEvent.image_url} target="_blank" rel="noopener noreferrer" size="sm">
@@ -531,12 +575,34 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                 </td>
               </tr>
               <tr>
-                <td><strong>Short Description</strong></td>
+                <td>
+                  <strong>
+                    <Group spacing={4} align="center">
+                      Short Description
+                      <FieldChangePopover
+                        currentValue={wasmEvent?.short_description}
+                        previousValue={wasmEvent?.accepted_short_description}
+                        hasChanged={wasmEvent?.short_description !== wasmEvent?.accepted_short_description}
+                      />
+                    </Group>
+                  </strong>
+                </td>
                 <td style={{ maxWidth: '300px', wordWrap: 'break-word' }}>{wasmEvent?.short_description || '-'}</td>
                 <td style={{ maxWidth: '300px', wordWrap: 'break-word' }}>{event?.featured_text || '-'}</td>
               </tr>
               <tr>
-                <td><strong>Event URL</strong></td>
+                <td>
+                  <strong>
+                    <Group spacing={4} align="center">
+                      Event URL
+                      <FieldChangePopover
+                        currentValue={wasmEvent?.event_url}
+                        previousValue={wasmEvent?.accepted_event_url}
+                        hasChanged={wasmEvent?.event_url !== wasmEvent?.accepted_event_url}
+                      />
+                    </Group>
+                  </strong>
+                </td>
                 <td>
                   {wasmEvent?.event_url ? (
                     <Anchor href={wasmEvent.event_url} target="_blank" rel="noopener noreferrer" size="sm">
@@ -559,7 +625,18 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                 </td>
               </tr>
               <tr>
-                <td><strong>Event Category</strong></td>
+                <td>
+                  <strong>
+                    <Group spacing={4} align="center">
+                      Event Category
+                      <FieldChangePopover
+                        currentValue={wasmEvent?.event_category}
+                        previousValue={wasmEvent?.accepted_event_category}
+                        hasChanged={wasmEvent?.event_category !== wasmEvent?.accepted_event_category}
+                      />
+                    </Group>
+                  </strong>
+                </td>
                 <td>{wasmEvent?.event_category || '-'}</td>
                 <td>{'-'}</td>
               </tr>
