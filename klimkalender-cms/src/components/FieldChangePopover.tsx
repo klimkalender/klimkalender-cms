@@ -1,5 +1,6 @@
-import { Popover, ActionIcon, Stack, Text, Group } from '@mantine/core';
+import { Popover, ActionIcon, Stack, Text, Code } from '@mantine/core';
 import { AlertTriangle } from 'lucide-react';
+import { diffWords } from 'diff';
 
 interface FieldChangePopoverProps {
   currentValue: string | null | undefined;
@@ -12,8 +13,12 @@ export function FieldChangePopover({ currentValue, previousValue, hasChanged }: 
     return null;
   }
 
+  const oldText = previousValue || '';
+  const newText = currentValue || '';
+  const differences = diffWords(oldText, newText);
+
   return (
-    <Popover width={400} position="bottom" withArrow shadow="md">
+    <Popover width={500} position="bottom" withArrow shadow="md">
       <Popover.Target>
         <ActionIcon size="xs" color='red'>
           <AlertTriangle size={12} />
@@ -22,18 +27,28 @@ export function FieldChangePopover({ currentValue, previousValue, hasChanged }: 
       <Popover.Dropdown>
         <Stack spacing="xs">
           <Text size="sm" weight={500}>Value Changed</Text>
-          <Group spacing="xs">
-            <Text size="xs" color="dimmed">Previous:</Text>
-            <Text size="xs" style={{ textDecoration: 'line-through', color: 'red' }}>
-              {previousValue || 'N/A'}
-            </Text>
-          </Group>
-          <Group spacing="xs">
-            <Text size="xs" color="dimmed">Current:</Text>
-            <Text size="xs" style={{ color: 'green' }}>
-              {currentValue || 'N/A'}
-            </Text>
-          </Group>
+          <Code block style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+            {differences.map((part, index) => (
+              <span
+                key={index}
+                style={{
+                  backgroundColor: part.added 
+                    ? '#d4edda' 
+                    : part.removed 
+                    ? '#f8d7da' 
+                    : 'transparent',
+                  color: part.added 
+                    ? '#155724' 
+                    : part.removed 
+                    ? '#721c24' 
+                    : 'inherit',
+                  textDecoration: part.removed ? 'line-through' : 'none',
+                }}
+              >
+                {part.value}
+              </span>
+            ))}
+          </Code>
         </Stack>
       </Popover.Dropdown>
     </Popover>

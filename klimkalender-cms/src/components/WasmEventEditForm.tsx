@@ -575,7 +575,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                 </td>
               </tr>
               <tr>
-                <td>
+                <td valign='top'>
                   <strong>
                     <Group spacing={4} align="center">
                       Short Description
@@ -587,8 +587,8 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                     </Group>
                   </strong>
                 </td>
-                <td style={{ maxWidth: '300px', wordWrap: 'break-word' }}>{wasmEvent?.short_description || '-'}</td>
-                <td style={{ maxWidth: '300px', wordWrap: 'break-word' }}>{event?.featured_text || '-'}</td>
+                <td valign='top' style={{ maxWidth: '300px', wordWrap: 'break-word' }}>{wasmEvent?.short_description || '-'}</td>
+                <td valign='top' style={{ maxWidth: '300px', wordWrap: 'break-word' }}>{event?.featured_text || '-'}</td>
               </tr>
               <tr>
                 <td>
@@ -649,6 +649,11 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                 <td><strong>Tags</strong></td>
                 <td>{'-'}</td>
                 <td>{currentTags.map((t) => <>{t.name}</>)}</td>
+              </tr>
+              <tr>
+                <td valign='top'><strong>Full Description</strong></td>
+                <td><div dangerouslySetInnerHTML={{ __html: wasmEvent?.full_description_html || '-' }} /></td>
+                <td valign='top'>{'-'}</td>
               </tr>
             </tbody>
           </Table>
