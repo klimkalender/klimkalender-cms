@@ -118,6 +118,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
               event_id: newEvent?.id || 0,
               status: 'UP_TO_DATE' as WasmEventStatus,
               action: wasmEventAction,
+              accepted_name: wasmEvent.name,
               accepted_classification: wasmEvent.classification,
               accepted_date: wasmEvent.date,
               accepted_hall_name: wasmEvent.hall_name,
