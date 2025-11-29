@@ -7,6 +7,7 @@ import { WerckStofBot } from './bots/WerckStofBot.ts';
 import { WasBot } from './bots/WasBot.ts';
 import { GripBot } from './bots/GripBot.ts';
 import { CmbelBot } from './bots/CmbelBot.ts';
+import { BoulderBotProcessor } from './BoulderBotProcessor.ts';
 
 export class BoulderBotHookBase implements BoulderBotHook {
     async onBeforeRun(): Promise<void> {
@@ -20,7 +21,7 @@ export class BoulderBotHookBase implements BoulderBotHook {
     }
     async storeResult(data: CompData[]): Promise<void> {
         // no-op
-    }    
+    }
 }
 
 export interface BoulderBotHook {
@@ -31,21 +32,21 @@ export interface BoulderBotHook {
     onAfterRun: (success: boolean, details?: string) => Promise<void>;
 }
 
-class BoulderBotLogger extends Transport {
-  private boulderBotHook: BoulderBotHook;
-  constructor(opts) {
-    const {boulderBotHook, ...rest} = opts || {};
-    super(rest);
-    this.boulderBotHook = boulderBotHook;
-    if(!this.boulderBotHook) {
-        throw new Error('BoulderBotHook is required for SupabaseBufferLogger');
+export class BoulderBotLogger extends Transport {
+    private boulderBotHook: BoulderBotHook;
+    constructor(opts) {
+        const { boulderBotHook, ...rest } = opts || {};
+        super(rest);
+        this.boulderBotHook = boulderBotHook;
+        if (!this.boulderBotHook) {
+            throw new Error('BoulderBotHook is required for SupabaseBufferLogger');
+        }
     }
-  }
 
-  log(info, callback) {
-    this.boulderBotHook.onLog(info.message, info.level);
-    callback();
-  }
+    log(info, callback) {
+        this.boulderBotHook.onLog(info.message, info.level);
+        callback();
+    }
 };
 
 /**
@@ -55,20 +56,21 @@ export class BoulderBot {
     private logger: winston.Logger;
     private chatGPTSecret: string;
     private boulderBotHook: BoulderBotHook;
+    private boulderBotProcessor: BoulderBotProcessor | null;
     private static readonly BOT_RUN_MAX_MINUTES = 5;
 
-    constructor(chatGPTSecret?: string, boulderBotHook: BoulderBotHook = new BoulderBotHookBase()) {
+    constructor(chatGPTSecret?: string, boulderBotHook: BoulderBotHook = new BoulderBotHookBase(), boulderBotProcessor: BoulderBotProcessor | null = null) {
         this.chatGPTSecret = chatGPTSecret || '';
         this.boulderBotHook = boulderBotHook;
-        this.logger = this.createDefaultLogger(); 
+        this.boulderBotProcessor = boulderBotProcessor;
+        this.logger = this.createLogger();
     }
 
     /**
      * Create a default logger for initialization
      */
-    private createDefaultLogger(): winston.Logger {
-        console.dir(this.boulderBotHook);
-        const transport = new BoulderBotLogger({boulderBotHook: this.boulderBotHook});
+    private createLogger(): winston.Logger {
+        const transport = new BoulderBotLogger({ boulderBotHook: this.boulderBotHook });
         return winston.createLogger({
             level: 'info',
             format: winston.format.simple(),
@@ -119,11 +121,18 @@ export class BoulderBot {
             await this.boulderBotHook.storeResult(events);
 
             this.logger.info(`BoulderBot run completed, found ${events.length} events.`);
+            if (this.boulderBotProcessor) {
+                await this.boulderBotProcessor.processResult();
+            } else {
+                this.logger.info('No BoulderBotProcessor provided, skipping processing step.');
+            }
 
         } catch (error: any) {
             this.logger.error(`BoulderBot error: ${error.message}`);
             throw error;
         } finally {
+            // wait, ensure all logs are flushed
+            await new Promise(resolve => setTimeout(resolve, 1000));
             await this.boulderBotHook.onAfterRun(true, 'Completed');
             this.logger.info('Boulderbot is done 🧗');
         }

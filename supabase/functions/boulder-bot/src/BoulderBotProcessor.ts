@@ -1,20 +1,35 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { Classification, CompData } from './CompData.ts';
 import { WasmClassification, WasmEvent, WasmEventDataOnly } from './types.ts';
+import winston from 'winston';
+import { BoulderBotHook, BoulderBotHookBase, BoulderBotLogger } from './BoulderBot.ts';
+
 
 export class BoulderBotProcessor {
+  private logger: winston.Logger;
 
-  constructor(private readonly supabaseClient: SupabaseClient) {
+  constructor(private readonly supabaseClient: SupabaseClient, private readonly boulderBotHook: BoulderBotHook = new BoulderBotHookBase()) {
     // Initialization code here
+    this.logger = this.createLogger();
   }
+
+  private createLogger(): winston.Logger {
+    const transport = new BoulderBotLogger({ boulderBotHook: this.boulderBotHook });
+    return winston.createLogger({
+      level: 'info',
+      format: winston.format.simple(),
+      transports: [new winston.transports.Console(), transport],
+    });
+  }
+
   // Implementation of BoulderBotProcessor class
   async processResult(botResult?: CompData[]
   ) {
-    console.log("Processing BoulderBot result...");
+    this.logger.info("Processing BoulderBot result...");
     let botResultData = botResult || await this.loadBotResultFromStorage();
-    console.log("BoulderBot result data events:", botResultData?.length);
+    this.logger.info("BoulderBot result data events:", botResultData?.length);
     if (!botResultData) {
-      console.error("No BoulderBot result data found.");
+      this.logger.error("No BoulderBot result data found.");
       return;
     }
     // load id's of existing (NON REMOVED) wasm_events to check for updates
@@ -27,7 +42,7 @@ export class BoulderBotProcessor {
 
     // status is one of NEW, IGNORED, UP_TO_DATE, CHANGED, REMOVED, EVENT_PASSED
     for (const comp of botResultData) {
-      console.log(`Processing competition ${comp.eventName} (${comp.uniqueRemoteId}) with ${comp.classification}`);
+      this.logger.info(`Processing competition ${comp.eventName} (${comp.uniqueRemoteId}) with ${comp.classification}`);
       notFoundDatabaseExternalIds.delete(comp.uniqueRemoteId);
       // find existing event by external_id and update or insert
       const { data, error } = await this.supabaseClient
@@ -37,15 +52,15 @@ export class BoulderBotProcessor {
         .single();
 
       if (error && error.code !== 'PGRST116') { // PGRST116 = No rows found
-        console.error(`Error fetching competition ${comp.uniqueRemoteId}:`, error);
+        this.logger.error(`Error fetching competition ${comp.uniqueRemoteId}:`, error);
         continue;
       }
       const eventIsAlreadyLinked = Boolean(data && data.event_id);
 
-      let  updatedEvent = data as WasmEvent | null;
+      let updatedEvent = data as WasmEvent | null;
       const mappedEvent = this.mapCompDataToWasEvent(comp);
-      if (this.doWasmEventsDiffer( data || {} as WasmEvent, { ...data as WasmEvent, ...mappedEvent } as WasmEvent)) {
-        console.log(`Detected changes in competition ${comp.eventName} - updating`);
+      if (this.doWasmEventsDiffer(data || {} as WasmEvent, { ...data as WasmEvent, ...mappedEvent } as WasmEvent)) {
+        this.logger.info(`Detected changes in competition ${comp.eventName} - updating`);
         // console.dir({ ...data as WasmEvent, ...mappedEvent });
         const { error: upsertError, data: updatedEventResult } = await this.supabaseClient
           .from('wasm_events')
@@ -53,16 +68,16 @@ export class BoulderBotProcessor {
           .select()
           .single();
         if (upsertError) {
-          console.error(`Error upserting competition ${comp.uniqueRemoteId}:`, upsertError);
+          this.logger.error(`Error upserting competition ${comp.uniqueRemoteId}:`, upsertError);
         } else {
-          console.log(`Successfully upserted competition ${comp.eventName}.`);
+          this.logger.info(`Successfully upserted competition ${comp.eventName}.`);
           updatedEvent = updatedEventResult;
         }
-      }else{
-        console.log(`No changes detected for competition ${comp.eventName}. Not updating.`);
+      } else {
+        this.logger.info(`No changes detected for competition ${comp.eventName}. Not updating.`);
       }
       if (!updatedEvent) {
-        console.error(`No updated event data for competition ${comp.uniqueRemoteId}, skipping further processing.`);
+        this.logger.error(`No updated event data for competition ${comp.uniqueRemoteId}, skipping further processing.`);
         continue;
       }
 
@@ -75,9 +90,9 @@ export class BoulderBotProcessor {
           .update({ status: newStatus })
           .eq('external_id', comp.uniqueRemoteId);
         if (statusError) {
-          console.error(`Error updating status for competition ${comp.uniqueRemoteId}:`, statusError);
+          this.logger.error(`Error updating status for competition ${comp.uniqueRemoteId}:`, statusError);
         } else {
-          console.log(`Status of REMOVED event updated to ${newStatus} for competition ${comp.eventName}.`);
+          this.logger.info(`Status of REMOVED event updated to ${newStatus} for competition ${comp.eventName}.`);
         }
       }
 
@@ -88,9 +103,9 @@ export class BoulderBotProcessor {
           .update({ status: 'EVENT_PASSED' })
           .eq('external_id', comp.uniqueRemoteId);
         if (statusError) {
-          console.error(`Error updating status for competition ${comp.uniqueRemoteId}:`, statusError);
+          this.logger.error(`Error updating status for competition ${comp.uniqueRemoteId}:`, statusError);
         } else {
-          console.log(`Status updated to EVENT_PASSED for competition ${comp.eventName}.`);
+          this.logger.info(`Status updated to EVENT_PASSED for competition ${comp.eventName}.`);
         }
       }
 
@@ -103,17 +118,17 @@ export class BoulderBotProcessor {
           .update({ status: newStatus })
           .eq('external_id', comp.uniqueRemoteId);
         if (statusError) {
-          console.error(`Error updating status for competition ${comp.uniqueRemoteId}:`, statusError);
+          this.logger.error(`Error updating status for competition ${comp.uniqueRemoteId}:`, statusError);
         } else {
-          console.log(`Status updated to ${newStatus} for competition ${comp.eventName}.`);
-          console.dir(updatedEvent);
+          this.logger.info(`Status updated to ${newStatus} for competition ${comp.eventName}.`);
+          this.logger.debug(updatedEvent);
         }
         updatedEvent.status = newStatus;
       }
       // auto-process events that have action AUTO_IMPORT
       if (updatedEvent.status === 'CHANGED' && updatedEvent.action === 'AUTO_IMPORT'
       ) {
-        console.log(`Auto-importing changes for competition ${comp.eventName}.`);
+        this.logger.info(`Auto-importing changes for competition ${comp.eventName}.`);
         const { error: importError } = await this.supabaseClient
           .from('events')
           .eq('id', updatedEvent.event_id)
@@ -124,7 +139,7 @@ export class BoulderBotProcessor {
             event_url: updatedEvent.event_url,
           });
         if (importError) {
-          console.error(`Error auto-importing competition ${comp.uniqueRemoteId}:`, importError);
+          this.logger.error(`Error auto-importing competition ${comp.uniqueRemoteId}:`, importError);
         } else {
           // update the imaged separately if needed
           if (updatedEvent.image_url && updatedEvent.image_url != updatedEvent.accepted_image_url) {
@@ -135,9 +150,9 @@ export class BoulderBotProcessor {
                 .eq('id', updatedEvent.event_id)
                 .update({ featured_image_ref: newImageRef });
               if (imageUpdateError) {
-                console.error(`Error updating image for competition ${comp.uniqueRemoteId}:`, imageUpdateError);
+                this.logger.error(`Error updating image for competition ${comp.uniqueRemoteId}:`, imageUpdateError);
               } else {
-                console.log(`Successfully updated image for competition ${comp.eventName}.`);
+                this.logger.info(`Successfully updated image for competition ${comp.eventName}.`);
               }
             }
           }
@@ -158,27 +173,27 @@ export class BoulderBotProcessor {
             })
             .eq('external_id', comp.uniqueRemoteId);
           if (statusError) {
-            console.error(`Error updating status for competition ${comp.uniqueRemoteId}:`, statusError);
+            this.logger.error(`Error updating status for competition ${comp.uniqueRemoteId}:`, statusError);
           } else {
-            console.log(`Status updated to UP_TO_DATE for competition ${comp.eventName}.`);
+            this.logger.info(`Status updated to UP_TO_DATE for competition ${comp.eventName}.`);
           }
         }
       }
     }
     // mark events there were not found events as REMOVED
     if (notFoundDatabaseExternalIds.size > 0) {
-      console.log(`Marking ${notFoundDatabaseExternalIds.size} competition(s) as REMOVED.`);
+      this.logger.info(`Marking ${notFoundDatabaseExternalIds.size} competition(s) as REMOVED.`);
       const { error: statusError } = await this.supabaseClient
         .from('wasm_events')
         .update({ status: 'REMOVED' })
         .in('external_id', notFoundDatabaseExternalIds);
       if (statusError) {
-        console.error(`Error updating status for competitions:`, statusError);
+        this.logger.error(`Error updating status for competitions:`, statusError);
       } else {
-        console.log(`Status updated to REMOVED for ${notFoundDatabaseExternalIds.size} competitions.`);
+        this.logger.info(`Status updated to REMOVED for ${notFoundDatabaseExternalIds.size} competitions.`);
       }
     }
-    console.log("BoulderBot result processing completed.");
+    this.logger.info("BoulderBot result processing completed.");
   }
 
   mapCompDataToWasEvent(compData: CompData): WasmEventDataOnly {
@@ -211,81 +226,81 @@ export class BoulderBotProcessor {
   }
 
   doWasmEventsDiffer(eventA: WasmEvent, eventB: WasmEvent): boolean {
-    if(eventA.name !== eventB.name){
-      console.log(`Name changed: ${eventA.name} != ${eventB.name}`);
+    if (eventA.name !== eventB.name) {
+      this.logger.debug(`Name changed: ${eventA.name} != ${eventB.name}`);
       return true;
     }
-    if(  eventA.classification !== eventB.classification){
-      console.log(`Classification changed: ${eventA.classification} != ${eventB.classification}`);
+    if (eventA.classification !== eventB.classification) {
+      this.logger.debug(`Classification changed: ${eventA.classification} != ${eventB.classification}`);
       return true;
     }
     // the string representation of date may differ even if the date is the same
-    if( new Date(eventA.date).getTime() !== new Date(eventB.date).getTime()){
-      console.log(`Date changed: ${eventA.date} != ${eventB.date}`);
+    if (new Date(eventA.date).getTime() !== new Date(eventB.date).getTime()) {
+      this.logger.debug(`Date changed: ${eventA.date} != ${eventB.date}`);
       return true;
     }
-    if(  eventA.hall_name !== eventB.hall_name){
-      console.log(`Hall name changed: ${eventA.hall_name} != ${eventB.hall_name}`);
+    if (eventA.hall_name !== eventB.hall_name) {
+      this.logger.debug(`Hall name changed: ${eventA.hall_name} != ${eventB.hall_name}`);
       return true;
     }
-    if(  eventA.short_description !== eventB.short_description){
-      console.log(`Short description changed.`);
+    if (eventA.short_description !== eventB.short_description) {
+      this.logger.debug(`Short description changed.`);
       return true;
     }
-    if(  eventA.full_description_html !== eventB.full_description_html){
-      console.log(`Full description HTML changed.`);
+    if (eventA.full_description_html !== eventB.full_description_html) {
+      this.logger.debug(`Full description HTML changed.`);
       return true;
     }
-    if(  eventA.event_url !== eventB.event_url){
-      console.log(`Event URL changed: ${eventA.event_url} != ${eventB.event_url}`);
+    if (eventA.event_url !== eventB.event_url) {
+      this.logger.debug(`Event URL changed: ${eventA.event_url} != ${eventB.event_url}`);
       return true;
     }
-    if(  eventA.image_url !== eventB.image_url){
-      console.log(`Image URL changed: ${eventA.image_url} != ${eventB.image_url}`);
+    if (eventA.image_url !== eventB.image_url) {
+      this.logger.debug(`Image URL changed: ${eventA.image_url} != ${eventB.image_url}`);
       return true;
     }
-    if(  eventA.event_category !== eventB.event_category){
-      console.log(`Event category changed: ${eventA.event_category} != ${eventB.event_category}`); 
+    if (eventA.event_category !== eventB.event_category) {
+      this.logger.debug(`Event category changed: ${eventA.event_category} != ${eventB.event_category}`);
       return true;
-    } 
-   return false;
+    }
+    return false;
   }
 
   didEventChangeFromAccepted(event: WasmEvent): boolean {
-    if(  event.name !== event.accepted_name){
-      console.log(`Name changed: ${event.name} != ${event.accepted_name}`);
+    if (event.name !== event.accepted_name) {
+      this.logger.debug(`Name changed: ${event.name} != ${event.accepted_name}`);
       return true;
     }
-    if(  event.classification !== event.accepted_classification){
-      console.log(`Classification changed: ${event.classification} != ${event.accepted_classification}`);
+    if (event.classification !== event.accepted_classification) {
+      this.logger.debug(`Classification changed: ${event.classification} != ${event.accepted_classification}`);
       return true;
     }
-    if( new Date(event.date).getTime() !== new Date(event.accepted_date||'').getTime()){
-      console.log(`Date changed: ${event.date} != ${event.accepted_date}`);
+    if (new Date(event.date).getTime() !== new Date(event.accepted_date || '').getTime()) {
+      this.logger.debug(`Date changed: ${event.date} != ${event.accepted_date}`);
       return true;
     }
-    if(  event.hall_name !== event.accepted_hall_name){
-      console.log(`Hall name changed: ${event.hall_name} != ${event.accepted_hall_name}`);
+    if (event.hall_name !== event.accepted_hall_name) {
+      this.logger.debug(`Hall name changed: ${event.hall_name} != ${event.accepted_hall_name}`);
       return true;
     }
-    if(  event.short_description !== event.accepted_short_description){
-      console.log(`Short description changed.`);
+    if (event.short_description !== event.accepted_short_description) {
+      this.logger.debug(`Short description changed.`);
       return true;
     }
-    if(  event.full_description_html !== event.accepted_full_description_html){
-      console.log(`Full description HTML changed.`);
+    if (event.full_description_html !== event.accepted_full_description_html) {
+      this.logger.debug(`Full description HTML changed.`);
       return true;
     }
-    if(  event.event_url !== event.accepted_event_url){
-      console.log(`Event URL changed: ${event.event_url} != ${event.accepted_event_url}`);
+    if (event.event_url !== event.accepted_event_url) {
+      this.logger.debug(`Event URL changed: ${event.event_url} != ${event.accepted_event_url}`);
       return true;
     }
-    if(  event.image_url !== event.accepted_image_url){
-      console.log(`Image URL changed: ${event.image_url} != ${event.accepted_image_url}`);
+    if (event.image_url !== event.accepted_image_url) {
+      this.logger.debug(`Image URL changed: ${event.image_url} != ${event.accepted_image_url}`);
       return true;
     }
-    if(  event.event_category !== event.accepted_event_category){
-      console.log(`Event category changed: ${event.event_category} != ${event.accepted_event_category}`); 
+    if (event.event_category !== event.accepted_event_category) {
+      this.logger.debug(`Event category changed: ${event.event_category} != ${event.accepted_event_category}`);
       return true;
     }
     return false;
@@ -296,7 +311,7 @@ export class BoulderBotProcessor {
       .from('boulderbot')
       .download('botresult.json');
     if (error) {
-      console.error('Error downloading botresult.json:', error);
+      this.logger.error('Error downloading botresult.json:', error);
       return null;
     }
     const botResultData = (JSON.parse(await data.text()) as CompData[]).map(comp => {
@@ -327,7 +342,7 @@ export class BoulderBotProcessor {
       const respJson = await response.json()
       return respJson.imageRef;
     }
-    console.error('Image upload error:', response);
+    this.logger.error('Image upload error:', response);
     return null;
   }
 }
