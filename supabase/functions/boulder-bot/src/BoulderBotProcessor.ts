@@ -46,7 +46,7 @@ export class BoulderBotProcessor {
       const mappedEvent = this.mapCompDataToWasEvent(comp);
       if (this.doWasmEventsDiffer( data || {} as WasmEvent, { ...data as WasmEvent, ...mappedEvent } as WasmEvent)) {
         console.log(`Detected changes in competition ${comp.eventName} - updating`);
-        console.dir({ ...data as WasmEvent, ...mappedEvent });
+        // console.dir({ ...data as WasmEvent, ...mappedEvent });
         const { error: upsertError, data: updatedEventResult } = await this.supabaseClient
           .from('wasm_events')
           .upsert({ ...mappedEvent, processed_at: new Date().toISOString() }, { onConflict: 'external_id' })
