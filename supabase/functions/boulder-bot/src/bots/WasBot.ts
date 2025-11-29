@@ -61,7 +61,7 @@ export class WasBot implements Bot {
     private async processEventsPage(page: WasPage): Promise<CompData[]> {
         const eventsFound: CompData[] = [];
 
-        this.logger.info(`cxScraping WAS ${page.type}`);
+        this.logger.info(`=> Scraping WAS ${page.type}`);
 
         try {
             const response = await axios.get(page.eventPageUrl);

@@ -5,6 +5,7 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { BoulderBot, BoulderBotHookBase } from './BoulderBot.ts';
 import { CompData } from "./CompData.ts";
+import { BoulderBotProcessor } from "./BoulderBotProcessor.ts";
 
 const BOT_RUN_MAX_MINUTES = 5;
 
@@ -180,8 +181,10 @@ Deno.serve(async (req: Request) => {
         }
 
         // Create and run the bot
+        console.log("Starting BoulderBot runner...");
         const hooks = new SupabaseBoulderBotHook({ supabaseClient, user: user?.email || null });
-        const runner = new BoulderBot(apiKey, hooks);
+        const processor = new BoulderBotProcessor(supabaseClient, hooks);
+        const runner = new BoulderBot(apiKey, hooks, processor  );
         await runner.run();
         return new Response(JSON.stringify({ ok: true }), {
             headers: { ...corsHeaders, "Content-Type": "application/json" },
