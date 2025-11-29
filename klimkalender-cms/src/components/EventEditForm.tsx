@@ -69,7 +69,7 @@ export function EventEditForm({ event, venues, allTags, currentTags, organizers,
   const [featuredText, setFeaturedText] = useState(event?.featured_text || '');
   const [link, setLink] = useState(event?.link || '');
   const [remarks, setRemarks] = useState(event?.remarks || '');
-  
+
   // Tags handling
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>(
     currentTags.map(tag => tag.id.toString())
@@ -549,11 +549,11 @@ export function EventEditForm({ event, venues, allTags, currentTags, organizers,
                 value={formatDateInputTime(startDateTime!)}
                 onChange={(e) => {
                   const newStartDate = new Date(e.target.value);
-                  if(isFullDay){
+                  if (isFullDay) {
                     newStartDate.setHours(0, 0, 0, 0); // Set to 00:00:00
                   }
                   setStartDateTime(newStartDate);
-                  
+
                   // If full day event and start date is provided, set end date to same date at 23:59
                   if (isFullDay && newStartDate) {
                     const newEndDate = new Date(newStartDate);
@@ -665,70 +665,67 @@ export function EventEditForm({ event, venues, allTags, currentTags, organizers,
               />
             </div>
           </Group>
+          <Textarea
+            label="Featured Text"
+            placeholder="Enter featured text (shown for featured events)"
+            value={featuredText}
+            onChange={(event) => setFeaturedText(event.currentTarget.value)}
+            minRows={2}
+            error={errors.featuredText}
+          />
+          <div>
+            <Text size="sm" weight={500} mb="xs">
+              Featured Image
+            </Text>
 
-          {featured && (
-            <>
-              <Textarea
-                label="Featured Text"
-                placeholder="Enter featured text (shown for featured events)"
-                value={featuredText}
-                onChange={(event) => setFeaturedText(event.currentTarget.value)}
-                minRows={2}
-                error={errors.featuredText}
-              />
-              <div>
-                <Text size="sm" weight={500} mb="xs">
-                  Featured Image
-                </Text>
-
-                {/* Current image display */}
-                {currentImageUrl && !imagePreview && (
-                  <div style={{ marginBottom: 12 }}>
-                    <Text size="xs" color="dimmed" mb="xs">Current image:</Text>
-                    <Image
-                      src={currentImageUrl}
-                      alt="Current event image"
-                      width={200}
-                      height={150}
-                      fit="cover"
-                      radius="md"
-                    />
-                  </div>
-                )}
-
-                {/* Image preview */}
-                {imagePreview && (
-                  <div style={{ marginBottom: 12 }}>
-                    <Text size="xs" color="dimmed" mb="xs">New image preview:</Text>
-                    <Image
-                      src={imagePreview}
-                      alt="New event image preview"
-                      width={200}
-                      height={150}
-                      fit="cover"
-                      radius="md"
-
-                    />
-                  </div>
-                )}
-
-                <div>
-                  <label htmlFor="event-image">Select image file:</label>
-                  <input
-                    id="event-image"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    style={{ marginLeft: '10px' }}
-                  />
-                </div>
-                {errors.featuredImage && (
-                  <Text size="xs" color="red" mt={5}>{errors.featuredImage}</Text>
-                )}
+            {/* Current image display */}
+            {currentImageUrl && !imagePreview && (
+              <div style={{ marginBottom: 12 }}>
+                <Text size="xs" color="dimmed" mb="xs">Current image:</Text>
+                <Image
+                  src={currentImageUrl}
+                  alt="Current event image"
+                  width={200}
+                  height={150}
+                  fit="cover"
+                  radius="md"
+                />
               </div>
-            </>
+            )}
 
-          )}
+            {/* Image preview */}
+            {imagePreview && (
+              <div style={{ marginBottom: 12 }}>
+                <Text size="xs" color="dimmed" mb="xs">New image preview:</Text>
+                <Image
+                  src={imagePreview}
+                  alt="New event image preview"
+                  width={200}
+                  height={150}
+                  fit="cover"
+                  radius="md"
+
+                />
+              </div>
+            )}
+
+            <div>
+              <label htmlFor="event-image">Select image file:</label>
+              <input
+                id="event-image"
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                style={{ marginLeft: '10px' }}
+              />
+            </div>
+            {errors.featuredImage && (
+              <Text size="xs" color="red" mt={5}>{errors.featuredImage}</Text>
+            )}
+          </div>
+
+
+
 
           <TextInput
             label="Link"
