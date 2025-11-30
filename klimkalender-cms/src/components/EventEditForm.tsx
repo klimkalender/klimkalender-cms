@@ -41,7 +41,7 @@ function formatDateInputTime(tzDate: Date) {
 export function EventEditForm({ event, venues, allTags, currentTags, organizers, onSave, onCancel, onDelete }: EventEditFormProps) {
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState(event?.title || '');
-  const [currentEvent, setCurrentEvent] = useState<Event | null>(event || null);
+  const [currentEvent] = useState<Event | null>(event || null);
 
   const [startDateTime, setStartDateTime] = useState(() => {
     if (event?.start_date_time) {

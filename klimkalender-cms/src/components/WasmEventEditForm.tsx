@@ -679,7 +679,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
           style={{
             position: 'fixed',
             top: 20,
-            right: 20,
+            right: 200,
             zIndex: 1000,
             minWidth: 300
           }}
