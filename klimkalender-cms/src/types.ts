@@ -15,6 +15,7 @@ export type CalendarEvent = {
   featuredImage?: string;
   featuredText?: string;
   venueAddress?: string;
+  botUniqueRemoteId?: string;
 };
 
 export type Event = Database['public']['Tables']['events']['Row'];

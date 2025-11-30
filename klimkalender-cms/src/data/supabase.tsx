@@ -146,7 +146,7 @@ export async function readLastBoulderBotAction(setAction: React.Dispatch<React.S
     .single();
   if (error) {
     console.error('Error fetching last BoulderBot action:', error);
-    return null;
+    setAction(null);
   }
   setAction(data);
 };

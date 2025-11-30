@@ -17,7 +17,7 @@ const supabase = createClient(
 
 
 
-function mapEventToSupabaseRow(event: CalendarEvent, uuid: string): Omit<Event, 'id'> {
+function mapEventToSupabaseRow(event: CalendarEvent, uuid: string | null): Omit<Event, 'id'> {
   // Helper to decode HTML entities in the title
   function decodeHtmlEntities(str: string): string {
     return str
@@ -58,7 +58,7 @@ function mapEventToSupabaseRow(event: CalendarEvent, uuid: string): Omit<Event, 
   };
 }
 
-async function importData(uuid: string) {
+async function importData(uuid: string | null) {
   // read data from JSON file
   const rawData = JSON.parse(fs.readFileSync('../../../data/events.json', 'utf-8'));
   const events: CalendarEvent[] = rawData.map((event: any) => ({
@@ -177,8 +177,41 @@ async function importData(uuid: string) {
     if (venueError) {
       console.error('Error importing venue:', venueError);
     }
+    // link wasm_event to event
+    //  .update({ event_id: eventResp?.id || null })
+    const {data: foundWasmEvent} =await supabase
+      .from('wasm_events')
+      .select('id')
+      .eq('external_id', event.botUniqueRemoteId)
+      .eq('status', 'NEW')
+      .single();
 
-  }
+      if(foundWasmEvent){
+        // we found the event 
+        const data = {
+          accepted_name: event.title,
+          accepted_date: event.startTimeUtc.toISOString(),
+          accepted_hall_name: event.venueName,
+          accepted_short_description: event.featuredText || '',
+          accepted_event_url: event.link,
+          status: 'CHANGED',
+          // it takes a lot of work to really find out if is it different than
+          // so we set it to CHANGED and process it manually later
+          event_id: eventResp?.id || null,
+        }
+        const { error: wasmEventLinkError } = await supabase
+          .from('wasm_events')
+          .update(data)
+          .eq('id', foundWasmEvent.id);
+        if (wasmEventLinkError) {
+          console.error('Error linking wasm_event to event:', wasmEventLinkError);
+        } else {
+          console.log(`Linked wasm_event ${foundWasmEvent.id} to event ${eventResp?.id}`);
+        }
+      } else {
+        console.log(`No NEW wasm_event found for external_id ${event.botUniqueRemoteId}, skipping link.`);
+      }
+    }
 }
 
 async function addTagToEvent(eventId: string, tagName: string) {
@@ -238,11 +271,5 @@ async function uploadRemoteImageToSupabase(imageUrl: string, bucket: string, pre
 
 
 
-// run the import
-const session = await supabase.auth.getSession();
-const importUuid = session.data.session?.user.id;
-if (!importUuid) {
-  console.error('No valid Supabase session found. Please set SUPABASE_SECRET_KEY environment variable.');
-  process.exit(1);
-}
-await importData(importUuid);
+// run the import - without user
+await importData(null);

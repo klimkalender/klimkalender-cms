@@ -23,7 +23,7 @@ function WasmachineRoute() {
   const [allTags, setAllTags] = useState<Tag[]|null>(null);
   const [organizers, setOrganizers] = useState<Organizer[]|null>(null);
   const [profiles, setProfiles] = useState<Profile[]|null>(null);
-  const [lastBoulderBotAction, setLastBoulderBotAction] = useState<Action | null | undefined>(null);
+  const [lastBoulderBotAction, setLastBoulderBotAction] = useState<Action | null | undefined>(undefined);
 
   const { wasmEventId } = Route.useSearch();
 
@@ -39,10 +39,11 @@ function WasmachineRoute() {
   }, []);
 
 
+  console.log(`last action ${lastBoulderBotAction}`);
 
   return (
     <div className="p-2 grid gap-2">
-         <div>{venues && wasmEvents &&events && tagsPerEvent && organizers && allTags && lastBoulderBotAction && profiles &&
+         <div>{venues && wasmEvents &&events && tagsPerEvent && organizers && allTags && lastBoulderBotAction  !== undefined&& profiles &&
            <WasmachineTable wasmEvents={wasmEvents} events={events} venues={venues} tagsPerEvent={tagsPerEvent}  allTags={allTags} organizers={organizers} profiles={profiles} action={lastBoulderBotAction} initialWasmEventId={wasmEventId} />
          }</div>
     </div>
