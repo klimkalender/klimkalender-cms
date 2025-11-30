@@ -101,7 +101,7 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
         id: 'processed_at',
       },
       {
-        header: 'Created/Updated by',
+        header: 'Created / Updated',
         accessorFn: (originalRow) => `${lookupProfileName(profiles, originalRow.created_by)} / ${lookupProfileName(profiles, originalRow.updated_by)}`,
         id: 'created_updated_by',
         Cell: ({ row }) => 

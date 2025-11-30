@@ -22,7 +22,7 @@ export function TagsTable({ tags, initialTagId, profiles }: { tags: Tag[], profi
         id: 'name', //id required if you use accessorFn instead of accessorKey
       },
       {
-        header: 'Created/Updated by',
+        header: 'Created / Updated',
         accessorFn: (originalRow) => `${lookupProfileName(profiles, originalRow.created_by)} / ${lookupProfileName(profiles, originalRow.updated_by)}`,
         id: 'created_updated_by',
         Cell: ({ row }) =>
