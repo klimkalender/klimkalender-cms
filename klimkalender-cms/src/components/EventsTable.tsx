@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Event, Organizer, Tag, Venue, Profile } from '@/types';
-import { Drawer, Button, Group, Tabs } from '@mantine/core';
+import { Drawer, Button, Group, Tabs, Notification } from '@mantine/core';
 import {
   MantineReactTable,
   useMantineReactTable,
@@ -11,6 +11,7 @@ import { EventEditForm } from './EventEditForm';
 import { useNavigate } from '@tanstack/react-router';
 import { lookupProfileName } from '@/utils/lookup-profile-name';
 import { CreateUpdateByTooltip } from './CreateUpdateByTooltip';
+import { supabase } from '@/data/supabase';
 
 type EventsTableProps = {
   events: Event[];
@@ -28,6 +29,8 @@ export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent,
   const [eventsList, setEventsList] = useState<Event[]>(events);
   const [activeTab, setActiveTab] = useState<string>('PUBLISHED');
   const [tagsPerEvent, setTagsPerEvent] = useState<{ [id: number]: Tag[] }>(defaultTagsPerEvent);
+  const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null)
+
   const opened = !!initialEventId;
 
   useEffect(() => {
@@ -104,8 +107,8 @@ export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent,
         header: 'Created / Updated',
         accessorFn: (originalRow) => `${lookupProfileName(profiles, originalRow.created_by)} / ${lookupProfileName(profiles, originalRow.updated_by)}`,
         id: 'created_updated_by',
-        Cell: ({ row }) => 
-          <CreateUpdateByTooltip 
+        Cell: ({ row }) =>
+          <CreateUpdateByTooltip
             createdAt={row.original.created_at}
             createdBy={row.original.created_by}
             updatedAt={row.original.updated_at}
@@ -147,6 +150,62 @@ export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent,
   const handleCreateNew = () => {
     navigate({ to: '/events', search: { eventId: 'new' } });
   };
+
+  const handleArchivePassedEvents = async () => {
+    // Archive events that are older than 30 days and currently published
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    try {
+
+      // First, find all event IDs that are DRAFT or PUBLISHED and older than yesterday
+      const { data: eventsToArchive, error: findError } = await supabase
+        .from('events')
+        .select('id')
+        .in('status', ['DRAFT', 'PUBLISHED'])
+        .lt('start_date_time', yesterday.toISOString());
+
+      if (findError) {
+        console.error('Error finding events to archive:', findError);
+        return;
+      }
+
+      const { error } = await supabase
+        .from('events')
+        .update({ status: 'ARCHIVED' })
+        .in('id', eventsToArchive?.map(e => e.id) || []);
+
+      if (error) {
+        console.error('Error archiving events:', error);
+      }
+
+      // Reload the events list by updating the local state
+      // a bit tricky 
+      setEventsList(prev =>
+        prev.map(event => {
+          if (eventsToArchive?.some(e => e.id === event.id)) {
+            return { ...event, status: 'ARCHIVED' };
+          }
+          return event;
+        })
+      );
+      // Show notification about archived events
+      if (!error) {
+        setNotification({
+          type: 'success',
+          message: `Archived ${eventsToArchive?.length || 0} events.`
+        })
+      } else {
+        setNotification({
+          type: 'error',
+          message: `Archive failed: ${error || 'Unknown error'}`
+        })
+      }
+
+    } catch (error) {
+      console.error('Unexpected error:', error);
+    }
+  }
 
   const handleEventDelete = (eventId: number) => {
     setEventsList(prev => prev.filter(e => e.id !== eventId));
@@ -190,9 +249,14 @@ export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent,
     <>
       <Group position="apart" mb="md">
         <div className="ml-4 text-2xl font-bold text-black">Events</div>
-        <Button onClick={handleCreateNew}>
-          Add Event
-        </Button>
+        <Group>
+          <Button variant="outline" onClick={handleArchivePassedEvents}>
+            Archive Passed Events
+          </Button>
+          <Button onClick={handleCreateNew}>
+            Add Event
+          </Button>
+        </Group>
       </Group>
       <Tabs value={activeTab} onTabChange={(a) => setActiveTab(a || 'DRAFT')}>
         <Tabs.List>
@@ -216,6 +280,22 @@ export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent,
           onDelete={handleEventDelete}
         />
       </Drawer>
+      {notification && (
+        <Notification
+          color={notification.type === 'success' ? 'green' : 'red'}
+          onClose={() => setNotification(null)}
+          style={{
+            position: 'fixed',
+            top: 20,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 1000,
+            minWidth: 300
+          }}
+        >
+          {notification.message}
+        </Notification>
+      )}
     </>
   );
 }
