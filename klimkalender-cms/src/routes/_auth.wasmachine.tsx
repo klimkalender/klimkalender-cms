@@ -39,7 +39,6 @@ function WasmachineRoute() {
   }, []);
 
 
-  console.log(`last action ${lastBoulderBotAction}`);
 
   return (
     <div className="p-2 grid gap-2">

@@ -56,6 +56,9 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
   const [formAction, setFormAction] = useState<FormAction>(defaultAction);
   const [selectedVenueId, setSelectedVenueId] = useState<string | null>(defaultVenueId);
   const [wasmEventAction, setWasmEventAction] = useState<WasmEventAction>(wasmEvent?.action || 'MANUAL_IMPORT');
+  const [currentWasmEvent] = useState<WasmEvent | null>(wasmEvent || null);
+  const [currentEvent] = useState<Event | null>(event || null);
+
 
   // UI state
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -100,7 +103,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
           };
           await updateWasmEvent(updatedWasmEvent);
           if (onSave) {
-            onSave(updatedWasmEvent, currentTags, event || null);
+            onSave(updatedWasmEvent, currentTags, currentEvent || null);
           }
           setNotification({
             type: 'success',
@@ -111,29 +114,29 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
         case 'PUBLISH_AS_DRAFT':
           //create a new event
           try {
-            if (!wasmEvent) throw new Error('WasmEvent is undefined');
-            const newEvent = await createEvent(wasmEvent!, selectedVenueId ? parseInt(selectedVenueId) : 0, formAction === 'PUBLISH_AS_PUBLISHED' ? 'PUBLISHED' : 'DRAFT');
+            if (!currentWasmEvent) throw new Error('WasmEvent is undefined');
+            const newEvent = await createEvent(currentWasmEvent!, selectedVenueId ? parseInt(selectedVenueId) : 0, formAction === 'PUBLISH_AS_PUBLISHED' ? 'PUBLISHED' : 'DRAFT');
             console.dir(newEvent);
             const updatedWasmEvent = {
-              ...wasmEvent,
+              ...currentWasmEvent,
               event_id: newEvent?.id || 0,
               status: 'UP_TO_DATE' as WasmEventStatus,
               action: wasmEventAction,
-              accepted_name: wasmEvent.name,
-              accepted_classification: wasmEvent.classification,
-              accepted_date: wasmEvent.date,
-              accepted_hall_name: wasmEvent.hall_name,
-              accepted_short_description: wasmEvent.short_description,
-              accepted_full_description_html: wasmEvent.full_description_html,
-              accepted_event_url: wasmEvent.event_url,
-              accepted_image_url: wasmEvent.image_url,
-              accepted_event_category: wasmEvent.event_category,
+              accepted_name: currentWasmEvent.name,
+              accepted_classification: currentWasmEvent.classification,
+              accepted_date: currentWasmEvent.date,
+              accepted_hall_name: currentWasmEvent.hall_name,
+              accepted_short_description: currentWasmEvent.short_description,
+              accepted_full_description_html: currentWasmEvent.full_description_html,
+              accepted_event_url: currentWasmEvent.event_url,
+              accepted_image_url: currentWasmEvent.image_url,
+              accepted_event_category: currentWasmEvent.event_category,
             };
 
             await updateWasmEvent(updatedWasmEvent);
-            if (wasmEvent.image_url) {
-              console.log(`Uploading image ${wasmEvent.image_url} to supabase storage...`);
-              const imageRef = await uploadEventImage(wasmEvent.image_url);
+            if (currentWasmEvent.image_url) {
+              console.log(`Uploading image ${currentWasmEvent.image_url} to supabase storage...`);
+              const imageRef = await uploadEventImage(currentWasmEvent.image_url);
               if (imageRef) {
                 const { error } = await supabase.from('events').update({ featured_image_ref: imageRef }).eq('id', newEvent?.id);
                 if (error) {
@@ -149,8 +152,8 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
             // todo: set tags
             const tags: string[] = [];
             const dbTags: Tag[] = [];
-            if (wasmEvent.event_category) {
-              tags.push(wasmEvent.event_category);
+            if (currentWasmEvent.event_category) {
+              tags.push(currentWasmEvent.event_category);
             }
             console.log('Assigning tags to event:', tags);
             for (const tag of tags) {
@@ -170,7 +173,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
               }
             }
             // set organizer if NKBV image found
-            if (wasmEvent.image_url?.toUpperCase().includes('NKBV')) {
+            if (currentWasmEvent.image_url?.toUpperCase().includes('NKBV')) {
               console.log('NKBV image detected, setting organizer to NKBV');
               // find NKBV organizer
               const orgRecord = await supabase.from('organizers').select('*').eq('name', 'NKBV').single();
@@ -203,25 +206,26 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
           break;
         case 'UPDATE_EVENT':
           console.log('Updating existing event...');
-          if (!wasmEvent) throw new Error('WasmEvent is undefined');
-          if (!event) throw new Error('Event is undefined');
+          if (!currentWasmEvent) throw new Error('WasmEvent is undefined');
+          if (!currentEvent) throw new Error('Event is undefined');
           const updatedEventRecord = await supabase.from('events').update({
-            title: wasmEvent.name,
-            start_date_time: wasmEvent.date,
-            link: wasmEvent.event_url,
-            featured_text: wasmEvent.short_description || null,
-          }).eq('id', event.id).select().single();
-          if (wasmEvent.image_url) {
+            title: currentWasmEvent.name,
+            start_date_time: currentWasmEvent.date,
+            link: currentWasmEvent.event_url,
+            featured_text: currentWasmEvent.short_description || null,
+          }).eq('id', currentEvent.id).select().single();
+          if (currentWasmEvent.image_url) {
             // Check current image size before updating
-            const currentRef = event.featured_image_ref || undefined;
-            console.log(`Uploading updated image ${wasmEvent.image_url} to supabase storage...`);
-            const imageRef = await uploadEventImage(wasmEvent.image_url, currentRef);
+            const currentRef = currentEvent.featured_image_ref || undefined;
+            console.log(`Uploading updated image ${currentWasmEvent.image_url} to supabase storage...`);
+            const imageRef = await uploadEventImage(currentWasmEvent.image_url, currentRef);
             if (imageRef) {
               if (imageRef !== currentRef) {
-                const { error } = await supabase.from('events').update({ featured_image_ref: imageRef }).eq('id', event.id);
+                const { error } = await supabase.from('events').update({ featured_image_ref: imageRef }).eq('id', currentEvent.id);
                 if (error) {
                   console.error('Error updating event with image reference:', error);
                 }
+                currentEvent.featured_image_ref = imageRef;
               } else {
                 console.log('Image reference unchanged, no update needed.');
               }
@@ -230,18 +234,18 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
             }
           }
           const updatedWasmEventForUpdate = {
-            ...wasmEvent,
+            ...currentWasmEvent,
             action: wasmEventAction,
             status: 'UP_TO_DATE' as WasmEventStatus,
-            accepted_name: wasmEvent.name,
-            accepted_classification: wasmEvent.classification,
-            accepted_date: wasmEvent.date,
-            accepted_hall_name: wasmEvent.hall_name,
-            accepted_short_description: wasmEvent.short_description,
-            accepted_full_description_html: wasmEvent.full_description_html,
-            accepted_event_url: wasmEvent.event_url,
-            accepted_image_url: wasmEvent.image_url,
-            accepted_event_category: wasmEvent.event_category,
+            accepted_name: currentWasmEvent.name,
+            accepted_classification: currentWasmEvent.classification,
+            accepted_date: currentWasmEvent.date,
+            accepted_hall_name: currentWasmEvent.hall_name,
+            accepted_short_description: currentWasmEvent.short_description,
+            accepted_full_description_html: currentWasmEvent.full_description_html,
+            accepted_event_url: currentWasmEvent.event_url,
+            accepted_image_url: currentWasmEvent.image_url,
+            accepted_event_category: currentWasmEvent.event_category,
           };
           await updateWasmEvent(updatedWasmEventForUpdate);
           if (onSave) {
@@ -254,27 +258,27 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
           break;
         case 'IGNORE_ONCE':
           console.log('Updating existing event...');
-          if (!wasmEvent) throw new Error('WasmEvent is undefined');
-          if (!event) throw new Error('Event is undefined');
+          if (!currentWasmEvent) throw new Error('WasmEvent is undefined');
+          if (!currentEvent) throw new Error('Event is undefined');
           // we set all fields to accepted_
           // but do NOT update the event
           const updatedWasmEventForIgnoreOnce = {
-            ...wasmEvent,
+            ...currentWasmEvent,
             action: wasmEventAction,
             status: 'UP_TO_DATE' as WasmEventStatus,
-            accepted_name: wasmEvent.name,
-            accepted_classification: wasmEvent.classification,
-            accepted_date: wasmEvent.date,
-            accepted_hall_name: wasmEvent.hall_name,
-            accepted_short_description: wasmEvent.short_description,
-            accepted_full_description_html: wasmEvent.full_description_html,
-            accepted_event_url: wasmEvent.event_url,
-            accepted_image_url: wasmEvent.image_url,
-            accepted_event_category: wasmEvent.event_category,
+            accepted_name: currentWasmEvent.name,
+            accepted_classification: currentWasmEvent.classification,
+            accepted_date: currentWasmEvent.date,
+            accepted_hall_name: currentWasmEvent.hall_name,
+            accepted_short_description: currentWasmEvent.short_description,
+            accepted_full_description_html: currentWasmEvent.full_description_html,
+            accepted_event_url: currentWasmEvent.event_url,
+            accepted_image_url: currentWasmEvent.image_url,
+            accepted_event_category: currentWasmEvent.event_category,
           };
           await updateWasmEvent(updatedWasmEventForIgnoreOnce);
           if (onSave) {
-            onSave(updatedWasmEventForIgnoreOnce, currentTags, event || null);
+            onSave(updatedWasmEventForIgnoreOnce, currentTags, currentEvent || null);
           }
           setNotification({
             type: 'success',
@@ -292,7 +296,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
           };
           await updateWasmEvent(updatedWasmEventForIgnoreForever);
           if (onSave) {
-            onSave(updatedWasmEventForIgnoreForever, currentTags, event || null);
+            onSave(updatedWasmEventForIgnoreForever, currentTags, currentEvent || null);
           }
           setNotification({
             type: 'success',
@@ -318,7 +322,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
     }
   };
 
-  const venue = event ? venues.find(v => v.id === event.venue_id || 0) : null;
+  const venue = currentEvent ? venues.find(v => v.id === currentEvent.venue_id || 0) : null;
 
   function getStatusDisplayName(status: WasmEventStatus | undefined): string {
     switch (status) {
@@ -370,11 +374,11 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                   Event ID:
                 </Text>
                 <Text size="sm" weight={500}>
-                  {wasmEvent?.event_id ? wasmEvent.event_id : '-'}
+                  {currentWasmEvent?.event_id ? currentWasmEvent.event_id : '-'}
                 </Text>
 
-                {wasmEvent?.event_id && (
-                  <Link to='/events' search={event?.id ? { eventId: event.id.toString() } : {}} target="_blank">
+                {currentWasmEvent?.event_id && (
+                  <Link to='/events' search={currentEvent?.id ? { eventId: currentEvent.id.toString() } : {}} target="_blank">
                     <ExternalLink size={14} />
                   </Link>
                 )}
@@ -393,7 +397,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                   Processed at:
                 </Text>
                 <Text size="sm">
-                  {wasmEvent?.processed_at ? new Date(wasmEvent.processed_at).toLocaleString() : 'N/A'}
+                  {currentWasmEvent?.processed_at ? new Date(currentWasmEvent.processed_at).toLocaleString() : 'N/A'}
                 </Text>
               </Group>
             </Stack>
@@ -422,13 +426,13 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                 onChange={(e) => setFormAction(e as FormAction)}
               >
                 <Stack spacing="xs">
-                  {!event && (
+                  {!currentEvent && (
                     <>
                       <Radio value="PUBLISH_AS_DRAFT" label="Copy event as draft" />
                       <Radio value="PUBLISH_AS_PUBLISHED" label="Copy event as published" />
                     </>
                   )}
-                  {event && (
+                  {currentEvent && (
                     <>
                       <Radio value="UPDATE_EVENT" label="Update existing event" />
                       <Radio value="CHANGE_IMPORT_TYPE" label="Update import type only" />
@@ -486,7 +490,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                   </Group>
                 </strong></td>
                 <td>{wasmEvent?.name || '-'}</td>
-                <td>{event?.title || '-'}</td>
+                <td>{currentEvent?.title || '-'}</td>
               </tr>
               <tr>
                 <td>
@@ -519,8 +523,8 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                     </Group>
                   </strong>
                 </td>
-                <td>{wasmEvent?.date ? new Date(wasmEvent.date).toLocaleDateString() : '-'}</td>
-                <td>{event?.start_date_time ? new Date(event.start_date_time).toLocaleString() : '-'}</td>
+                <td>{currentWasmEvent?.date ? new Date(currentWasmEvent.date).toLocaleDateString() : '-'}</td>
+                <td>{currentEvent?.start_date_time ? new Date(currentEvent.start_date_time).toLocaleString() : '-'}</td>
               </tr>
               <tr>
                 <td>
@@ -537,12 +541,12 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                   </strong>
                 </td>
                 <td>
-                  {wasmEvent?.image_url ? (
-                    <Anchor href={wasmEvent.image_url} target="_blank" rel="noopener noreferrer" size="sm">
+                  {currentWasmEvent?.image_url ? (
+                    <Anchor href={currentWasmEvent.image_url} target="_blank" rel="noopener noreferrer" size="sm">
                       <Group spacing={4}>
                         <Group spacing={4} align="center">
                           <Image
-                            src={wasmEvent.image_url}
+                            src={currentWasmEvent.image_url}
                             alt="Event image preview"
                             width={40}
                             height={40}
@@ -557,13 +561,13 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                   ) : '-'}
                 </td>
                 <td>
-                  {event?.featured_image_ref ? (
+                  {currentEvent?.featured_image_ref ? (
                     // fix: request image from supabase storage
-                    <Anchor href={event.featured_image_ref} target="_blank" rel="noopener noreferrer" size="sm">
+                    <Anchor href={currentEvent.featured_image_ref} target="_blank" rel="noopener noreferrer" size="sm">
                       <Group spacing={4}>
                         <Group spacing={4} align="center">
                           <Image
-                            src={supabase.storage.from('event-images').getPublicUrl(event.featured_image_ref).data.publicUrl}
+                            src={supabase.storage.from('event-images').getPublicUrl(currentEvent.featured_image_ref).data.publicUrl}
                             alt="Event image preview"
                             width={40}
                             height={40}
@@ -593,7 +597,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                   </strong>
                 </td>
                 <td valign='top' style={{ maxWidth: '300px', wordWrap: 'break-word' }}>{wasmEvent?.short_description || '-'}</td>
-                <td valign='top' style={{ maxWidth: '300px', wordWrap: 'break-word' }}>{event?.featured_text || '-'}</td>
+                <td valign='top' style={{ maxWidth: '300px', wordWrap: 'break-word' }}>{currentEvent?.featured_text || '-'}</td>
               </tr>
               <tr>
                 <td>
@@ -610,20 +614,20 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                   </strong>
                 </td>
                 <td>
-                  {wasmEvent?.event_url ? (
-                    <Anchor href={wasmEvent.event_url} target="_blank" rel="noopener noreferrer" size="sm">
+                  {currentWasmEvent?.event_url ? (
+                    <Anchor href={currentWasmEvent.event_url} target="_blank" rel="noopener noreferrer" size="sm">
                       <Group spacing={4}>
-                        <span>{wasmEvent?.event_url}</span>
+                        <span>{currentWasmEvent?.event_url}</span>
                         <ExternalLink size={12} />
                       </Group>
                     </Anchor>
                   ) : '-'}
                 </td>
                 <td>
-                  {event?.link ? (
-                    <Anchor href={event.link} target="_blank" rel="noopener noreferrer" size="sm">
+                  {currentEvent?.link ? (
+                    <Anchor href={currentEvent.link} target="_blank" rel="noopener noreferrer" size="sm">
                       <Group spacing={4}>
-                        <span>{event?.link}</span>
+                        <span>{currentEvent?.link}</span>
                         <ExternalLink size={12} />
                       </Group>
                     </Anchor>

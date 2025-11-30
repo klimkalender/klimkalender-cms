@@ -41,6 +41,7 @@ function formatDateInputTime(tzDate: Date) {
 export function EventEditForm({ event, venues, allTags, currentTags, organizers, onSave, onCancel, onDelete }: EventEditFormProps) {
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState(event?.title || '');
+  const [currentEvent, setCurrentEvent] = useState<Event | null>(event || null);
 
   const [startDateTime, setStartDateTime] = useState(() => {
     if (event?.start_date_time) {
@@ -138,8 +139,8 @@ export function EventEditForm({ event, venues, allTags, currentTags, organizers,
 
   // Get current image URL if event has a featured image
   const getCurrentImageUrl = () => {
-    if (!event?.featured_image_ref) return null;
-    const { data } = supabase.storage.from('event-images').getPublicUrl(event.featured_image_ref);
+    if (!currentEvent?.featured_image_ref) return null;
+    const { data } = supabase.storage.from('event-images').getPublicUrl(currentEvent.featured_image_ref);
     return data?.publicUrl;
   };
 
@@ -255,8 +256,8 @@ export function EventEditForm({ event, venues, allTags, currentTags, organizers,
           featuredImageRef = newImageRef;
 
           // Delete old image if updating an existing event
-          if (event?.featured_image_ref && event.featured_image_ref !== newImageRef) {
-            await deleteOldImage(event.featured_image_ref);
+          if (currentEvent?.featured_image_ref && currentEvent.featured_image_ref !== newImageRef) {
+            await deleteOldImage(currentEvent.featured_image_ref);
           }
         }
       }
@@ -287,12 +288,12 @@ export function EventEditForm({ event, venues, allTags, currentTags, organizers,
 
       let result;
 
-      if (event?.id) {
+      if (currentEvent?.id) {
         // Update existing event
         result = await supabase
           .from('events')
           .update(eventData)
-          .eq('id', event.id)
+          .eq('id', currentEvent?.id)
           .select()
           .single();
       } else {
@@ -344,7 +345,7 @@ export function EventEditForm({ event, venues, allTags, currentTags, organizers,
       const result = await supabase
         .from('events')
         .update({ status: 'PUBLISHED' })
-        .eq('id', event.id)
+        .eq('id', currentEvent?.id )
         .select()
         .single();
 
@@ -460,15 +461,15 @@ export function EventEditForm({ event, venues, allTags, currentTags, organizers,
 
     try {
       // Delete the event image from storage if it exists
-      if (event.featured_image_ref) {
-        await deleteOldImage(event.featured_image_ref);
+      if (currentEvent?.featured_image_ref) {
+        await deleteOldImage(currentEvent.featured_image_ref);
       }
 
       // Delete the event from the database
       const { error } = await supabase
         .from('events')
         .delete()
-        .eq('id', event.id);
+        .eq('id', currentEvent?.id);
 
       if (error) {
         throw error;
@@ -479,7 +480,7 @@ export function EventEditForm({ event, venues, allTags, currentTags, organizers,
         message: 'Event deleted successfully!'
       });
 
-      onDelete(event.id);
+      onDelete(currentEvent?.id || 0);
 
     } catch (error: any) {
       console.error('Error deleting event:', error);

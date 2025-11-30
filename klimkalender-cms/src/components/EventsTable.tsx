@@ -134,6 +134,8 @@ export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent,
       const existingIndex = prev.findIndex(e => e.id === savedEvent.id);
       if (existingIndex >= 0) {
         // Update existing event
+        console.log('updating existing event');
+        console.log(savedEvent);
         return prev.map(e => e.id === savedEvent.id ? savedEvent : e);
       } else {
         // Add new event

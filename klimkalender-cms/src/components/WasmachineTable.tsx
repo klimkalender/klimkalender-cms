@@ -140,6 +140,8 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
       if (event) {
         const existingIndex = prev.findIndex(e => e.id === event.id);
         if (existingIndex >= 0) {
+          console.log('updating existing event in events list');
+          console.log(event);
           // Update existing event
           return prev.map(e => e.id === event.id ? event : e);
         } else {
