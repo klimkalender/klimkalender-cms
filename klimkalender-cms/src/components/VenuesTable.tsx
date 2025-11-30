@@ -23,13 +23,13 @@ export function VenuesTable({ venues, profiles, initialVenueId }: { venues: Venu
       if (initialVenueId === 'new') {
         setSelectedVenue(null);
       } else {
-        const venue = venues.find(v => v.id.toString() === initialVenueId);
+        const venue = venuesList.find(v => v.id.toString() === initialVenueId);
         setSelectedVenue(venue || null);
       }
     } else {
       setSelectedVenue(null);
     }
-  }, [initialVenueId, venues]);
+  }, [initialVenueId, venuesList]);
   const columns = useMemo<MRT_ColumnDef<Venue>[]>(
     () => [
       {
