@@ -35,7 +35,7 @@ export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent,
       if (initialEventId === 'new') {
         setSelectedEvent(null);
       } else {
-        const event = events.find(e => e.id.toString() === initialEventId);
+        const event = eventsList.find(e => e.id.toString() === initialEventId);
         setSelectedEvent(event || null);
         if (event) {
           setActiveTab(event.status);
@@ -44,7 +44,7 @@ export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent,
     } else {
       setSelectedEvent(null);
     }
-  }, [initialEventId, events]);
+  }, [initialEventId, eventsList]);
   const columns = useMemo<MRT_ColumnDef<Event>[]>(
     () => [
       {
