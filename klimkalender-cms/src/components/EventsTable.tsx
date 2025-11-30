@@ -34,7 +34,7 @@ export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent,
       } else {
         const event = events.find(e => e.id.toString() === initialEventId);
         setSelectedEvent(event || null);
-        if(event){
+        if (event) {
           setActiveTab(event.status);
         }
       }
@@ -172,7 +172,8 @@ export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent,
   //but that is not recommended and will likely be deprecated in the future
   return (
     <>
-      <Group position="right" mb="md">
+      <Group position="apart" mb="md">
+        <div className="ml-4 text-2xl font-bold text-black">Events</div>
         <Button onClick={handleCreateNew}>
           Add Event
         </Button>

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { Tag } from '@/types';
-import { Drawer } from '@mantine/core';
+import { Button, Drawer, Group } from '@mantine/core';
 import {
   MantineReactTable,
   useMantineReactTable,
@@ -25,14 +25,14 @@ export function TagsTable({ tags, initialTagId }: { tags: Tag[], initialTagId?: 
 
   const table = useMantineReactTable({
     columns,
-    data: tags, 
+    data: tags,
     enableGlobalFilter: true,
     enableFilters: true,
     positionGlobalFilter: 'left',
     enableColumnFilters: false,
     enableDensityToggle: false,
     enableFullScreenToggle: false,
-    initialState: { density: 'xs', pagination: { pageSize: 10, pageIndex: 0 } , showGlobalFilter: true,},
+    initialState: { density: 'xs', pagination: { pageSize: 10, pageIndex: 0 }, showGlobalFilter: true, },
     sortDescFirst: true,
     mantineTableBodyRowProps: ({ row }) => ({
       onClick: () => {
@@ -46,7 +46,12 @@ export function TagsTable({ tags, initialTagId }: { tags: Tag[], initialTagId?: 
 
   //note: you can also pass table options as props directly to <MantineReactTable /> instead of using useMantineReactTable
   //but that is not recommended and will likely be deprecated in the future
-  return <><MantineReactTable table={table} />
+  return <>
+    <Group position="apart" mb="md">
+      <div className="ml-4 text-2xl font-bold text-black">Tags</div>
+    </Group>
+
+    <MantineReactTable table={table} />
     <Drawer position="right" size="xl" opened={opened} onClose={() => navigate({ to: '/tags' })}>
       {/* Drawer content */}
     </Drawer>

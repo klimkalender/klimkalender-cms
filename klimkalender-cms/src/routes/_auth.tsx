@@ -18,7 +18,7 @@ export const Route = createFileRoute('/_auth')({
 function AuthLayout() {
   return (
     <div className="p-2 h-full">
-      <ul className="py-2 flex gap-2">
+      {/* <ul className="py-2 flex gap-2">
         <li>
           <Link
             to="/events"
@@ -59,7 +59,7 @@ function AuthLayout() {
             Wasmachine
           </Link>
         </li>
-      </ul>
+      </ul> */}
       <Outlet />
     </div>
   )

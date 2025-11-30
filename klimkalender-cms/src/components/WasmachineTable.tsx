@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Action, Event, Organizer, Tag, Venue, WasmEvent } from '@/types';
-import { Drawer, Group, Tabs } from '@mantine/core';
+import { Button, Drawer, Group, Tabs } from '@mantine/core';
 import {
   MantineReactTable,
   useMantineReactTable,
@@ -40,7 +40,7 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
     if (initialWasmEventId) {
       const wasmEvent = wasmEvents.find(e => e.id.toString() === initialWasmEventId);
       setSelectedWasmEvent(wasmEvent || null);
-      if(wasmEvent){
+      if (wasmEvent) {
         setActiveTab(wasmEvent.status);
       }
     } else {
@@ -98,7 +98,7 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
         id: 'processed_at',
       }
     ],
-    [tagsPerEvent,eventsList],
+    [tagsPerEvent, eventsList],
   );
 
   const handleRowClick = (event: WasmEvent) => {
@@ -170,7 +170,7 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
     enableFullScreenToggle: false,
     initialState: { density: 'xs', pagination: { pageSize: 10, pageIndex: 0 }, showGlobalFilter: true, columnVisibility: { status: false } },
     sortDescFirst: true,
-      mantineTableBodyRowProps: ({ row }) => ({
+    mantineTableBodyRowProps: ({ row }) => ({
       onClick: () => {
         handleRowClick(row.original);
       }
@@ -179,9 +179,11 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
 
   return (
     <>
-      <Group position="right" mb="md">
+      <Group position="apart" mb="md">
+        <div className="ml-4 text-2xl font-bold text-black">Wasmachine</div>
         <RunBoulderbotButton onComplete={setLastAction} />
       </Group>
+
       <Tabs value={activeTab} onTabChange={(a) => setActiveTab(a || 'NEW')}>
         <Tabs.List>
           <Tabs.Tab value="NEW">New</Tabs.Tab>
@@ -198,11 +200,11 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
         <MantineReactTable table={table} />
       )}
       {showBoulderbotLogs && (
-       <BoulderbotLogs action={lastAction} setAction={setLastAction} />
+        <BoulderbotLogs action={lastAction} setAction={setLastAction} />
       )}
 
       <Drawer position="right" size="80%" opened={opened} onClose={() => navigate({ to: '/wasmachine' })}>
-         <WasmEventEditForm
+        <WasmEventEditForm
           wasmEvent={selectedWasmEvent}
           event={selectedWasmEvent?.event_id ? eventsList.find(e => e.id === selectedWasmEvent.event_id) || null : null}
           venues={venues}

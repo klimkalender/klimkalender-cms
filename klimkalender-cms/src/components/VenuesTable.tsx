@@ -129,7 +129,8 @@ export function VenuesTable({ venues, initialVenueId }: { venues: Venue[], initi
   //but that is not recommended and will likely be deprecated in the future
   return (
     <>
-      <Group position="right" mb="md">
+      <Group position="apart" mb="md">
+        <div className="ml-4 text-2xl font-bold text-black">Venues</div>
         <Button onClick={handleCreateNew}>
           Add Venue
         </Button>

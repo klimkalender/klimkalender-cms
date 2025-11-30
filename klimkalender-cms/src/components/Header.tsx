@@ -95,7 +95,7 @@ export default function Header() {
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
             activeProps={{
               className:
-                'flex items-center gap-3 p-3 rounded-lg bg-blue-500 hover:bg-cyan-700 transition-colors mb-2',
+                'flex items-center gap-3 p-3 rounded-lg bg-blue-400 hover:bg-cyan-700 transition-colors mb-2',
             }}
           >
             <CalendarHeart size={20} />
@@ -107,7 +107,7 @@ export default function Header() {
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
             activeProps={{
               className:
-                'flex items-center gap-3 p-3 rounded-lg bg-blue-500 hover:bg-cyan-700 transition-colors mb-2',
+                'flex items-center gap-3 p-3 rounded-lg bg-blue-400 hover:bg-cyan-700 transition-colors mb-2',
             }}
           >
             <MapPinHouse size={20} />
@@ -119,7 +119,7 @@ export default function Header() {
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
             activeProps={{
               className:
-                'flex items-center gap-3 p-3 rounded-lg bg-blue-500 hover:bg-cyan-700 transition-colors mb-2',
+                'flex items-center gap-3 p-3 rounded-lg bg-blue-400 hover:bg-cyan-700 transition-colors mb-2',
             }}
           >
             <Landmark size={20} />
@@ -131,7 +131,7 @@ export default function Header() {
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
             activeProps={{
               className:
-                'flex items-center gap-3 p-3 rounded-lg bg-blue-500 hover:bg-cyan-700 transition-colors mb-2',
+                'flex items-center gap-3 p-3 rounded-lg bg-blue-400 hover:bg-cyan-700 transition-colors mb-2',
             }}
           >
             <Tag size={20} />
@@ -143,7 +143,7 @@ export default function Header() {
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
             activeProps={{
               className:
-                'flex items-center gap-3 p-3 rounded-lg bg-blue-500 hover:bg-cyan-700 transition-colors mb-2',
+                'flex items-center gap-3 p-3 rounded-lg bg-blue-400 hover:bg-cyan-700 transition-colors mb-2',
             }}
           >
             <WashingMachine size={20} />

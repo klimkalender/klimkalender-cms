@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { Organizer } from '@/types';
-import { Drawer } from '@mantine/core';
+import { Button, Drawer, Group } from '@mantine/core';
 import {
   MantineReactTable,
   useMantineReactTable,
@@ -52,7 +52,11 @@ export function OrganizersTable({ organizers, initialOrganizerId }: { organizers
 
   //note: you can also pass table options as props directly to <MantineReactTable /> instead of using useMantineReactTable
   //but that is not recommended and will likely be deprecated in the future
-  return <><MantineReactTable table={table} />
+  return <>
+    <Group position="apart" mb="md">
+      <div className="ml-4 text-2xl font-bold text-black">Organizers</div>
+    </Group>
+    <MantineReactTable table={table} />
     <Drawer position="right" size="xl" opened={opened} onClose={() => navigate({ to: '/organizers' })}>
       {/* Drawer content */}
     </Drawer>
