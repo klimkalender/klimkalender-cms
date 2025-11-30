@@ -31,6 +31,8 @@ model Event {
   featuredImageRef String?     @map("featured_image_ref")
   remarks          String?     @map("remarks")
   link             String?     @map("link")
+  createdBy        String?     @map("created_by") @db.Uuid
+  updatedBy        String?     @map("updated_by") @db.Uuid
   createdAt        DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt        DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
 
@@ -43,8 +45,10 @@ model Event {
 }
 
 model Tag {
-  id   Int    @id @default(autoincrement())
-  name String @unique
+  id        Int     @id @default(autoincrement())
+  name      String  @unique
+  createdBy String? @map("created_by") @db.Uuid
+  updatedBy String? @map("updated_by") @db.Uuid
 
   events EventTag[]
 
@@ -68,6 +72,8 @@ model Organizer {
   imageRef  String?  @map("image_ref")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  createdBy String?  @map("created_by") @db.Uuid
+  updatedBy String?  @map("updated_by") @db.Uuid
 
   events Event[]
 
@@ -86,6 +92,8 @@ model Venue {
   country    String?
   createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  createdBy  String?  @map("created_by") @db.Uuid
+  updatedBy  String?  @map("updated_by") @db.Uuid
 
   events Event[]
 
@@ -184,6 +192,8 @@ model WasmEvent {
   action                      WasmAction?              @map("action")
   createdAt                   DateTime                 @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt                   DateTime?                @map("updated_at") @db.Timestamptz(3)
+  createdBy                   String?                  @map("created_by") @db.Uuid
+  updatedBy                   String?                  @map("updated_by") @db.Uuid
 
   @@map("wasm_events")
 }
