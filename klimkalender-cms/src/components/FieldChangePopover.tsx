@@ -6,10 +6,11 @@ interface FieldChangePopoverProps {
   currentValue: string | null | undefined;
   previousValue: string | null | undefined;
   hasChanged: boolean;
+  shouldDisplay?: boolean;
 }
 
-export function FieldChangePopover({ currentValue, previousValue, hasChanged }: FieldChangePopoverProps) {
-  if (!hasChanged) {
+export function FieldChangePopover({ currentValue, previousValue, hasChanged, shouldDisplay = true }: FieldChangePopoverProps) {
+  if (!hasChanged || !shouldDisplay) {
     return null;
   }
 

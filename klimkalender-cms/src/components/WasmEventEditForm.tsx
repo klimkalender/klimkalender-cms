@@ -481,6 +481,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                       currentValue={wasmEvent?.name}
                       previousValue={wasmEvent?.accepted_name}
                       hasChanged={wasmEvent?.name !== wasmEvent?.accepted_name}
+                      shouldDisplay={!!wasmEvent?.event_id}
                     />
                   </Group>
                 </strong></td>
@@ -496,6 +497,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                         currentValue={wasmEvent?.hall_name}
                         previousValue={wasmEvent?.accepted_hall_name}
                         hasChanged={wasmEvent?.hall_name !== wasmEvent?.accepted_hall_name}
+                        shouldDisplay={!!wasmEvent?.event_id}
                       />
                     </Group>
                   </strong>
@@ -512,6 +514,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                         currentValue={wasmEvent?.date}
                         previousValue={wasmEvent?.accepted_date}
                         hasChanged={wasmEvent?.date !== wasmEvent?.accepted_date}
+                        shouldDisplay={!!wasmEvent?.event_id}        
                       />
                     </Group>
                   </strong>
@@ -528,6 +531,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                         currentValue={wasmEvent?.image_url}
                         previousValue={wasmEvent?.accepted_image_url}
                         hasChanged={wasmEvent?.image_url !== wasmEvent?.accepted_image_url}
+                        shouldDisplay={!!wasmEvent?.event_id}
                       />
                     </Group>
                   </strong>
@@ -583,6 +587,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                         currentValue={wasmEvent?.short_description}
                         previousValue={wasmEvent?.accepted_short_description}
                         hasChanged={wasmEvent?.short_description !== wasmEvent?.accepted_short_description}
+                        shouldDisplay={!!wasmEvent?.event_id}
                       />
                     </Group>
                   </strong>
@@ -599,6 +604,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                         currentValue={wasmEvent?.event_url}
                         previousValue={wasmEvent?.accepted_event_url}
                         hasChanged={wasmEvent?.event_url !== wasmEvent?.accepted_event_url}
+                        shouldDisplay={!!wasmEvent?.event_id}
                       />
                     </Group>
                   </strong>
@@ -633,6 +639,7 @@ export function WasmEventEditForm({ wasmEvent, event, venues, currentTags, onCan
                         currentValue={wasmEvent?.event_category}
                         previousValue={wasmEvent?.accepted_event_category}
                         hasChanged={wasmEvent?.event_category !== wasmEvent?.accepted_event_category}
+                        shouldDisplay={!!wasmEvent?.event_id}
                       />
                     </Group>
                   </strong>
