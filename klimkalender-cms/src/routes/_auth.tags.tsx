@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, useEffect } from 'react';
-import { readTags, } from '@/data/supabase';
+import { readProfiles, readTags, } from '@/data/supabase';
 
-import type { Tag, } from '@/types';
+import type { Profile, Tag, } from '@/types';
 import { TagsTable } from '@/components/TagsTable';
 import { z } from 'zod';
 
@@ -18,16 +18,18 @@ export const Route = createFileRoute('/_auth/tags')({
 
 function TagsRoute() {
   const [tags, setTags] = useState<Tag[]|null>(null);
+  const [profiles, setProfiles] = useState<Profile[]|null>(null);
   const { tagId } = Route.useSearch();
 
   useEffect(() => {
     readTags(setTags);
+    readProfiles(setProfiles);
   }, []);
 
 
   return (
     <div className="p-2 grid gap-2">
-      <div>{tags && <TagsTable tags={tags} initialTagId={tagId} />}</div>
+      <div>{tags && profiles && <TagsTable tags={tags} initialTagId={tagId} profiles={profiles} />}</div>
     </div>
   )
 

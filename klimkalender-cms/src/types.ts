@@ -26,3 +26,4 @@ export type Action = Database['public']['Tables']['actions']['Row'];
 export type ActionLog = Database['public']['Tables']['action_logs']['Row'];
 export type WasmEventAction = Database['public']['Enums']['wasm_action'];
 export type WasmEventStatus = Database['public']['Enums']['wasm_event_status'];
+export type Profile = Database['public']['Tables']['profiles']['Row'];

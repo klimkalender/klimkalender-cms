@@ -104,6 +104,7 @@ export type Database = {
       events: {
         Row: {
           created_at: string
+          created_by: string | null
           end_date_time: string
           external_id: string | null
           featured: boolean | null
@@ -119,10 +120,12 @@ export type Database = {
           time_zone: string
           title: string
           updated_at: string
+          updated_by: string | null
           venue_id: number | null
         }
         Insert: {
           created_at?: string
+          created_by?: string | null
           end_date_time: string
           external_id?: string | null
           featured?: boolean | null
@@ -138,10 +141,12 @@ export type Database = {
           time_zone?: string
           title: string
           updated_at: string
+          updated_by?: string | null
           venue_id?: number | null
         }
         Update: {
           created_at?: string
+          created_by?: string | null
           end_date_time?: string
           external_id?: string | null
           featured?: boolean | null
@@ -157,6 +162,7 @@ export type Database = {
           time_zone?: string
           title?: string
           updated_at?: string
+          updated_by?: string | null
           venue_id?: number | null
         }
         Relationships: [
@@ -179,39 +185,84 @@ export type Database = {
       organizers: {
         Row: {
           created_at: string
+          created_by: string | null
           id: number
           image_ref: string | null
           name: string
           updated_at: string
+          updated_by: string | null
         }
         Insert: {
           created_at?: string
+          created_by?: string | null
           id?: number
           image_ref?: string | null
           name: string
           updated_at: string
+          updated_by?: string | null
         }
         Update: {
           created_at?: string
+          created_by?: string | null
           id?: number
           image_ref?: string | null
           name?: string
           updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          full_name: string | null
+          id: string
+          updated_at: string | null
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string | null
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string | null
+          username?: string | null
         }
         Relationships: []
       }
       tags: {
         Row: {
+          created_at: string
+          created_by: string | null
           id: number
           name: string
+          updated_at: string | null
+          updated_by: string | null
         }
         Insert: {
+          created_at?: string
+          created_by?: string | null
           id?: number
           name: string
+          updated_at?: string | null
+          updated_by?: string | null
         }
         Update: {
+          created_at?: string
+          created_by?: string | null
           id?: number
           name?: string
+          updated_at?: string | null
+          updated_by?: string | null
         }
         Relationships: []
       }
@@ -221,6 +272,7 @@ export type Database = {
           city: string | null
           country: string | null
           created_at: string
+          created_by: string | null
           id: number
           image_ref: string | null
           lat: number | null
@@ -228,12 +280,14 @@ export type Database = {
           name: string
           postal_code: string | null
           updated_at: string
+          updated_by: string | null
         }
         Insert: {
           address?: string | null
           city?: string | null
           country?: string | null
           created_at?: string
+          created_by?: string | null
           id?: number
           image_ref?: string | null
           lat?: number | null
@@ -241,12 +295,14 @@ export type Database = {
           name: string
           postal_code?: string | null
           updated_at: string
+          updated_by?: string | null
         }
         Update: {
           address?: string | null
           city?: string | null
           country?: string | null
           created_at?: string
+          created_by?: string | null
           id?: number
           image_ref?: string | null
           lat?: number | null
@@ -254,6 +310,7 @@ export type Database = {
           name?: string
           postal_code?: string | null
           updated_at?: string
+          updated_by?: string | null
         }
         Relationships: []
       }
@@ -275,6 +332,7 @@ export type Database = {
           action: Database["public"]["Enums"]["wasm_action"] | null
           classification: Database["public"]["Enums"]["wasm_event_classification"]
           created_at: string
+          created_by: string | null
           date: string
           event_category: Database["public"]["Enums"]["wasm_event_category"]
           event_id: number | null
@@ -289,6 +347,7 @@ export type Database = {
           short_description: string | null
           status: Database["public"]["Enums"]["wasm_event_status"]
           updated_at: string | null
+          updated_by: string | null
         }
         Insert: {
           accepted_classification?:
@@ -307,6 +366,7 @@ export type Database = {
           action?: Database["public"]["Enums"]["wasm_action"] | null
           classification: Database["public"]["Enums"]["wasm_event_classification"]
           created_at?: string
+          created_by?: string | null
           date: string
           event_category: Database["public"]["Enums"]["wasm_event_category"]
           event_id?: number | null
@@ -321,6 +381,7 @@ export type Database = {
           short_description?: string | null
           status?: Database["public"]["Enums"]["wasm_event_status"]
           updated_at?: string | null
+          updated_by?: string | null
         }
         Update: {
           accepted_classification?:
@@ -339,6 +400,7 @@ export type Database = {
           action?: Database["public"]["Enums"]["wasm_action"] | null
           classification?: Database["public"]["Enums"]["wasm_event_classification"]
           created_at?: string
+          created_by?: string | null
           date?: string
           event_category?: Database["public"]["Enums"]["wasm_event_category"]
           event_id?: number | null
@@ -353,6 +415,7 @@ export type Database = {
           short_description?: string | null
           status?: Database["public"]["Enums"]["wasm_event_status"]
           updated_at?: string | null
+          updated_by?: string | null
         }
         Relationships: [
           {

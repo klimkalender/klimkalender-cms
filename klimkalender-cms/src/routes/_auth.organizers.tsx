@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, useEffect } from 'react';
-import { readOrganizers, } from '@/data/supabase';
+import { readOrganizers, readProfiles, } from '@/data/supabase';
 
-import type { Organizer, } from '@/types';
+import type { Organizer, Profile, } from '@/types';
 import { OrganizersTable } from '@/components/OrganizersTable';
 import { z } from 'zod';
 
@@ -18,16 +18,18 @@ export const Route = createFileRoute('/_auth/organizers')({
 
 function OrganizersRoute() {
   const [organizers, setOrganizers] = useState<Organizer[]|null>(null);
+  const [profiles, setProfiles] = useState<Profile[]|null>(null);
   const { organizerId } = Route.useSearch();
 
   useEffect(() => {
     readOrganizers(setOrganizers);
+    readProfiles(setProfiles);  
   }, []);
 
 
   return (
     <div className="p-2 grid gap-2">
-      <div>{organizers && <OrganizersTable organizers={organizers} initialOrganizerId={organizerId} />}</div>
+      <div>{organizers && profiles && <OrganizersTable organizers={organizers} profiles={profiles} initialOrganizerId={organizerId} />}</div>
     </div>
   )
 

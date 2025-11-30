@@ -17,7 +17,7 @@ const supabase = createClient(
 
 
 
-function mapEventToSupabaseRow(event: CalendarEvent): Omit<Event, 'id'> {
+function mapEventToSupabaseRow(event: CalendarEvent, uuid: string): Omit<Event, 'id'> {
   // Helper to decode HTML entities in the title
   function decodeHtmlEntities(str: string): string {
     return str
@@ -34,6 +34,7 @@ function mapEventToSupabaseRow(event: CalendarEvent): Omit<Event, 'id'> {
       .replace(/&hellip;/g, '…')
       .replace(/&#8211;/g, '–');
   }
+
 
   return {
     external_id: event.id,
@@ -52,10 +53,12 @@ function mapEventToSupabaseRow(event: CalendarEvent): Omit<Event, 'id'> {
     featured_image_ref: null, // To be set after image upload
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
+    created_by: uuid,
+    updated_by: uuid,
   };
 }
 
-async function importData() {
+async function importData(uuid: string) {
   // read data from JSON file
   const rawData = JSON.parse(fs.readFileSync('../../../data/events.json', 'utf-8'));
   const events: CalendarEvent[] = rawData.map((event: any) => ({
@@ -66,7 +69,7 @@ async function importData() {
   }));
 
   for (const event of events) { //.slice(0, 1)) { // limit to first 1 event for testing
-    const eventRow = mapEventToSupabaseRow(event);
+    const eventRow = mapEventToSupabaseRow(event, uuid);
     // console.dir(eventRow, { depth: null });
     console.dir(event, { depth: null });
 
@@ -236,5 +239,10 @@ async function uploadRemoteImageToSupabase(imageUrl: string, bucket: string, pre
 
 
 // run the import
-
-await importData();
+const session = await supabase.auth.getSession();
+const importUuid = session.data.session?.user.id;
+if (!importUuid) {
+  console.error('No valid Supabase session found. Please set SUPABASE_SECRET_KEY environment variable.');
+  process.exit(1);
+}
+await importData(importUuid);

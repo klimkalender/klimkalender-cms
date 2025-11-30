@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { EventsTable } from '@/components/EventsTable';
-import type { Organizer, Venue, Event, Tag } from '@/types';
+import type { Organizer, Venue, Event, Tag, Profile } from '@/types';
 import { useState, useEffect } from 'react';
-import { readEvents, readOrganizers, readTags, readTagsMap, readVenues } from '@/data/supabase';
+import { readEvents, readOrganizers, readProfiles, readTags, readTagsMap, readVenues } from '@/data/supabase';
 import { z } from 'zod';
 
 const eventsSearchSchema = z.object({
@@ -20,6 +20,7 @@ function EventsRoute() {
   const [tagsPerEvent, setTagsPerEvent] = useState<{ [id: number]: Tag[] }|null>(null);
   const [allTags, setAllTags] = useState<Tag[]|null>(null);
   const [organizers, setOrganizers] = useState<Organizer[]|null>(null);
+  const [profiles, setProfiles] = useState<Profile[]|null>(null);
   const { eventId } = Route.useSearch();
 
   useEffect(() => {
@@ -28,13 +29,14 @@ function EventsRoute() {
     readTagsMap(setTagsPerEvent);
     readOrganizers(setOrganizers);
     readTags(setAllTags);
+    readProfiles(setProfiles);
   }, []);
 
 
   return (
     <div className="p-2 grid gap-2">
-      <div>{venues && events && tagsPerEvent && organizers && allTags &&
-        <EventsTable events={events} venues={venues} tagsPerEvent={tagsPerEvent}  allTags={allTags} organizers={organizers} initialEventId={eventId} />
+      <div>{venues && events && tagsPerEvent && organizers && allTags && profiles &&
+        <EventsTable events={events} venues={venues} tagsPerEvent={tagsPerEvent}  allTags={allTags} organizers={organizers} initialEventId={eventId}  profiles={profiles} />
       }</div>
     </div>
   )

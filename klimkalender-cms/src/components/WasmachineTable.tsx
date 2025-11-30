@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { Action, Event, Organizer, Tag, Venue, WasmEvent } from '@/types';
-import { Button, Drawer, Group, Tabs } from '@mantine/core';
+import type { Action, Event, Organizer, Profile, Tag, Venue, WasmEvent } from '@/types';
+import { Drawer, Group, Tabs } from '@mantine/core';
 import {
   MantineReactTable,
   useMantineReactTable,
@@ -13,6 +13,8 @@ import RunBoulderbotButton from './BoulderbotButton';
 import type { Database } from '@/database.types';
 import { WasmEventEditForm } from './WasmEventEditForm';
 import { useNavigate } from '@tanstack/react-router';
+import { lookupProfileName } from '@/utils/lookup-profile-name';
+import { CreateUpdateByTooltip } from './CreateUpdateByTooltip';
 
 type EventsTableProps = {
   wasmEvents: WasmEvent[];
@@ -21,11 +23,12 @@ type EventsTableProps = {
   tagsPerEvent: { [id: number]: Tag[] };
   allTags: Tag[]
   organizers: Organizer[];
+  profiles: Profile[];
   action: Action | null | undefined;
   initialWasmEventId?: string;
 };
 
-export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPerEvent: defaultTagsPerEvent, allTags, organizers, action, initialWasmEventId }: EventsTableProps) {
+export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPerEvent: defaultTagsPerEvent, allTags, organizers, profiles, action, initialWasmEventId }: EventsTableProps) {
   const navigate = useNavigate();
   const [selectedWasmEvent, setSelectedWasmEvent] = useState<WasmEvent | null>(null);
   const [eventsList, setEventsList] = useState<Event[]>(events);
@@ -96,6 +99,19 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
           return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
         },
         id: 'processed_at',
+      },
+      {
+        header: 'Created/Updated by',
+        accessorFn: (originalRow) => `${lookupProfileName(profiles, originalRow.created_by)} / ${lookupProfileName(profiles, originalRow.updated_by)}`,
+        id: 'created_updated_by',
+        Cell: ({ row }) => 
+          <CreateUpdateByTooltip 
+            createdAt={row.original.created_at}
+            createdBy={row.original.created_by}
+            updatedAt={row.original.updated_at}
+            updatedBy={row.original.updated_by}
+            profiles={profiles}
+          />,
       }
     ],
     [tagsPerEvent, eventsList],

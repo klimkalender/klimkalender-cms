@@ -22,6 +22,8 @@ export async function readEvents(setEvents: React.Dispatch<React.SetStateAction<
   venue_id: number | null;
   created_at: string;
   updated_at: string;
+  created_by: string | null;
+  updated_by: string | null;
 }[] | null>>
 ) {
   const { data, error } = await supabase.from("events").select().order("start_date_time", { ascending: true });
@@ -52,6 +54,8 @@ export async function readVenues(setVenues: React.Dispatch<React.SetStateAction<
   country: string | null;
   created_at: string;
   updated_at: string;
+  created_by: string | null;
+  updated_by: string | null;
 }[] | null>>) {
   const { data, error } = await supabase.from("venues").select().order("name", { ascending: true });
   if (data) setVenues(data);
@@ -64,6 +68,8 @@ export async function readOrganizers(setOrganizers: React.Dispatch<React.SetStat
   name: string;
   created_at: string;
   updated_at: string;
+  created_by: string | null;
+  updated_by: string | null;
 }[] | null>>) {
   const { data, error } = await supabase.from("organizers").select().order("name", { ascending: true });
   if (data) setOrganizers(data);
@@ -73,20 +79,37 @@ export async function readOrganizers(setOrganizers: React.Dispatch<React.SetStat
 export async function readTags(setTags: React.Dispatch<React.SetStateAction<{
   id: number;
   name: string;
+  created_at: string;
+  updated_at: string | null;
+  created_by: string | null;
+  updated_by: string | null;
 }[] | null>>) {
   const { data, error } = await supabase.from("tags").select().order("name", { ascending: true });
   if (data) setTags(data);
   if (error) console.error("Error fetching tags:", error);
 }
 
+export async function readProfiles(setProfiles: React.Dispatch<React.SetStateAction<{
+  id: string;
+  avatar_url: string | null;
+  full_name: string | null;
+  username: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+}[] | null>>) {
+  const { data, error } = await supabase.from("profiles").select();
+  if (data) setProfiles(data);
+  if (error) console.error("Error fetching tags:", error);
+}
+
 export async function readTagsMap(setTags: React.Dispatch<React.SetStateAction<{
   [id: number]: Tag[];
 } | null>>) {
-   const { data: tagsData } = await supabase.from("tags").select();
+  const { data: tagsData } = await supabase.from("tags").select();
   const { data, error } = await supabase.from("event_tags").select('event_id, tag_id');
   if (data) {
     const tagsMap: { [id: number]: Tag[] } = {};
-    
+
     data.forEach((et) => {
       const tag = tagsData?.find(t => t.id === et.tag_id);
       if (tag) {
@@ -145,7 +168,7 @@ export async function getActionLog(setLogs: React.Dispatch<React.SetStateAction<
   }
 }
 
-export async function createEvent(wasmEvent: WasmEvent, venueId: number, status: 'PUBLISHED' | 'DRAFT') :Promise<Event| null>{
+export async function createEvent(wasmEvent: WasmEvent, venueId: number, status: 'PUBLISHED' | 'DRAFT'): Promise<Event | null> {
   // Calculate end of day in European timezone (CET/CEST)
   // hmm... is this correct?
   const eventDate = new Date(wasmEvent.date);
@@ -154,7 +177,7 @@ export async function createEvent(wasmEvent: WasmEvent, venueId: number, status:
   const endDateTime = endOfDay.toISOString();
   const { data, error } = await supabase
     .from('events')
-    .insert([{ 
+    .insert([{
       title: wasmEvent.name,
       start_date_time: wasmEvent.date,
       end_date_time: endDateTime,
@@ -179,7 +202,7 @@ export async function createEvent(wasmEvent: WasmEvent, venueId: number, status:
 export async function updateWasmEvent(wasmEvent: WasmEvent) {
   const { data, error } = await supabase
     .from('wasm_events')
-    .update({ 
+    .update({
       accepted_name: wasmEvent.accepted_name,
       accepted_classification: wasmEvent.accepted_classification,
       accepted_date: wasmEvent.accepted_date,
@@ -201,7 +224,7 @@ export async function updateWasmEvent(wasmEvent: WasmEvent) {
     return null;
   }
   return data;
-} 
+}
 
 
 export async function uploadRemoteImageToSupabase(imageUrl: string, bucket: string, prefix?: string): Promise<string | undefined> {

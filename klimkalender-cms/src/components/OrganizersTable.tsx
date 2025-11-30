@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import type { Organizer } from '@/types';
-import { Button, Drawer, Group } from '@mantine/core';
+import type { Organizer, Profile } from '@/types';
+import { Drawer, Group } from '@mantine/core';
 import {
   MantineReactTable,
   useMantineReactTable,
@@ -8,8 +8,10 @@ import {
 } from 'mantine-react-table';
 import { getImageTag } from '@/data/supabase';
 import { useNavigate } from '@tanstack/react-router';
+import { lookupProfileName } from '@/utils/lookup-profile-name';
+import { CreateUpdateByTooltip } from './CreateUpdateByTooltip';
 
-export function OrganizersTable({ organizers, initialOrganizerId }: { organizers: Organizer[], initialOrganizerId?: string }) {
+export function OrganizersTable({ organizers, profiles, initialOrganizerId }: { organizers: Organizer[], profiles: Profile[], initialOrganizerId?: string }) {
   const navigate = useNavigate();
   const opened = !!initialOrganizerId;
   const columns = useMemo<MRT_ColumnDef<Organizer>[]>(
@@ -24,6 +26,19 @@ export function OrganizersTable({ organizers, initialOrganizerId }: { organizers
         header: 'Image',
         accessorFn: (originalRow) => getImageTag(originalRow.image_ref, 'organizer-images'),
         id: 'image',
+      },
+       {
+        header: 'Created/Updated by',
+        accessorFn: (originalRow) => `${lookupProfileName(profiles, originalRow.created_by)} / ${lookupProfileName(profiles, originalRow.updated_by)}`,
+        id: 'created_updated_by',
+        Cell: ({ row }) => 
+          <CreateUpdateByTooltip 
+            createdAt={row.original.created_at}
+            createdBy={row.original.created_by}
+            updatedAt={row.original.updated_at}
+            updatedBy={row.original.updated_by}
+            profiles={profiles}
+          />,
       }
     ],
     [],
@@ -40,10 +55,10 @@ export function OrganizersTable({ organizers, initialOrganizerId }: { organizers
     enableFullScreenToggle: false,
     initialState: { density: 'xs', pagination: { pageSize: 10, pageIndex: 0 }, showGlobalFilter: true, },
     sortDescFirst: true,
-    mantineTableBodyRowProps: ({ row }) => ({
-      onClick: () => {
-        navigate({ to: '/organizers', search: { organizerId: row.original.id.toString() } });
-      },
+    mantineTableBodyRowProps: ({  }) => ({
+      // onClick: () => {
+      //   navigate({ to: '/organizers', search: { organizerId: row.original.id.toString() } });
+      // },
       sx: {
         cursor: 'pointer', //you might want to change the cursor too when adding an onClick
       },

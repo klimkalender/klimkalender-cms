@@ -1,6 +1,7 @@
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas  = ["public", "auth"]
 }
 
 generator client {
@@ -13,6 +14,8 @@ enum EventStatus {
   DRAFT
   PUBLISHED
   ARCHIVED
+
+  @@schema("public")
 }
 
 model Event {
@@ -42,17 +45,21 @@ model Event {
   WasmEvent WasmEvent?
 
   @@map("events")
+  @@schema("public")
 }
 
 model Tag {
-  id        Int     @id @default(autoincrement())
-  name      String  @unique
-  createdBy String? @map("created_by") @db.Uuid
-  updatedBy String? @map("updated_by") @db.Uuid
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   events EventTag[]
 
   @@map("tags")
+  @@schema("public")
 }
 
 model EventTag {
@@ -64,6 +71,7 @@ model EventTag {
 
   @@unique([eventId, tagId])
   @@map("event_tags")
+  @@schema("public")
 }
 
 model Organizer {
@@ -78,6 +86,7 @@ model Organizer {
   events Event[]
 
   @@map("organizers")
+  @@schema("public")
 }
 
 model Venue {
@@ -98,6 +107,7 @@ model Venue {
   events Event[]
 
   @@map("venues")
+  @@schema("public")
 }
 
 enum ActionType {
@@ -105,6 +115,7 @@ enum ActionType {
   BOULDERBOT
 
   @@map("action_type")
+  @@schema("public")
 }
 
 model Action {
@@ -117,6 +128,7 @@ model Action {
   details   String?
 
   @@map("actions")
+  @@schema("public")
 }
 
 model ActionLog {
@@ -128,6 +140,7 @@ model ActionLog {
   data       String
 
   @@map("action_logs")
+  @@schema("public")
 }
 
 enum WasmEventClassification {
@@ -136,6 +149,7 @@ enum WasmEventClassification {
   NOCOMPETITION
 
   @@map("wasm_event_classification")
+  @@schema("public")
 }
 
 enum WasmEventCategory {
@@ -144,6 +158,7 @@ enum WasmEventCategory {
   LEAD
 
   @@map("wasm_event_category")
+  @@schema("public")
 }
 
 enum WasmAction {
@@ -151,6 +166,7 @@ enum WasmAction {
   AUTO_IMPORT
 
   @@map("wasm_action")
+  @@schema("public")
 }
 
 enum WasmEventStatus {
@@ -162,6 +178,7 @@ enum WasmEventStatus {
   EVENT_PASSED
 
   @@map("wasm_event_status")
+  @@schema("public")
 }
 
 model WasmEvent {
@@ -196,4 +213,5 @@ model WasmEvent {
   updatedBy                   String?                  @map("updated_by") @db.Uuid
 
   @@map("wasm_events")
+  @@schema("public")
 }

@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import type { Venue } from '@/types';
+import type { Profile, Venue } from '@/types';
 import { Drawer, Button, Group } from '@mantine/core';
 import {
   MantineReactTable,
@@ -9,8 +9,10 @@ import {
 import { getImageTag } from '@/data/supabase';
 import { VenueEditForm } from './VenueEditForm';
 import { useNavigate } from '@tanstack/react-router';
+import { lookupProfileName } from '@/utils/lookup-profile-name';
+import { CreateUpdateByTooltip } from './CreateUpdateByTooltip';
 
-export function VenuesTable({ venues, initialVenueId }: { venues: Venue[], initialVenueId?: string }) {
+export function VenuesTable({ venues, profiles, initialVenueId }: { venues: Venue[], profiles: Profile[], initialVenueId?: string }) {
   const navigate = useNavigate();
   const [selectedVenue, setSelectedVenue] = useState<Venue | null>(null);
   const [venuesList, setVenuesList] = useState<Venue[]>(venues);
@@ -67,6 +69,19 @@ export function VenuesTable({ venues, initialVenueId }: { venues: Venue[], initi
         header: 'Image',
         accessorFn: (originalRow) => getImageTag(originalRow.image_ref, 'venue-images'),
         id: 'image',
+      },
+            {
+        header: 'Created/Updated by',
+        accessorFn: (originalRow) => `${lookupProfileName(profiles, originalRow.created_by)} / ${lookupProfileName(profiles, originalRow.updated_by)}`,
+        id: 'created_updated_by',
+        Cell: ({ row }) => 
+          <CreateUpdateByTooltip 
+            createdAt={row.original.created_at}
+            createdBy={row.original.created_by}
+            updatedAt={row.original.updated_at}
+            updatedBy={row.original.updated_by}
+            profiles={profiles}
+          />,
       }
     ],
     [],

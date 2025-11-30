@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { Event, Organizer, Tag, Venue } from '@/types';
+import type { Event, Organizer, Tag, Venue, Profile } from '@/types';
 import { Drawer, Button, Group, Tabs } from '@mantine/core';
 import {
   MantineReactTable,
@@ -9,6 +9,8 @@ import {
 import { sortByDate } from '@/utils/sort-by-date';
 import { EventEditForm } from './EventEditForm';
 import { useNavigate } from '@tanstack/react-router';
+import { lookupProfileName } from '@/utils/lookup-profile-name';
+import { CreateUpdateByTooltip } from './CreateUpdateByTooltip';
 
 type EventsTableProps = {
   events: Event[];
@@ -17,9 +19,10 @@ type EventsTableProps = {
   allTags: Tag[]
   organizers: Organizer[];
   initialEventId?: string;
+  profiles: Profile[]
 };
 
-export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent, allTags, organizers, initialEventId }: EventsTableProps) {
+export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent, allTags, organizers, initialEventId, profiles }: EventsTableProps) {
   const navigate = useNavigate();
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [eventsList, setEventsList] = useState<Event[]>(events);
@@ -96,6 +99,19 @@ export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent,
         id: 'organizer',
         accessorFn: (originalRow) => organizers.find(o => o.id === originalRow.organizer_id)?.name || '-',
         accessorKey: 'organizer',
+      },
+      {
+        header: 'Created/Updated by',
+        accessorFn: (originalRow) => `${lookupProfileName(profiles, originalRow.created_by)} / ${lookupProfileName(profiles, originalRow.updated_by)}`,
+        id: 'created_updated_by',
+        Cell: ({ row }) => 
+          <CreateUpdateByTooltip 
+            createdAt={row.original.created_at}
+            createdBy={row.original.created_by}
+            updatedAt={row.original.updated_at}
+            updatedBy={row.original.updated_by}
+            profiles={profiles}
+          />,
       }
     ],
     [tagsPerEvent],
@@ -203,3 +219,4 @@ export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent,
     </>
   );
 }
+

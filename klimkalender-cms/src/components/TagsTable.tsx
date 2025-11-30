@@ -1,14 +1,16 @@
 import { useMemo } from 'react';
-import type { Tag } from '@/types';
-import { Button, Drawer, Group } from '@mantine/core';
+import type { Profile, Tag } from '@/types';
+import { Drawer, Group } from '@mantine/core';
 import {
   MantineReactTable,
   useMantineReactTable,
   type MRT_ColumnDef, //if using TypeScript (optional, but recommended)
 } from 'mantine-react-table';
 import { useNavigate } from '@tanstack/react-router';
+import { lookupProfileName } from '@/utils/lookup-profile-name';
+import { CreateUpdateByTooltip } from './CreateUpdateByTooltip';
 
-export function TagsTable({ tags, initialTagId }: { tags: Tag[], initialTagId?: string }) {
+export function TagsTable({ tags, initialTagId, profiles }: { tags: Tag[], profiles: Profile[], initialTagId?: string }) {
   const navigate = useNavigate();
   const opened = !!initialTagId;
   const columns = useMemo<MRT_ColumnDef<Tag>[]>(
@@ -19,6 +21,19 @@ export function TagsTable({ tags, initialTagId }: { tags: Tag[], initialTagId?: 
         accessorKey: 'name',
         id: 'name', //id required if you use accessorFn instead of accessorKey
       },
+      {
+        header: 'Created/Updated by',
+        accessorFn: (originalRow) => `${lookupProfileName(profiles, originalRow.created_by)} / ${lookupProfileName(profiles, originalRow.updated_by)}`,
+        id: 'created_updated_by',
+        Cell: ({ row }) =>
+          <CreateUpdateByTooltip
+            createdAt={row.original.created_at}
+            createdBy={row.original.created_by}
+            updatedAt={row.original.updated_at}
+            updatedBy={row.original.updated_by}
+            profiles={profiles}
+          />,
+      }
     ],
     [],
   );
@@ -34,10 +49,10 @@ export function TagsTable({ tags, initialTagId }: { tags: Tag[], initialTagId?: 
     enableFullScreenToggle: false,
     initialState: { density: 'xs', pagination: { pageSize: 10, pageIndex: 0 }, showGlobalFilter: true, },
     sortDescFirst: true,
-    mantineTableBodyRowProps: ({ row }) => ({
-      onClick: () => {
-        navigate({ to: '/tags', search: { tagId: row.original.id.toString() } });
-      },
+    mantineTableBodyRowProps: ({ }) => ({
+      // onClick: () => {
+      //   navigate({ to: '/tags', search: { tagId: row.original.id.toString() } });
+      // },
       sx: {
         cursor: 'pointer', //you might want to change the cursor too when adding an onClick
       },

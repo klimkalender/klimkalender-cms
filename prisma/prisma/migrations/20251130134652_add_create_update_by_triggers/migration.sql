@@ -1,4 +1,29 @@
 -- ============================================================
+-- 0. CREATE AUTH SCHEMA
+-- ============================================================
+
+CREATE SCHEMA IF NOT EXISTS auth;
+CREATE TABLE auth.users (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  email text UNIQUE NOT NULL,
+  raw_user_meta_data jsonb DEFAULT '{}'::jsonb,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+-- ============================================================
+-- AUTH.UID() FUNCTION
+-- ============================================================
+
+CREATE OR REPLACE FUNCTION auth.uid()
+RETURNS uuid AS $$
+BEGIN
+  RETURN gen_random_uuid();
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- ============================================================
 -- 1. PUBLIC PROFILES TABLE (safe, client-queryable)
 -- ============================================================
 
