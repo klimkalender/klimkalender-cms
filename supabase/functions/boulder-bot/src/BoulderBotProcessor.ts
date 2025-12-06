@@ -329,7 +329,7 @@ export class BoulderBotProcessor {
     const session = await this.supabaseClient.auth.getSession()
     const accessToken = session.data.session?.access_token;
 
-    const response = await fetch('https://zrshjxlfodmuulctapbw.supabase.co/functions/v1/image-grabber', {
+    const response = await fetch(`${process.env.VITE_SUPABASE_URL}/functions/v1/image-grabber`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
