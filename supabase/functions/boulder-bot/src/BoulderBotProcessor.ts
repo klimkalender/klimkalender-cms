@@ -74,7 +74,7 @@ export class BoulderBotProcessor {
           updatedEvent = updatedEventResult;
         }
       } else {
-        this.logger.info(`No changes detected for competition ${comp.eventName}. Not updating.`);
+        // this.logger.info(`No changes detected for competition ${comp.eventName}. Not updating.`);
       }
       if (!updatedEvent) {
         this.logger.error(`No updated event data for competition ${comp.uniqueRemoteId}, skipping further processing.`);
