@@ -13,3 +13,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.tab__count {
+  /* margin-left: 4px; */
+  font-weight: 400;
+  color: rgb(121, 122, 124);
+}

@@ -15,6 +15,7 @@ import { WasmEventEditForm } from './WasmEventEditForm';
 import { useNavigate } from '@tanstack/react-router';
 import { lookupProfileName } from '@/utils/lookup-profile-name';
 import { CreateUpdateByTooltip } from './CreateUpdateByTooltip';
+import { countItemsByStatus, type ItemStatusCounts } from '@/utils/item-counts';
 
 type EventsTableProps = {
   wasmEvents: WasmEvent[];
@@ -37,6 +38,7 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
   const [showBoulderbotLogs, setShowBoulderbotLogs] = useState<boolean>(false);
   const [tagsPerEvent, setTagsPerEvent] = useState<{ [id: number]: Tag[] }>(defaultTagsPerEvent);
   const [lastAction, setLastAction] = useState<Database["public"]["Tables"]["actions"]["Row"] | null | undefined>(action);
+  const [eventStatusCounts, setEventStatusCounts] = useState<ItemStatusCounts>(countItemsByStatus(wasmEvents));
   const opened = !!initialWasmEventId;
 
   useEffect(() => {
@@ -49,6 +51,7 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
     } else {
       setSelectedWasmEvent(null);
     }
+    setEventStatusCounts(countItemsByStatus(wasmEvents));
   }, [initialWasmEventId, wasmEvents]);
   const columns = useMemo<MRT_ColumnDef<WasmEvent>[]>(
     () => [
@@ -204,12 +207,12 @@ export function WasmachineTable({ wasmEvents: wasmEvents, events, venues, tagsPe
 
       <Tabs value={activeTab} onTabChange={(a) => setActiveTab(a || 'NEW')}>
         <Tabs.List>
-          <Tabs.Tab value="NEW">New</Tabs.Tab>
-          <Tabs.Tab value="CHANGED">Changed</Tabs.Tab>
-          <Tabs.Tab value="UP_TO_DATE">Up to Date</Tabs.Tab>
-          <Tabs.Tab value="REMOVED">Removed</Tabs.Tab>
-          <Tabs.Tab value="IGNORED">Ignored</Tabs.Tab>
-          <Tabs.Tab value="EVENT_PASSED">Event Passed</Tabs.Tab>
+          <Tabs.Tab value="NEW">New <span className="tab__count">({eventStatusCounts['NEW'] || 0})</span></Tabs.Tab>
+          <Tabs.Tab value="CHANGED">Changed <span className="tab__count">({eventStatusCounts['CHANGED'] || 0})</span></Tabs.Tab>
+          <Tabs.Tab value="UP_TO_DATE">Up to Date <span className="tab__count">({eventStatusCounts['UP_TO_DATE'] || 0})</span></Tabs.Tab>
+          <Tabs.Tab value="REMOVED">Removed <span className="tab__count">({eventStatusCounts['REMOVED'] || 0})</span></Tabs.Tab>
+          <Tabs.Tab value="IGNORED">Ignored <span className="tab__count">({eventStatusCounts['IGNORED'] || 0})</span></Tabs.Tab>
+          <Tabs.Tab value="EVENT_PASSED">Event Passed <span className="tab__count">({eventStatusCounts['EVENT_PASSED'] || 0})</span></Tabs.Tab>
           <Tabs.Tab icon={<Logs />} value="BOULDERBOT">Boulderbot Logs</Tabs.Tab>
         </Tabs.List>
       </Tabs>

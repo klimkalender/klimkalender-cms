@@ -12,6 +12,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { lookupProfileName } from '@/utils/lookup-profile-name';
 import { CreateUpdateByTooltip } from './CreateUpdateByTooltip';
 import { supabase } from '@/data/supabase';
+import { type ItemStatusCounts, countItemsByStatus } from '@/utils/item-counts';
 
 type EventsTableProps = {
   events: Event[];
@@ -30,6 +31,7 @@ export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent,
   const [activeTab, setActiveTab] = useState<string>('PUBLISHED');
   const [tagsPerEvent, setTagsPerEvent] = useState<{ [id: number]: Tag[] }>(defaultTagsPerEvent);
   const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null)
+  const [eventStatusCounts, setEventStatusCounts] = useState<ItemStatusCounts>(countItemsByStatus(events));
 
   const opened = !!initialEventId;
 
@@ -47,6 +49,7 @@ export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent,
     } else {
       setSelectedEvent(null);
     }
+    setEventStatusCounts(countItemsByStatus(eventsList));
   }, [initialEventId, eventsList]);
   const columns = useMemo<MRT_ColumnDef<Event>[]>(
     () => [
@@ -262,9 +265,9 @@ export function EventsTable({ events, venues, tagsPerEvent: defaultTagsPerEvent,
       </Group>
       <Tabs value={activeTab} onTabChange={(a) => setActiveTab(a || 'DRAFT')}>
         <Tabs.List>
-          <Tabs.Tab value="DRAFT">Draft</Tabs.Tab>
-          <Tabs.Tab value="PUBLISHED">Published</Tabs.Tab>
-          <Tabs.Tab value="ARCHIVED">Archived</Tabs.Tab>
+          <Tabs.Tab value="DRAFT">Draft <span className="tab__count">({eventStatusCounts['DRAFT'] || 0})</span></Tabs.Tab>
+          <Tabs.Tab value="PUBLISHED">Published <span className="tab__count">({eventStatusCounts['PUBLISHED'] || 0})</span></Tabs.Tab>
+          <Tabs.Tab value="ARCHIVED">Archived <span className="tab__count">({eventStatusCounts['ARCHIVED'] || 0})</span></Tabs.Tab>
         </Tabs.List>
       </Tabs>
 
