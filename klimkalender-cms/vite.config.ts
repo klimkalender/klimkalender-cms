@@ -16,7 +16,7 @@ export default defineConfig({
     tailwindcss(),
     svgr(),
   ],
-  base: '/klimkalender-cms/',
+  // base: '/klimkalender-cms/',
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
