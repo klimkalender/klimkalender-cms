@@ -28,7 +28,7 @@ export default function RunBoulderbotButton({ onComplete }: BoulderbotButtonProp
 
     let response: Response | undefined;
     try {
-      response = await fetch('https://zrshjxlfodmuulctapbw.supabase.co/functions/v1/boulder-bot', {
+      response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/boulder-bot`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`,

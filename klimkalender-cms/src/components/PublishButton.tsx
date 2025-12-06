@@ -14,7 +14,7 @@ export default function PublishButton() {
     setIsPublishing(true)
 
     try {
-      const response = await fetch('https://zrshjxlfodmuulctapbw.supabase.co/functions/v1/kk-publisher', {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/kk-publisher`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
