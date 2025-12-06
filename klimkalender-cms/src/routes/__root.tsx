@@ -1,5 +1,5 @@
 import { Outlet, createRootRouteWithContext } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/router-devtools'
+// import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 
 import type { AuthContext } from '../auth'
 import Header from '@/components/Header'
@@ -25,7 +25,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     <>
       <Header />
       <Outlet />
-      <TanStackRouterDevtools position="bottom-right" initialIsOpen={false} />
+      {/* <TanStackRouterDevtools position="bottom-right" initialIsOpen={false} /> */}
     </>
   ),
   notFoundComponent: NotFound,
